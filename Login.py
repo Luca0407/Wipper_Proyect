@@ -1,12 +1,12 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 import subprocess
+from getpath import getpath as gp
 
 
-output_path = Path(__file__).parent
-ASSETS_PATH = output_path / 'assets' / 'frame0'
-back_to = output_path.parent.parent
-NEXT_PATH = back_to / 'Register screen' / 'build' / 'gui.py'
+init_path = gp.getPath()
+ASSETS_PATH = init_path / 'Login_Screen' / 'build' / 'assets' / 'frame0'
+NEXT_PATH = init_path / 'Register.py'
 
 
 def relative_to_assets(path: str) -> Path:
@@ -20,7 +20,7 @@ def check_login():
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 
-def open_register_screen():
+def register_screen():
     subprocess.Popen(["python", str(NEXT_PATH)])
 
 window = Tk()
@@ -60,7 +60,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=open_register_screen,
+    command=register_screen,
     relief="flat"
 )
 button_1.place(
