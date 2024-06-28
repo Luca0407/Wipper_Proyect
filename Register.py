@@ -1,12 +1,7 @@
-from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 from pathlib import Path
 from getpath import getpath as gp
-
-
-def guardar_texto():
-
-    return entry_2.get()
+from users import users
     
 
 PATH = gp.getPath()
@@ -78,7 +73,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: guardar_texto,
+    command=lambda: users.register(entry_3.get(), entry_2.get(), entry_1.get(), window),
     relief="flat"
 )
 
