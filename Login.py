@@ -1,13 +1,10 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
-import subprocess
 from getpath import getpath as gp
 
 
 init_path = gp.getPath()
 ASSETS_PATH = init_path / 'Login_Screen' / 'build' / 'assets' / 'frame0'
-NEXT_PATH = init_path / 'Register.py'
-
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -15,13 +12,12 @@ def relative_to_assets(path: str) -> Path:
 def check_login():
     if entry_2.get() == "admin" and entry_1.get() == "12345":
         messagebox.showinfo("Ingreso exitoso", "Bienvenido al gestor de Wipper.")
+        window.destroy()
+        gp.wipper_menu(init_path)
     elif entry_2.get() == "" and entry_1.get() == "":
         messagebox.showerror("Ingreso incorrecto", "Rellene los campos, no sea imbecil.")
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
-
-def register_screen():
-    subprocess.Popen(["python", str(NEXT_PATH)])
 
 window = Tk()
 
@@ -56,13 +52,15 @@ canvas = Canvas(
 canvas.place(x = 0, y = 0)
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
+
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=register_screen,
+    command=lambda: gp.register_screen(init_path),
     relief="flat"
 )
+
 button_1.place(
     x=74.0,
     y=422.0,
@@ -72,6 +70,7 @@ button_1.place(
 
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
+
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
@@ -79,6 +78,7 @@ button_2 = Button(
     command=lambda: check_login(),
     relief="flat"
 )
+
 button_2.place(
     x=71.0,
     y=360.0,

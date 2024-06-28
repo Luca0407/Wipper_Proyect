@@ -3,10 +3,15 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from getpath import getpath as gp
 
 
+init_path = Path(__file__).parent
 PATH = gp.getPath()
 
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)
+
+def logout(path):
+    window.destroy()
+    gp.login_screen(path)
 
 window = Tk()
 
@@ -121,7 +126,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_5 clicked"),
+    command=lambda: logout(init_path),
     relief="flat"
 )
 button_5.place(

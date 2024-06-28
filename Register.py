@@ -4,6 +4,11 @@ from pathlib import Path
 from getpath import getpath as gp
 
 
+def guardar_texto():
+
+    return entry_2.get()
+    
+
 PATH = gp.getPath()
 
 def relative_to_assets(path: str) -> Path:
@@ -73,7 +78,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: guardar_texto,
     relief="flat"
 )
 
@@ -114,6 +119,7 @@ entry_3 = Entry(
     fg="#000716",
     highlightthickness=0,
     font=("Montserrat Regular",12)
+    
 )
 
 entry_3.place(
@@ -172,3 +178,4 @@ entry_1.place(
 
 window.resizable(False, False)
 window.mainloop()
+
