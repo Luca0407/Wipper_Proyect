@@ -2,7 +2,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 from pathlib import Path
 from getpath import getpath as gp
 from users import users
-    
+
 
 PATH = gp.getPath()
 
@@ -67,7 +67,7 @@ canvas.create_text(
 )
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=relative_to_assets("sign_up.png"))
 
 button_1 = Button(
     image=button_image_1,
@@ -85,7 +85,7 @@ button_1.place(
 )
 
 button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
+    file=relative_to_assets("exit.png"))
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
@@ -101,7 +101,7 @@ button_2.place(
 )
 
 entry_image_3 = PhotoImage(
-    file=relative_to_assets("entry_3.png"))
+    file=relative_to_assets("input.png"))
 entry_bg_3 = canvas.create_image(
     150.0,
     112.0,
@@ -125,7 +125,7 @@ entry_3.place(
 )
 
 entry_image_2 = PhotoImage(
-    file=relative_to_assets("entry_2.png"))
+    file=relative_to_assets("input.png"))
 entry_bg_2 = canvas.create_image(
     150.0,
     202.0,
@@ -148,7 +148,7 @@ entry_2.place(
 )
 
 entry_image_1 = PhotoImage(
-    file=relative_to_assets("entry_1.png"))
+    file=relative_to_assets("input.png"))
 entry_bg_1 = canvas.create_image(
     150.0,
     292.0,

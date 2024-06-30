@@ -26,6 +26,7 @@ def register(entry1, entry2, entry3, tk):
     
     
 
+"""
 with open(TXT_NAME, 'r') as file:
     # Iterar sobre cada línea del file
     for linea in file:
@@ -38,4 +39,5 @@ with open(TXT_NAME, 'r') as file:
 with open(TXT_NAME, 'r') as file:
     # Leer todas las líneas del file como una lista
     lineas = file.readlines()
-    print(lineas)  
+    print(lineas)
+"""
