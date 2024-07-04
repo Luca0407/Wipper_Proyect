@@ -72,46 +72,6 @@ canvas.create_text(
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# --Crea, posiciona y da funcionalidad al botón de inicio de sesión--
-sign_up_image = PhotoImage(
-    file=relative_to_assets("sign_up.png"))
-
-sign_up_button = Button(
-    image=sign_up_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: users.register(mail_input.get(), user_input.get(), password_input.get(), window),  # temporal.
-    relief="flat"
-)
-
-sign_up_button.place(
-    x=71.0,
-    y=362.0,
-    width=158.0,
-    height=48.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea, posiciona y da funcionalidad al botón de salida--
-exit_image = PhotoImage(
-    file=relative_to_assets("exit.png"))
-
-exit_button = Button(
-    image=exit_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=gp.login_screen(PATH),
-    relief="flat"
-)
-
-exit_button.place(
-    x=268.0,
-    y=13.0,
-    width=19.0,
-    height=19.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 # --Crea, posiciona y da funcionalidad a la entrada de texto para el correo--
 mail_image = PhotoImage(
     file=relative_to_assets("input.png"))
@@ -189,6 +149,45 @@ password_input.place(
     y=272.0,
     width=208.0,
     height=38.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Crea, posiciona y da funcionalidad al botón de salida--
+exit_image = PhotoImage(
+    file=relative_to_assets("exit.png"))
+
+exit_button = Button(
+    image=exit_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: window.destroy(),
+    relief="flat"
+)
+
+exit_button.place(
+    x=268.0,
+    y=13.0,
+    width=19.0,
+    height=19.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --Crea, posiciona y da funcionalidad al botón de inicio de sesión--
+sign_up_image = PhotoImage(
+    file=relative_to_assets("sign_up.png"))
+
+sign_up_button = Button(
+    image=sign_up_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: users.register(mail_input.get(), user_input.get(), password_input.get()),  # temporal.
+    relief="flat"
+)
+
+sign_up_button.place(
+    x=71.0,
+    y=362.0,
+    width=158.0,
+    height=48.0
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 

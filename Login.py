@@ -19,10 +19,15 @@ def check_login():
     if user_input.get() == "admin" and pass_input.get() == "12345":
         messagebox.showinfo("Ingreso exitoso", "Bienvenido al gestor de Wipper.")
         window.destroy()
-        gp.wipper_menu(init_path)
+        gp.wipper_menu()
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+def on_enter(event):
+    login_button.invoke() # Función para simular un clic en el botón para ingresar.
+
+window.bind('<Return>', on_enter) # Vincula la tecla "Enter" a la función on_enter.
 
 window.geometry("300x480")
 window.configure(bg = "#191919")
@@ -73,86 +78,6 @@ canvas.create_text(
     text="Contraseña",
     fill="#FFFFFF",
     font=("Montserrat Regular", 18 * -1)
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea, posiciona y da funcionalidad al botón para registrarse--
-sign_up_image = PhotoImage(
-    file=relative_to_assets("sign_up.png"))
-
-sign_up_button = Button(
-    image=sign_up_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: gp.register_screen(init_path),  # Abre el módulo de registro.
-    relief="flat"
-)
-
-sign_up_button.place(
-    x=74.0,
-    y=422.0,
-    width=152.0,
-    height=16.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea, posiciona y da funcionalidad al botón para iniciar sesión--
-login_image = PhotoImage(
-    file=relative_to_assets("login.png"))
-
-login_button = Button(
-    image=login_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: check_login(), # Llama a la función para comprobar los input.
-    relief="flat"
-)
-
-login_button.place(
-    x=71.0,
-    y=360.0,
-    width=158.0,
-    height=48.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea, posiciona y da funcionalidad al botón de recuperar contraseña--
-forgot_pass_image = PhotoImage(
-    file=relative_to_assets("forgot_pass.png"))
-
-forgot_pass_button = Button(
-    image=forgot_pass_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("forgot_pass_button clicked"),  # temporal.
-    relief="flat"
-)
-
-forgot_pass_button.place(
-    x=74.0,
-    y=331.0,
-    width=152.0,
-    height=17.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea, posiciona y da funcionalidad al botón de salida--
-exit_image = PhotoImage(
-    file=relative_to_assets("exit.png"))
-
-exit_button = Button(
-    image=exit_image,
-    borderwidth=0,
-    highlightthickness=0,
-    command=window.destroy,  # Cierra el programa.
-    relief="flat"
-)
-
-exit_button.place(
-    x=268.0,
-    y=13.0,
-    width=19.0,
-    height=19.0
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -219,12 +144,85 @@ logo = canvas.create_image(
     image=logo_image
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Crea, posiciona y da funcionalidad al botón para registrarse--
+sign_up_image = PhotoImage(
+    file=relative_to_assets("sign_up.png"))
 
+sign_up_button = Button(
+    image=sign_up_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: gp.register_screen(),  # Abre el módulo de registro.
+    relief="flat"
+)
 
-def on_enter(event):
-    login_button.invoke() # Función para simular un clic en el botón para ingresar.
+sign_up_button.place(
+    x=74.0,
+    y=422.0,
+    width=152.0,
+    height=16.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window.bind('<Return>', on_enter) # Vincula la tecla "Enter" a la función on_enter.
+# --Crea, posiciona y da funcionalidad al botón para iniciar sesión--
+login_image = PhotoImage(
+    file=relative_to_assets("login.png"))
+
+login_button = Button(
+    image=login_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: check_login(), # Llama a la función para comprobar los input.
+    relief="flat"
+)
+
+login_button.place(
+    x=71.0,
+    y=360.0,
+    width=158.0,
+    height=48.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --Crea, posiciona y da funcionalidad al botón de recuperar contraseña--
+forgot_pass_image = PhotoImage(
+    file=relative_to_assets("forgot_pass.png"))
+
+forgot_pass_button = Button(
+    image=forgot_pass_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("forgot_pass_button clicked"),  # temporal.
+    relief="flat"
+)
+
+forgot_pass_button.place(
+    x=74.0,
+    y=331.0,
+    width=152.0,
+    height=17.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --Crea, posiciona y da funcionalidad al botón de salida--
+exit_image = PhotoImage(
+    file=relative_to_assets("exit.png"))
+
+exit_button = Button(
+    image=exit_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: window.destroy(),  # Cierra el programa.
+    relief="flat"
+)
+
+exit_button.place(
+    x=268.0,
+    y=13.0,
+    width=19.0,
+    height=19.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).
 window.mainloop()  # Hace que la ventana se mantenga abierta.

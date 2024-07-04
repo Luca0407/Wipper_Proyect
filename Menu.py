@@ -98,6 +98,7 @@ button_3.place(
 
 button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
+
 button_4 = Button(
     image=button_image_4,
     borderwidth=0,
@@ -105,6 +106,7 @@ button_4 = Button(
     command=lambda: print("button_4 clicked"),
     relief="flat"
 )
+
 button_4.place(
     x=11.0,
     y=185.0,
@@ -114,6 +116,7 @@ button_4.place(
 
 image_image_1 = PhotoImage(
     file=relative_to_assets("image_1.png"))
+
 image_1 = canvas.create_image(
     170.0,
     107.0,
@@ -122,6 +125,7 @@ image_1 = canvas.create_image(
 
 button_image_5 = PhotoImage(
     file=relative_to_assets("button_5.png"))
+
 button_5 = Button(
     image=button_image_5,
     borderwidth=0,
@@ -129,6 +133,7 @@ button_5 = Button(
     command=lambda: logout(init_path),
     relief="flat"
 )
+
 button_5.place(
     x=127.0,
     y=117.0,
