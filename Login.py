@@ -25,13 +25,15 @@ def check_login():
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 def on_enter(event):
-    login_button.invoke() # Función para simular un clic en el botón para ingresar.
+    login_button.invoke()  # Función para simular un clic en el botón para ingresar.
 
-window.bind('<Return>', on_enter) # Vincula la tecla "Enter" a la función on_enter.
+def new_user():
+    window.destroy()
+    gp.register_screen()  # Función para abrir el módulo "Register.py".
 
-window.geometry("300x480")
+window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
+
 window.configure(bg = "#191919")
-
 window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
 
 # --Posiciona la ventana en pantalla--
@@ -152,7 +154,7 @@ sign_up_button = Button(
     image=sign_up_image,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.register_screen(),  # Abre el módulo de registro.
+    command=lambda: new_user(),  # Abre el módulo de registro.
     relief="flat"
 )
 

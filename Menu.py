@@ -1,11 +1,17 @@
+# --Librerías y módulos--
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from getpath import getpath as gp
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+window = Tk()
+INIT_PATH = gp.getPath()
 
-init_path = gp.getPath()
+window.configure(bg = "#191919")
+window.overrideredirect(True)
+
 def relative_to_assets(path: str) -> Path:
-    return init_path / Path(path)
+    return INIT_PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
 
 def start_move(event):
     if event.y <= 30:  # Solo permite mover si el clic está en los primeros 30 píxeles
@@ -27,26 +33,20 @@ def do_move(event):
         y = window.winfo_y() + deltay
         window.geometry(f"+{x}+{y}")
 
-window = Tk()
-
 def logout():
     gp.login_screen()
     window.destroy()
 
-window.geometry("1360x728")
-window.configure(bg = "#191919")
-
-window.overrideredirect(True)
-
-# Obtén el tamaño de la pantalla
+# --Posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
-# Calcula la posición x e y para centrar la ventana
 window_width = 300
 window_height = 480
+
 x_cordinate = int((screen_width/2) - (window_width/2))
 y_cordinate = int((screen_height/2) - (window_height/2))
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 canvas = Canvas(
     window,
@@ -238,10 +238,12 @@ button_7.place(
     height=28.270816802978516
 )
 
-# Mover la ventana
+# --Funciones para mover la ventana--
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<ButtonRelease-1>", stop_move)
 canvas.bind("<B1-Motion>", do_move)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window.resizable(False, False)
-window.mainloop()
+
+window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).
+window.mainloop()  # Hace que la ventana se mantenga abierta.

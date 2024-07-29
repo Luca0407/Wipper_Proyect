@@ -5,6 +5,13 @@ from getpath import getpath as gp
 from users import users
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+# --Función para almacenar los datos en un archivo .txt. Redirige al módulo Login.py--
+def user_signup():
+    users.register(mail_input.get(), user_input.get(), password_input.get())
+    messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
+    window.destroy()
+    gp.login_screen()
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window = Tk()
 PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
@@ -12,10 +19,13 @@ PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imá
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
 
-window.geometry("300x480")
 window.configure(bg = "#191919")
-
 window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
+
+def on_enter(event):
+    sign_up_button.invoke()  # Función para simular un clic en el botón para ingresar.
+
+window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
 
 # --Posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
@@ -179,7 +189,7 @@ sign_up_button = Button(
     image=sign_up_image,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: users.register(mail_input.get(), user_input.get(), password_input.get()),  # temporal.
+    command=lambda: user_signup(),  # temporal.
     relief="flat"
 )
 
