@@ -5,6 +5,13 @@ from getpath import getpath as gp
 from users import users
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
+window = Tk()
+PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
+
+def relative_to_assets(path: str) -> Path:
+    return PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
+
 # --Función para almacenar los datos en un archivo .txt. Redirige al módulo Login.py--
 def user_signup():
     users.register(mail_input.get(), user_input.get(), password_input.get())
@@ -13,19 +20,13 @@ def user_signup():
     gp.login_screen()
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window = Tk()
-PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-
-def relative_to_assets(path: str) -> Path:
-    return PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
-
-window.configure(bg = "#191919")
-window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
-
 def on_enter(event):
     sign_up_button.invoke()  # Función para simular un clic en el botón para ingresar.
 
 window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
+
+window.configure(bg = "#191919")
+window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
 
 # --Posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
@@ -37,7 +38,7 @@ window_height = 480
 x_cordinate = int((screen_width/2) - (window_width/2))
 y_cordinate = int((screen_height/2) - (window_height/2))
 
-window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")  
+window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona la ventana--
@@ -161,6 +162,7 @@ password_input.place(
     height=38.0
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 # --Crea, posiciona y da funcionalidad al botón de salida--
 exit_image = PhotoImage(
     file=relative_to_assets("exit.png"))

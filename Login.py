@@ -27,11 +27,11 @@ def check_login():
 def on_enter(event):
     login_button.invoke()  # Función para simular un clic en el botón para ingresar.
 
+window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
+
 def new_user():
     window.destroy()
     gp.register_screen()  # Función para abrir el módulo "Register.py".
-
-window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
 
 window.configure(bg = "#191919")
 window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
@@ -146,6 +146,7 @@ logo = canvas.create_image(
     image=logo_image
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 # --Crea, posiciona y da funcionalidad al botón para registrarse--
 sign_up_image = PhotoImage(
     file=relative_to_assets("sign_up.png"))
