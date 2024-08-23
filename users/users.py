@@ -1,21 +1,25 @@
-# Módulo provisorio mientras se trabaja en la base de datos.
-TXT_NAME = "userpass.txt"  # Apunta a un archivo .txt
+import sqlite3  # Importa librería
 
-def getMail(entry):
-    with open(TXT_NAME, 'a') as file:  # Abre el archivo con la accion 'a' (add).
-        file.write(f"\n{entry}")  # Escribe dentro el valor del parámetro entry.
 
-def getUser(entry):
-    with open(TXT_NAME, 'a') as file:
-        file.write(f"\n{entry}")  # Mismo accionar en las demas funciones.
+connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
+cursor = connect.cursor()  # Crea un cursor para ejecutar consultas SQL.
 
-def getPass(entry):
-    with open(TXT_NAME, 'a') as file:
-        file.write(f"\n{entry}")  # Mismo accionar en las demas funciones.
+# --Función para registrar usuarios--
+def register(entry1, entry2, entry3):
+    user = cursor.execute("""INSERT INTO usuarios ('nombre', 'contra', 'correo')
+                        VALUES (?, ?, ?)""", (entry1, entry2, entry3))
+    connect.commit()
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# --Función para llamar a las demas funciones y agregar los valores al archivo--
-def register(entry1, entry2, entry3): 
-    getMail(entry1)
-    getUser(entry2)
-    getPass(entry3)
+# --Función para iniciar sesión con la cuenta de un determinado usuario--
+def login(entry1, entry2):
+    user = cursor.execute("SELECT nombre, contra FROM usuarios")
+    usuarios = user.fetchall()
+    user_data = (entry1, entry2)
+    for entry in usuarios:
+        if entry == user_data:
+            return True
+        
+    else:
+        return False
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

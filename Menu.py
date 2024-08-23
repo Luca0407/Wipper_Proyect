@@ -1,8 +1,7 @@
-# --Librerías y módulos--
+# --Librerías y módulos-- 
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 from getpath import getpath as gp
-from windowmove import windowmove as wm
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window = Tk()
@@ -70,35 +69,6 @@ canvas = Canvas(
     relief = "ridge"
 )
 canvas.place(x = 0, y = 0)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --create_text() inserta texto en la ventana segun los parametros que se le den--
-canvas.create_text(
-    70.0,
-    6.0,
-    anchor="nw",
-    text="Wipper Insumos",
-    fill="#FFFFFF",
-    font=("SegoeUI Semibold", 20 * -1)
-)
-
-canvas.create_text(
-    1299.0,
-    150.0,
-    anchor="nw",
-    text="v1.1\n",
-    fill="#282828",
-    font=("RobotoRoman Medium", 21 * -1)
-)
-
-canvas.create_text(
-    102.0,
-    65.0,
-    anchor="nw",
-    text="Admin",
-    fill="#FFFFFF",
-    font=("RobotoRoman Medium", 44 * -1)
-)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona la imagen "dashboard"--
@@ -293,6 +263,35 @@ minimize.place(
     y=2.0,
     width=28.270816802978516,
     height=28.270816802978516
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --create_text() inserta texto en la ventana segun los parametros que se le den--
+canvas.create_text(
+    70.0,
+    6.0,
+    anchor="nw",
+    text="Wipper Insumos",
+    fill="#FFFFFF",
+    font=("SegoeUI Semibold", 20 * -1)
+)
+
+canvas.create_text(
+    1299.0,
+    150.0,
+    anchor="nw",
+    text="v1.1\n",
+    fill="#282828",
+    font=("RobotoRoman Medium", 21 * -1)
+)
+
+canvas.create_text(
+    102.0,
+    65.0,
+    anchor="nw",
+    text="Admin",
+    fill="#FFFFFF",
+    font=("RobotoRoman Medium", 44 * -1)
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 

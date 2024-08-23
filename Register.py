@@ -12,9 +12,9 @@ PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imá
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
 
-# --Función para almacenar los datos en un archivo .txt. Redirige al módulo Login.py--
+# --Función para almacenar los datos en la base de datos. Redirige al módulo Login.py--
 def user_signup():
-    users.register(mail_input.get(), user_input.get(), password_input.get())
+    users.register(user_input.get(), password_input.get(), mail_input.get())
     messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
     window.destroy()
     gp.login_screen()

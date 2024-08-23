@@ -2,7 +2,9 @@
 from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 from getpath import getpath as gp
+from users import users
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 window = Tk()
 
@@ -14,9 +16,9 @@ ASSETS_PATH = init_path / 'Login_Screen' / 'build' / 'assets' / 'frame0'
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
 
-# --Función comprueba usuario y contraseña obtenidos para llamar al módulo del menú--
+# --Función comprueba usuario y contraseña ingresados para llamar al módulo del menú--
 def check_login():
-    if user_input.get() == "admin" and pass_input.get() == "12345":
+    if users.login(user_input.get(), pass_input.get()) is True:
         messagebox.showinfo("Ingreso exitoso", "Bienvenido al gestor de Wipper.")
         window.destroy()
         gp.wipper_menu()
