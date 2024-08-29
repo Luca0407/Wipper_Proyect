@@ -11,6 +11,19 @@ def register(entry1, entry2, entry3):
     connect.commit()
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+# --Función para revisar usuario y correo--
+def chek(entry1, entry2):
+    user = cursor.execute("SELECT nombre, correo FROM usuarios")
+    users_reg = user.fetchall()
+    user_data = (entry1, entry2)
+    for entry in users_reg:
+        if entry == user_data:
+            return True
+
+    else:
+        return False
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 # --Función para iniciar sesión con la cuenta de un determinado usuario--
 def login(entry1, entry2):
     user = cursor.execute("SELECT nombre, contra FROM usuarios")

@@ -14,10 +14,13 @@ def relative_to_assets(path: str) -> Path:
 
 # --Función para almacenar los datos en la base de datos. Redirige al módulo Login.py--
 def user_signup():
-    users.register(user_input.get(), password_input.get(), mail_input.get())
-    messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
-    window.destroy()
-    gp.login_screen()
+    if users.chek(user_input.get(), mail_input.get()) is False:
+        users.register(user_input.get(), password_input.get(), mail_input.get())
+        messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
+        window.destroy()
+        gp.login_screen()
+    else:
+        messagebox.showinfo("ERROR","Este usuario ya se encuentra registrado.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 def on_enter(event):
