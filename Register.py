@@ -1,5 +1,5 @@
 # --Librerías y módulos--
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
+from tkinter import Tk, Canvas, Entry, Button, PhotoImage, messagebox
 from pathlib import Path
 from getpath import getpath as gp
 from users import users
@@ -31,7 +31,7 @@ window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_e
 window.configure(bg = "#191919")
 window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
 
-# --Posiciona la ventana en pantalla--
+# --Centra y posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
@@ -55,35 +55,6 @@ canvas = Canvas(
 )
 
 canvas.place(x = 0, y = 0)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --create_text() inserta texto en la ventana segun los parametros que se le den--
-canvas.create_text(
-    41.0,
-    249.0,
-    anchor="nw",
-    text="Contraseña",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
-
-canvas.create_text(
-    41.0,
-    159.0,
-    anchor="nw",
-    text="Usuario",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
-
-canvas.create_text(
-    41.0,
-    69.0,
-    anchor="nw",
-    text="Correo",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea, posiciona y da funcionalidad a la entrada de texto para el correo--
@@ -203,6 +174,35 @@ sign_up_button.place(
     y=362.0,
     width=158.0,
     height=48.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --create_text() inserta texto en la ventana segun los parametros que se le den--
+canvas.create_text(
+    41.0,
+    249.0,
+    anchor="nw",
+    text="Contraseña",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    41.0,
+    159.0,
+    anchor="nw",
+    text="Usuario",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    41.0,
+    69.0,
+    anchor="nw",
+    text="Correo",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1)
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 

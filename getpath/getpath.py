@@ -21,7 +21,10 @@ def getPath():
             assets_path = OUTPUT_PATH / 'Register_Screen' / 'build' / 'assets' / 'frame0'
 
         case "Menu":
-            assets_path = OUTPUT_PATH / 'Wipper_Menu' / 'build' / 'assets' / 'frame0'
+            assets_path = OUTPUT_PATH / 'Menu_Screen' / 'build' / 'assets' / 'frame0'
+
+        case "Clients":
+            assets_path = OUTPUT_PATH
 
         case other:
             print("eh?", OUTPUT_PATH)
@@ -40,3 +43,8 @@ def wipper_menu():
 def login_screen():
     goto_path = OUTPUT_PATH / 'Login.py'
     subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.
+
+def clients():
+    goto_path = OUTPUT_PATH / 'Clients_Screens' / 'forest-dark'
+    pypath = OUTPUT_PATH / 'Clients.py'
+    subprocess.Popen(["python", str(pypath)])

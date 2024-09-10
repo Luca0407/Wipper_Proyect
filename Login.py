@@ -26,19 +26,21 @@ def check_login():
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+# --Función para registrar un nuevo usuario--.
+def new_user():
+    window.destroy()
+    gp.register_screen()  
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 def on_enter(event):
     login_button.invoke()  # Función para simular un clic en el botón para ingresar.
 
 window.bind('<Return>', on_enter)  # Vincula la tecla "Enter" a la función on_enter.
 
-def new_user():
-    window.destroy()
-    gp.register_screen()  # Función para abrir el módulo "Register.py".
-
 window.configure(bg = "#191919")
 window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
 
-# --Posiciona la ventana en pantalla--
+# --Centra y posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
@@ -63,26 +65,6 @@ canvas = Canvas(
 )
 
 canvas.place(x = 0, y = 0)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --create_text() inserta texto en la ventana segun los parametros que se le den--
-canvas.create_text(
-    41.0,
-    161.0,
-    anchor="nw",
-    text="Usuario",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
-
-canvas.create_text(
-    41.0,
-    251.0,
-    anchor="nw",
-    text="Contraseña",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea, posiciona y da funcionalidad a la entrada de texto para el usuario--
@@ -226,6 +208,26 @@ exit_button.place(
     y=13.0,
     width=19.0,
     height=19.0
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+# --create_text() inserta texto en la ventana segun los parametros que se le den--
+canvas.create_text(
+    41.0,
+    161.0,
+    anchor="nw",
+    text="Usuario",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1)
+)
+
+canvas.create_text(
+    41.0,
+    251.0,
+    anchor="nw",
+    text="Contraseña",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1)
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
