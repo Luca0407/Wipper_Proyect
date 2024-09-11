@@ -45,6 +45,5 @@ def login_screen():
     subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.
 
 def clients():
-    goto_path = OUTPUT_PATH / 'Clients_Screens' / 'forest-dark'
-    pypath = OUTPUT_PATH / 'Clients.py'
-    subprocess.Popen(["python", str(pypath)])
+    goto_path = OUTPUT_PATH / 'Clients.py'
+    subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.

@@ -7,47 +7,72 @@ import sqlite3
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
 cursor = connect.cursor()
 init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
+cols = ("ID", "Dueño", "Teléfono", "DNI", "CUIT")
 
 def close():
     root.destroy()
 
+def load_data():
+    cursor.execute("SELECT * FROM clients")
+    db_data = cursor.fetchall()
+    print(db_data)
+
+    for col_name in cols:
+        treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
+        treeview.column(col_name, anchor=tk.CENTER)
+
+    for value_tuple in db_data:
+        treeview.insert('', tk.END, values=value_tuple)
+
 def insert_row():
     name = name_entry.get()
-    lastname = lastname_entry.get()
     dni = dni_entry.get()
-    postal = postal_entry.get()
-    address = address_entry.get()
-    cuit = cuit_entry.get()
     phone = phone_entry.get()
-    mail = mail_entry.get()
-
+    cuit = cuit_entry.get()
+    
     # Validación de campos vacíos
-    if not all([name, lastname, dni, postal, address, cuit, phone, mail]):
+    if not all([name, dni, cuit, phone]):
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
-        return
-
-    treeview.insert('', tk.END, values= 0)
-
-    # Reiniciar los campos
-    reset_entries()
+        return 0
+    
+    client = cursor.execute("SELECT phone, doc_no, cuit FROM clients")
+    client_reg = client.fetchall()
+    client_data = (int(phone), int(dni), int(cuit))
+    print(client_data)
+    for entry in client_reg:
+        print(entry)
+        if entry == client_data:
+            messagebox.showwarning("Advertencia", "Este cliente ya se encuentra registrado")
+            break
+    else:
+        cursor.execute("""INSERT INTO clients ('owner_name', 'phone', 'doc_no', 'cuit')
+                        VALUES (?, ?, ?, ?)""", (name, phone, dni, cuit))
+        connect.commit()
+        reset_entries()  # Reiniciar los campos
+        load_data()
 
 def reset_entries():
-    name_entry.delete(0, "end")
-    name_entry.insert(0, "Nombre")
-    lastname_entry.delete(0, "end")
-    lastname_entry.insert(0, "Apellido")
-    dni_entry.delete(0, "end")
-    dni_entry.insert(0, "DNI")
-    postal_entry.delete(0, "end")
-    postal_entry.insert(0, "Código Postal")
-    address_entry.delete(0, "end")
-    address_entry.insert(0, "Domicilio")
-    cuit_entry.delete(0, "end")
-    cuit_entry.insert(0, "CUIT")
-    phone_entry.delete(0, "end")
+    name_entry.delete(0, "")
+    name_entry.insert(0, "Nombre y Apellido")
+    phone_entry.delete(0, "")
     phone_entry.insert(0, "Teléfono")
-    mail_entry.delete(0, "end")
-    mail_entry.insert(0, "Correo Electrónico")
+    dni_entry.delete(0, "")
+    dni_entry.insert(0, "DNI")
+    cuit_entry.delete(0, "")
+    cuit_entry.insert(0, "CUIT")
+
+def keep_used():
+    if name_entry.get() == "":
+        reset_entries()
+
+    if phone_entry.get() == "":
+        reset_entries()
+
+    if dni_entry.get() == "":
+        reset_entries()
+
+    if cuit_entry.get() == "":
+        reset_entries()
 
 def clear_entry(event, entry, default_text):
     if entry.get() == default_text:
@@ -82,47 +107,41 @@ widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
 # Entradas de texto
 name_entry = ttk.Entry(widgets_frame)
-name_entry.insert(0, "Nombre")
-name_entry.bind("<FocusIn>", lambda e: clear_entry(e, name_entry, "Nombre"))
+name_entry.insert(0, "Nombre y Apellido")
+name_entry.bind("<FocusIn>", lambda e: clear_entry(e, name_entry, "Nombre y Apellido"))
 name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
+name_entry.bind("<FocusOut>", lambda e: keep_used())
 
-lastname_entry = ttk.Entry(widgets_frame)
-lastname_entry.insert(1, "Apellido")
-lastname_entry.bind("<FocusIn>", lambda e: clear_entry(e, lastname_entry, "Apellido"))
-lastname_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+phone_entry = ttk.Entry(widgets_frame)
+phone_entry.insert(0, "Teléfono")
+phone_entry.bind("<FocusIn>", lambda e: clear_entry(e, phone_entry, "Teléfono"))
+phone_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+phone_entry.bind("<FocusOut>", lambda e: keep_used())
 
 dni_entry = ttk.Entry(widgets_frame)
 dni_entry.insert(0, "DNI")
 dni_entry.bind("<FocusIn>", lambda e: clear_entry(e, dni_entry, "DNI"))
 dni_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
-
-postal_entry = ttk.Entry(widgets_frame)
-postal_entry.insert(0, "Código Postal")
-postal_entry.bind("<FocusIn>", lambda e: clear_entry(e, postal_entry, "Código Postal"))
-postal_entry.grid(row=3, column=0, padx=5, pady=(0, 5), sticky="ew")
-
-address_entry = ttk.Entry(widgets_frame)
-address_entry.insert(0, "Domicilio")
-address_entry.bind("<FocusIn>", lambda e: clear_entry(e, address_entry, "Domicilio"))
-address_entry.grid(row=4, column=0, padx=5, pady=(0, 5), sticky="ew")
+dni_entry.bind("<FocusOut>", lambda e: keep_used())
 
 cuit_entry = ttk.Entry(widgets_frame)
 cuit_entry.insert(0, "CUIT")
 cuit_entry.bind("<FocusIn>", lambda e: clear_entry(e, cuit_entry, "CUIT"))
-cuit_entry.grid(row=5, column=0, padx=5, pady=(0, 5), sticky="ew")
-
-phone_entry = ttk.Entry(widgets_frame)
-phone_entry.insert(0, "Teléfono")
-phone_entry.bind("<FocusIn>", lambda e: clear_entry(e, phone_entry, "Teléfono"))
-phone_entry.grid(row=6, column=0, padx=5, pady=(0, 5), sticky="ew")
-
-mail_entry = ttk.Entry(widgets_frame)
-mail_entry.insert(0, "Correo Electrónico")
-mail_entry.bind("<FocusIn>", lambda e: clear_entry(e, mail_entry, "Correo Electrónico"))
-mail_entry.grid(row=7, column=0, padx=5, pady=(0, 5), sticky="ew")
+cuit_entry.grid(row=3, column=0, padx=5, pady=(0, 5), sticky="ew")
+cuit_entry.bind("<FocusOut>", lambda e: keep_used())
 
 separator = ttk.Separator(widgets_frame)
-separator.grid(row=8, column=0, padx=10, pady=10, sticky="ew")
+separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+
+def on_enter(event):
+    button.invoke()
+
+def on_escape(event):
+    button_close.invoke()
+
+root.bind('<Return>', on_enter)
+
+root.bind('<Escape>', on_escape)
 
 button = ttk.Button(widgets_frame, text="Agregar", command=insert_row)
 button.grid(row=9, column=0, padx=5, pady=(0, 5), sticky="nsew")
@@ -135,19 +154,16 @@ treeFrame.grid(row=0, column=1, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y")
 
-cols = ("Nombre", "Apellido", "DNI", "Código Postal", "Domicilio", "CUIT",
-        "Teléfono", "Correo Electrónico")
+
 treeview = ttk.Treeview(treeFrame, show="headings",
-                        yscrollcommand=treeScroll.set, columns=cols, height=23)
-treeview.column("Nombre", width=100)
-treeview.column("Apellido", width=100)
-treeview.column("DNI", width=80)
-treeview.column("Código Postal", width=100)
-treeview.column("Domicilio", width=200)
-treeview.column("CUIT", width=100)
-treeview.column("Teléfono", width=100)
-treeview.column("Correo Electrónico", width=250)
+    yscrollcommand=treeScroll.set, columns=cols, height=23)
+treeview.column("ID", width=20)
+treeview.column("Dueño", width=260)
+treeview.column("Teléfono", width=220)
+treeview.column("DNI", width=210)
+treeview.column("CUIT", width=220)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
+load_data()
 root.mainloop()
