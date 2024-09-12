@@ -58,7 +58,7 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
+    file=relative_to_assets("watermark.png"))
 image_1 = canvas.create_image(
     678.0,
     392.0,
@@ -66,7 +66,7 @@ image_1 = canvas.create_image(
 )
 
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=relative_to_assets("title_bar.png"))
 image_2 = canvas.create_image(
     680.0,
     15.0,
@@ -74,7 +74,7 @@ image_2 = canvas.create_image(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=relative_to_assets("menu_bar.png"))
 image_3 = canvas.create_image(
     680.0,
     80.0,
@@ -82,7 +82,7 @@ image_3 = canvas.create_image(
 )
 
 image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
+    file=relative_to_assets("status_bar.png"))
 image_4 = canvas.create_image(
     680.0,
     703.0,
@@ -90,7 +90,7 @@ image_4 = canvas.create_image(
 )
 
 image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
+    file=relative_to_assets("logo_icon.png"))
 image_5 = canvas.create_image(
     28.0,
     15.0,
@@ -134,7 +134,7 @@ canvas.create_text(
 )
 
 image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
+    file=relative_to_assets("user_icon.png"))
 image_6 = canvas.create_image(
     24.0,
     703.0,
@@ -142,7 +142,7 @@ image_6 = canvas.create_image(
 )
 
 image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
+    file=relative_to_assets("date_icon.png"))
 image_7 = canvas.create_image(
     1131.0,
     703.0,
@@ -150,7 +150,7 @@ image_7 = canvas.create_image(
 )
 
 image_image_8 = PhotoImage(
-    file=relative_to_assets("image_8.png"))
+    file=relative_to_assets("date_icon.png"))
 image_8 = canvas.create_image(
     1275.0,
     703.0,
@@ -158,12 +158,12 @@ image_8 = canvas.create_image(
 )
 
 button_image_1 = PhotoImage(
-    file=relative_to_assets("button_1.png"))
+    file=relative_to_assets("minimize.png"))
 button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: print("minimize clicked"),
     relief="flat"
 )
 button_1.place(
@@ -174,12 +174,12 @@ button_1.place(
 )
 
 button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
+    file=relative_to_assets("close.png"))
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=lambda: print("close clicked"),
     relief="flat"
 )
 button_2.place(
@@ -190,12 +190,12 @@ button_2.place(
 )
 
 button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
+    file=relative_to_assets("back.png"))
 button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
+    command=lambda: print("back clicked"),
     relief="flat"
 )
 button_3.place(
@@ -206,12 +206,12 @@ button_3.place(
 )
 
 button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
+    file=relative_to_assets("statistics.png"))
 button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_4 clicked"),
+    command=lambda: print("statistics clicked"),
     relief="flat"
 )
 button_4.place(
@@ -222,12 +222,12 @@ button_4.place(
 )
 
 button_image_5 = PhotoImage(
-    file=relative_to_assets("button_5.png"))
+    file=relative_to_assets("buys.png"))
 button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_5 clicked"),
+    command=lambda: print("buys clicked"),
     relief="flat"
 )
 button_5.place(
@@ -238,12 +238,12 @@ button_5.place(
 )
 
 button_image_6 = PhotoImage(
-    file=relative_to_assets("button_6.png"))
+    file=relative_to_assets("sale.png"))
 button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_6 clicked"),
+    command=lambda: print("sale clicked"),
     relief="flat"
 )
 button_6.place(
@@ -254,12 +254,12 @@ button_6.place(
 )
 
 button_image_7 = PhotoImage(
-    file=relative_to_assets("button_7.png"))
+    file=relative_to_assets("Suppliers.png"))
 button_7 = Button(
     image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_7 clicked"),
+    command=lambda: print("Suppliers clicked"),
     relief="flat"
 )
 button_7.place(
@@ -270,12 +270,12 @@ button_7.place(
 )
 
 button_image_8 = PhotoImage(
-    file=relative_to_assets("button_8.png"))
+    file=relative_to_assets("button.png"))
 button_8 = Button(
     image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_8 clicked"),
+    command=lambda: print("button clicked"),
     relief="flat"
 )
 button_8.place(
