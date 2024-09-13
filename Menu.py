@@ -75,13 +75,13 @@ canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona el logo decorativo (transparente)--
-bg_logo = PhotoImage(
-    file=relative_to_assets("bg_logo.png"))
+logo_watermark = PhotoImage(
+    file=relative_to_assets("watermark.png"))
 
 background_logo = canvas.create_image(
     678.0,
     392.0,
-    image=bg_logo
+    image=logo_watermark
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
