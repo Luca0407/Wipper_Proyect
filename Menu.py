@@ -1,11 +1,12 @@
 # --Librerías y módulos--
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Button, PhotoImage
 from getpath import getpath as gp
 from users import users
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
+username = users.current_user()
 window = Tk()
 PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
 
@@ -41,6 +42,7 @@ def do_move(event):
 # --Función para registrar un nuevo usuario--.
 def logout():
     window.destroy()
+    users.logout(username)
     gp.login_screen()
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -354,7 +356,7 @@ canvas.create_text(
     44.0,
     695.0,
     anchor="nw",
-    text="User",
+    text=username,
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )

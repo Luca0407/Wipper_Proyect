@@ -6,48 +6,18 @@
     </style>
 </head>
 
-<body>
+<br></br>
+
 <center>
     <h1>
-    <br></br>
 
-    Documentación Wipper Proyect 2024
+    Pantalla de inicio de sesión
 </h1>
 </center>
 
 <br></br>
 
-## **_Equipo de desarrollo_**
-
-<br></br>
-
-#### **Diseñador:** Segovia, Alejandro Agustín 🗿 | Lucca, Estela Belén 🤓
-
-<br></br>
-
-#### **Programadores:** Elizondo, Luca Maximiliano 🤑 | Galarza, Gonzalo Agustín 💀
-
-<br></br>
-
-#### **Cliente:** Elizondo, Hector René 🐸 (Wipper Insumos)
-
-<br></br>
-
-#### **Profesor de Practicas Profesionalizantes II:** Paszco, Gustavo Ariel
-
-<br></br>
-
-<br></br>
-
-<br></br>
-
-<center>
-    <h1>
-        Pantalla de inicio de sesión (Login.py)
-    </h1>
-</center>
-
-<br></br>
+> ###### Archivo: [Login.py](/Login.py)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para su funcionamiento se utilizan las siguientes librerías y los siguientes módulos:
 * pathlib (módulo Path)
@@ -99,11 +69,10 @@ def new_user():
     gp.register_screen()
 ```
 <br></br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La segunda función usa la función _login_ del módulo **users** y comprueba si los datos ingresados (usuario y contraseña) se encuentran registrados en la base de datos (determinado por el booleano que el modulo retorna). En caso de estar registrado, muestra mediante _messagebox.showinfo_ el mensaje de bienvenida. Caso contrario, usa _messagebox.showerror_ y muestra un mensaje de error.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La segunda función usa la función _login_ del módulo **users** y comprueba si los datos ingresados (usuario y contraseña) se encuentran registrados en la base de datos (determinado por el booleano que el modulo retorna). En caso de estar registrado, la ventana se destruye y se abre el menú principal. Caso contrario, usa _messagebox.showerror_ y muestra un mensaje de error.
 ```python
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        messagebox.showinfo("Ingreso exitoso", "Bienvenido al gestor de Wipper.")
         window.destroy()
         gp.wipper_menu()
     else:
@@ -179,9 +148,7 @@ user_input.place(
     width=208.0,
     height=38.0)
 ```
-
 <br></br>
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;En cuanto a la entrada para la contraseña, el código es muy similar. Se crea una imagen usando el mismo **PhotoImage** que la entrada del usuario. Se crea un objeto **Entry** con los mismos parámetros, pero con uno adicional: _show_, el cual mostrara un solo determinado caracter por cáda caracter que se escriba en la entrada. Por último, se posiciona y asignan las mismas medidas con _place()_.
 ```python
 pass_input = Entry(
@@ -214,4 +181,80 @@ logo = canvas.create_image(
 * Se crea un objeto con el módulo PhotoImage.
 * Se crea un objeto con el módulo Button.
 * Se posicióna y asignan medidas con place().
-</body>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Esta estructura se seguirá con los 4 botones que esta pantalla ofrece: _sign_up_, _login_, _forgot_pass_ y _exit_. Exceptuando medidas, imágenes y sus posiciones en pantalla, la diferencia más importante entre los 4 es el argumento _command_ de cada botón respectivamente. A continuación se mostraran y explicarán las funcionalidad es de cada una.
+```python
+# sign_up
+sign_up_button = Button(
+    image=sign_up_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: new_user())
+
+# login
+login_button = Button(
+    image=login_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: check_login())
+
+# forgot_pass
+forgot_pass_button = Button(
+    image=forgot_pass_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("forgot_pass_button clicked"))# TO_DO
+
+# exit
+exit_button = Button(
+    image=exit_image,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: window.destroy())
+```
+* _**sign_up:**_ llama a la función [new_user()](#gestión-de-usuarios), vista anteriormente.
+* _**login:**_ llama a la función [check_login()](#gestión-de-usuarios), vista junto con new_user().
+* _**forgot_pass:**_ de manera temporal, solo imprime un mensaje a modo de depuración.
+* _**exit:**_ ejecuta la función destroy(), la cual cierra la ventana, acabando con su ejecución.
+<br></br>
+
+## _Textos_
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Los textos se crean mediante el Objeto Canvas, usando create_text() (similar a [create_image()](#logo-en-pantalla)). Los 2 textos son iguales en argumento a diferencia de lo que dicen, por lo que solo se mostrará uno. Ambos textos utilizan 6 argumentos:
+1. _**posición x**_
+2. _**posición y**_
+3. _**anchor:**_ define cómo se alineará el texto respecto a las coordenadas x, y.
+4. _**text:**_ define el contenido del texto que aparecerá en el Canvas.
+5. _**fill:**_ define el color con el que se dibujará el texto en el Canvas.
+6. _**font:**_ define la fuente y el tamaño del texto. En Tkinter, los tamaños de fuente negativos indican el tamaño en píxeles en lugar de puntos.
+```python
+canvas.create_text(
+    41.0,
+    251.0,
+    anchor="nw",
+    text="Contraseña",
+    fill="#FFFFFF",
+    font=("Montserrat Regular", 18 * -1))
+```
+<br></br>
+
+## _Adicional_
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adicionalmente, se creó una función que reacciona al presionar la tecla Enter, la cual tiene como objetivo un botón en específico (en este caso, el botón login). Esta función se llama haciendo uso del método bind de Tk(), el cual asocia una tecla determinada a nuestra función.
+```python
+def on_enter(event):
+    login_button.invoke()
+
+window.bind('<Return>', on_enter)
+```
+<br></br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para finalizar esta ventana, determinamos que a esta no pueda redimensionar su tamaño, a la vez que hacemos que nuestra ventana se ejecute en bucle para que así su funcionamiento persista.
+```python
+window.resizable(False, False)
+window.mainloop()
+```
+<br></br>
+
+<br></br>
+
+###### [Anterior](Portada.md) | [Siguiente](Register.md)

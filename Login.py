@@ -1,6 +1,6 @@
-# --Librerías y módulos--
+# --- Librerías y módulos- --
+from tkinter import Tk, Canvas, Entry, Button, PhotoImage, messagebox
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, messagebox
 from getpath import getpath as gp
 from users import users
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -25,7 +25,6 @@ def new_user():
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        messagebox.showinfo("Ingreso exitoso", "Bienvenido al gestor de Wipper.")
         window.destroy()
         gp.wipper_menu()
     else:
@@ -101,6 +100,7 @@ pass_input.place(
     width=208.0,
     height=38.0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 # --- Logo en pantalla ---
 logo_image = PhotoImage(
@@ -195,8 +195,7 @@ canvas.create_text(
     anchor="nw",
     text="Contraseña",
     fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1)
-)
+    font=("Montserrat Regular", 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 def on_enter(event):

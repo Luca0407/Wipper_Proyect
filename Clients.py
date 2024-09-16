@@ -49,7 +49,6 @@ def insert_row():
                         VALUES (?, ?, ?, ?)""", (name, phone, dni, cuit))
         connect.commit()
         reset_entries()  # Reiniciar los campos
-        load_data()
 
 def reset_entries():
     name_entry.delete(0, "")
