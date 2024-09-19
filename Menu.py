@@ -3,6 +3,7 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 from getpath import getpath as gp
 from users import users
+import time
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
@@ -22,6 +23,16 @@ def start_move(event):
         window.x = None
         window.y = None
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --´
+
+def update_clock(canvas, clock_text):
+    current_time = time.strftime('%H:%M')  # Obtén la hora actual
+    canvas.itemconfig(clock_text, text=current_time)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_clock, canvas, clock_text)  # Llama de nuevo después de 1 segundo
+
+def update_date(canvas, date_text):
+    current_date = time.strftime('%d/%m/%y')  # Obtén la hora actual
+    canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
 
 # --Función que detiene el movimiento de la ventana--
 def stop_move(event):
@@ -157,7 +168,7 @@ date = canvas.create_image(
 time_icon = PhotoImage(
     file=relative_to_assets("time_icon.png"))
 
-time = canvas.create_image(
+time_img = canvas.create_image(
     1275.0,
     703.0,
     image=time_icon
@@ -252,7 +263,7 @@ commerce = Button(
     image=commerce_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("commerce clicked"),
+    command=lambda: gp.commerce(),
     relief="flat"
 )
 
@@ -334,23 +345,29 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 
-canvas.create_text(
+clock_text = canvas.create_text(
     1295.0,
     695.0,
     anchor="nw",
-    text="HH:MM",
+    text=" ",  # Texto vacío inicialmente
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )
 
-canvas.create_text(
+# Inicia la actualización del reloj
+update_clock(canvas, clock_text)
+
+date_text = canvas.create_text(
     1151.0,
     695.0,
     anchor="nw",
-    text="DD/MM/AA",
+    text="",  # Texto vacío inicialmente
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )
+
+# Inicia la actualización del reloj
+update_date(canvas, date_text)
 
 canvas.create_text(
     44.0,

@@ -1,5 +1,4 @@
 import sqlite3  # Importa librería
-from getpath import getpath as gp
 
 
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.

@@ -1,13 +1,14 @@
 from pathlib import Path
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Button, PhotoImage
+from getpath import getpath as gp
+import time
 
-
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\Admin\Desktop\All Pc\Tkinter\menu_comercio\build\assets\frame0")
+window = Tk()
+PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
 
 
 def relative_to_assets(path: str) -> Path:
-    return ASSETS_PATH / Path(path)
+    return PATH / Path(path)
 
 def start_move(event):
     if event.y <= 30:  # Solo permite mover si el clic está en los primeros 30 píxeles
@@ -29,9 +30,20 @@ def do_move(event):
         y = window.winfo_y() + deltay
         window.geometry(f"+{x}+{y}")
 
-window = Tk()
+def goback():
+    window.destroy()
+    gp.wipper_menu()
 
-window.geometry("1360x728")
+def update_clock(canvas, clock_text):
+    current_time = time.strftime('%H:%M')  # Obtén la hora actual
+    canvas.itemconfig(clock_text, text=current_time)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_clock, canvas, clock_text)  # Llama de nuevo después de 1 segundo
+
+def update_date(canvas, date_text):
+    current_date = time.strftime('%d/%m/%y')  # Obtén la hora actual
+    canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
+
 window.configure(bg = "#191919")
 
 window.overrideredirect(True)
@@ -41,10 +53,12 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
 # Calcula la posición x e y para centrar la ventana
-window_width = 300
-window_height = 480
+window_width = 1360
+window_height = 728
 x_cordinate = int((screen_width/2) - (window_width/2))
 y_cordinate = int((screen_height/2) - (window_height/2))
+
+window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
 
 canvas = Canvas(
     window,
@@ -57,44 +71,197 @@ canvas = Canvas(
 )
 
 canvas.place(x = 0, y = 0)
-image_image_1 = PhotoImage(
+bg_logo = PhotoImage(
     file=relative_to_assets("watermark.png"))
-image_1 = canvas.create_image(
+watermark = canvas.create_image(
     678.0,
     392.0,
-    image=image_image_1
+    image=bg_logo
 )
 
-image_image_2 = PhotoImage(
+title = PhotoImage(
     file=relative_to_assets("title_bar.png"))
-image_2 = canvas.create_image(
+title_bar = canvas.create_image(
     680.0,
     15.0,
-    image=image_image_2
+    image=title
 )
 
-image_image_3 = PhotoImage(
+menu = PhotoImage(
     file=relative_to_assets("menu_bar.png"))
-image_3 = canvas.create_image(
+menu_bar = canvas.create_image(
     680.0,
     80.0,
-    image=image_image_3
+    image=menu
 )
 
-image_image_4 = PhotoImage(
+status = PhotoImage(
     file=relative_to_assets("status_bar.png"))
-image_4 = canvas.create_image(
+status_bar = canvas.create_image(
     680.0,
     703.0,
-    image=image_image_4
+    image=status
 )
 
-image_image_5 = PhotoImage(
+logo = PhotoImage(
     file=relative_to_assets("logo_icon.png"))
-image_5 = canvas.create_image(
+logo_icon = canvas.create_image(
     28.0,
     15.0,
-    image=image_image_5
+    image=logo
+)
+
+user = PhotoImage(
+    file=relative_to_assets("user_icon.png"))
+user_icon = canvas.create_image(
+    24.0,
+    703.0,
+    image=user
+)
+
+fecha = PhotoImage(
+    file=relative_to_assets("date_icon.png"))
+date_icon = canvas.create_image(
+    1131.0,
+    703.0,
+    image=fecha
+)
+
+time_i = PhotoImage(
+    file=relative_to_assets("time_icon.png"))
+time_icon = canvas.create_image(
+    1275.0,
+    703.0,
+    image=time_i
+)
+
+button_watermark = PhotoImage(
+    file=relative_to_assets("button_1.png"))
+button_1 = Button(
+    image=button_watermark,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_1 clicked"),
+    relief="flat"
+)
+button_1.place(
+    x=1281.0,
+    y=2.0,
+    width=26.0,
+    height=26.0
+)
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: window.destroy(),
+    relief="flat"
+)
+button_2.place(
+    x=1321.0,
+    y=2.0,
+    width=26.0,
+    height=26.0
+)
+
+button_menu_bar = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+button_3 = Button(
+    image=button_menu_bar,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: goback(),
+    relief="flat"
+)
+button_3.place(
+    x=1159.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
+)
+
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_4 clicked"),
+    relief="flat"
+)
+button_4.place(
+    x=929.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
+)
+
+button_logo_icon = PhotoImage(
+    file=relative_to_assets("button_5.png"))
+button_5 = Button(
+    image=button_logo_icon,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_5 clicked"),
+    relief="flat"
+)
+
+button_5.place(
+    x=9.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
+)
+
+button_user_icon = PhotoImage(
+    file=relative_to_assets("button_6.png"))
+button_6 = Button(
+    image=button_user_icon,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_6 clicked"),
+    relief="flat"
+)
+button_6.place(
+    x=239.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
+)
+
+button_date_icon = PhotoImage(
+    file=relative_to_assets("button_7.png"))
+button_7 = Button(
+    image=button_date_icon,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_7 clicked"),
+    relief="flat"
+)
+button_7.place(
+    x=469.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
+)
+
+button_time_icon = PhotoImage(
+    file=relative_to_assets("button_8.png"))
+button_8 = Button(
+    image=button_time_icon,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_8 clicked"),
+    relief="flat"
+)
+button_8.place(
+    x=699.0,
+    y=50.0,
+    width=190.0,
+    height=60.0
 )
 
 canvas.create_text(
@@ -106,23 +273,29 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 
-canvas.create_text(
+clock_text = canvas.create_text(
     1295.0,
     695.0,
     anchor="nw",
-    text="HH:MM",
+    text=" ",  # Texto vacío inicialmente
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )
 
-canvas.create_text(
+# Inicia la actualización del reloj
+update_clock(canvas, clock_text)
+
+date_text = canvas.create_text(
     1151.0,
     695.0,
     anchor="nw",
-    text="DD/MM/AA",
+    text="",  # Texto vacío inicialmente
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )
+
+# Inicia la actualización del reloj
+update_date(canvas, date_text)
 
 canvas.create_text(
     44.0,
@@ -131,158 +304,6 @@ canvas.create_text(
     text="User",
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("user_icon.png"))
-image_6 = canvas.create_image(
-    24.0,
-    703.0,
-    image=image_image_6
-)
-
-image_image_7 = PhotoImage(
-    file=relative_to_assets("date_icon.png"))
-image_7 = canvas.create_image(
-    1131.0,
-    703.0,
-    image=image_image_7
-)
-
-image_image_8 = PhotoImage(
-    file=relative_to_assets("date_icon.png"))
-image_8 = canvas.create_image(
-    1275.0,
-    703.0,
-    image=image_image_8
-)
-
-button_image_1 = PhotoImage(
-    file=relative_to_assets("minimize.png"))
-button_1 = Button(
-    image=button_image_1,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("minimize clicked"),
-    relief="flat"
-)
-button_1.place(
-    x=1281.0,
-    y=2.0,
-    width=26.0,
-    height=26.0
-)
-
-button_image_2 = PhotoImage(
-    file=relative_to_assets("close.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("close clicked"),
-    relief="flat"
-)
-button_2.place(
-    x=1321.0,
-    y=2.0,
-    width=26.0,
-    height=26.0
-)
-
-button_image_3 = PhotoImage(
-    file=relative_to_assets("back.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("back clicked"),
-    relief="flat"
-)
-button_3.place(
-    x=1159.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-
-button_image_4 = PhotoImage(
-    file=relative_to_assets("statistics.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("statistics clicked"),
-    relief="flat"
-)
-button_4.place(
-    x=929.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-
-button_image_5 = PhotoImage(
-    file=relative_to_assets("buys.png"))
-button_5 = Button(
-    image=button_image_5,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("buys clicked"),
-    relief="flat"
-)
-button_5.place(
-    x=9.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-
-button_image_6 = PhotoImage(
-    file=relative_to_assets("sale.png"))
-button_6 = Button(
-    image=button_image_6,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("sale clicked"),
-    relief="flat"
-)
-button_6.place(
-    x=239.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-
-button_image_7 = PhotoImage(
-    file=relative_to_assets("Suppliers.png"))
-button_7 = Button(
-    image=button_image_7,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("Suppliers clicked"),
-    relief="flat"
-)
-button_7.place(
-    x=469.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-
-button_image_8 = PhotoImage(
-    file=relative_to_assets("button.png"))
-button_8 = Button(
-    image=button_image_8,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button clicked"),
-    relief="flat"
-)
-button_8.place(
-    x=699.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
 )
 
 # Mover la ventana

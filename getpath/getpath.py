@@ -10,7 +10,6 @@ caller_frame = inspect.getouterframes(current_frame, 2)  # Devuelve una lista de
 script_name = Path(caller_frame[-1].filename).stem  # Convierte el nombre del archivo en un objeto Path.
 
 OUTPUT_PATH = Path(__file__).parent.parent  # Constante que obtiene una ubicación de la cual empezar a buscar archivos.
-
 # --Función que obtiene la ubicación de las imagenes necesarias para cada módulo del software--
 def getPath():
     match script_name:
@@ -25,9 +24,12 @@ def getPath():
 
         case "Clients":
             assets_path = OUTPUT_PATH
+        
+        case "Products":
+            assets_path = OUTPUT_PATH
 
-        case other:
-            print("eh?", OUTPUT_PATH)
+        case "Commerce":
+            assets_path = OUTPUT_PATH / 'Commerce_Screen' / 'build' / 'assets' / 'frame0'
 
     return assets_path
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -46,4 +48,12 @@ def login_screen():
 
 def clients():
     goto_path = OUTPUT_PATH / 'Clients.py'
+    subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.
+
+def products():
+    goto_path = OUTPUT_PATH / 'Products.py'
+    subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.
+
+def commerce():
+    goto_path = OUTPUT_PATH / 'Commerce.py'
     subprocess.Popen(["python", str(goto_path)])  # Mismo accionar en las demas funciones.
