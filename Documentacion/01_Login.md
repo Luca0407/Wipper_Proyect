@@ -36,10 +36,9 @@
 
 ```python
 init_path = gp.getPath()
-ASSETS_PATH = init_path / 'Login_Screen' / 'build' / 'assets' / 'frame0'
 ```
 <br></br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La variable _init_path_ obtiene la ubicación en la cual se ecuentra alojado el archivo _**login.py**_. Luego, desde dicha ruta, la constante _ASSETS_PATH_ accede hasta la carpeta _'frame0'_ con el fin de obtener las 6 imágenes que componen la pantalla:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La variable _init_path_ obtiene la ubicación en la cual se ecuentran alojadas las 6 imágenes que componen la pantalla:
 1. _exit.png_
 2. _forgot_pass.png_
 3. _input.png_
@@ -66,7 +65,7 @@ def relative_to_assets(path: str) -> Path:
 ```python
 def new_user():
     window.destroy()
-    gp.register_screen()
+    gp.vxl("Register")
 ```
 <br></br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La segunda función usa la función _login_ del módulo **users** y comprueba si los datos ingresados (usuario y contraseña) se encuentran registrados en la base de datos (determinado por el booleano que el modulo retorna). En caso de estar registrado, la ventana se destruye y se abre el menú principal. Caso contrario, usa _messagebox.showerror_ y muestra un mensaje de error.
@@ -74,7 +73,7 @@ def new_user():
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
         window.destroy()
-        gp.wipper_menu()
+        gp.vxl("Menu")
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 ```
@@ -257,4 +256,4 @@ window.mainloop()
 
 <br></br>
 
-###### [Anterior](Portada.md) | [Siguiente](Register.md)
+###### [Anterior](00_Portada.md) | [Siguiente](02_Register.md)

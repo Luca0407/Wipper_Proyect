@@ -10,8 +10,7 @@ window = Tk()
 
 
 # --- Acceso a directorios ---
-init_path = gp.getPath()
-ASSETS_PATH = init_path / 'Login_Screen' / 'build' / 'assets' / 'frame0'
+ASSETS_PATH = gp.getPath()
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -21,12 +20,12 @@ def relative_to_assets(path: str) -> Path:
 # --- Gestión de usuarios ---
 def new_user():
     window.destroy()
-    gp.register_screen()
+    gp.vxl("Register")
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
         window.destroy()
-        gp.wipper_menu()
+        gp.vxl("Menu")
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

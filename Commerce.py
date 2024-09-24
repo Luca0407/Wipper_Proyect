@@ -32,7 +32,7 @@ def do_move(event):
 
 def goback():
     window.destroy()
-    gp.wipper_menu()
+    gp.vxl("Menu")
 
 def update_clock(canvas, clock_text):
     current_time = time.strftime('%H:%M')  # Obtén la hora actual

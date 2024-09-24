@@ -54,7 +54,7 @@ def do_move(event):
 def logout():
     window.destroy()
     users.logout(username)
-    gp.login_screen()
+    gp.vxl("Login")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.configure(bg = "#191919")
@@ -263,7 +263,7 @@ commerce = Button(
     image=commerce_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.commerce(),
+    command=lambda: gp.vxl("Commerce"),
     relief="flat"
 )
 
@@ -303,7 +303,7 @@ clients = Button(
     image=clients_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.clients(),
+    command=lambda: gp.vxl("Clients"),
     relief="flat"
 )
 

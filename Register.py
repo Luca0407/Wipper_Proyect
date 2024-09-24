@@ -23,7 +23,7 @@ def user_signup():
         users.register(user_input.get(), password_input.get(), mail_input.get())
         messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
         window.destroy()
-        gp.login_screen()
+        gp.vxl("Login")
     else:
         messagebox.showerror("ERROR","Este usuario ya se encuentra registrado.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

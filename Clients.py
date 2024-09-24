@@ -7,7 +7,7 @@ import sqlite3
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
 cursor = connect.cursor()
 init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-cols = ("ID", "Dueño", "Teléfono", "DNI", "CUIT")
+cols = ("ID", "Dueño", "Teléfono", "DNI")
 
 def close():
     root.destroy()
@@ -15,38 +15,34 @@ def close():
 def load_data():
     cursor.execute("SELECT * FROM clients")
     db_data = cursor.fetchall()
-    print(db_data)
 
     for col_name in cols:
         treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
         treeview.column(col_name, anchor=tk.CENTER)
 
     for value_tuple in db_data:
-        treeview.insert('', tk.END, values=value_tuple)
+        treeview.insert('', tk.END, values=value_tuple)       
 
 def insert_row():
     name = name_entry.get()
     dni = dni_entry.get()
     phone = phone_entry.get()
-    cuit = cuit_entry.get()
     
     # Validación de campos vacíos
-    if not all([name, dni, cuit, phone]):
+    if not all([name, dni, phone]):
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
         return 0
     
-    client = cursor.execute("SELECT phone, doc_no, cuit FROM clients")
+    client = cursor.execute("SELECT phone, doc_no FROM clients")
     client_reg = client.fetchall()
-    client_data = (int(phone), int(dni), int(cuit))
-    print(client_data)
+    client_data = (int(phone), int(dni))
     for entry in client_reg:
-        print(entry)
         if entry == client_data:
             messagebox.showwarning("Advertencia", "Este cliente ya se encuentra registrado")
             break
     else:
-        cursor.execute("""INSERT INTO clients ('owner_name', 'phone', 'doc_no', 'cuit')
-                        VALUES (?, ?, ?, ?)""", (name, phone, dni, cuit))
+        cursor.execute("""INSERT INTO clients ('owner_name', 'phone', 'doc_no')
+                        VALUES (?, ?, ?)""", (name, phone, dni))
         connect.commit()
         reset_entries()  # Reiniciar los campos
 
@@ -57,8 +53,6 @@ def reset_entries():
     phone_entry.insert(0, "Teléfono")
     dni_entry.delete(0, "")
     dni_entry.insert(0, "DNI")
-    cuit_entry.delete(0, "")
-    cuit_entry.insert(0, "CUIT")
 
 def keep_used():
     if name_entry.get() == "":
@@ -68,9 +62,6 @@ def keep_used():
         reset_entries()
 
     if dni_entry.get() == "":
-        reset_entries()
-
-    if cuit_entry.get() == "":
         reset_entries()
 
 def clear_entry(event, entry, default_text):
@@ -123,12 +114,6 @@ dni_entry.bind("<FocusIn>", lambda e: clear_entry(e, dni_entry, "DNI"))
 dni_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
 dni_entry.bind("<FocusOut>", lambda e: keep_used())
 
-cuit_entry = ttk.Entry(widgets_frame)
-cuit_entry.insert(0, "CUIT")
-cuit_entry.bind("<FocusIn>", lambda e: clear_entry(e, cuit_entry, "CUIT"))
-cuit_entry.grid(row=3, column=0, padx=5, pady=(0, 5), sticky="ew")
-cuit_entry.bind("<FocusOut>", lambda e: keep_used())
-
 separator = ttk.Separator(widgets_frame)
 separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
@@ -157,10 +142,9 @@ treeScroll.pack(side="right", fill="y")
 treeview = ttk.Treeview(treeFrame, show="headings",
     yscrollcommand=treeScroll.set, columns=cols, height=23)
 treeview.column("ID", width=20)
-treeview.column("Dueño", width=260)
-treeview.column("Teléfono", width=220)
-treeview.column("DNI", width=210)
-treeview.column("CUIT", width=220)
+treeview.column("Dueño", width=310)
+treeview.column("Teléfono", width=300)
+treeview.column("DNI", width=300)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
