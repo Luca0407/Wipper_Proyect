@@ -19,7 +19,7 @@
 
 > ###### Archivo: [Register.py](/Register.py)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yendo directo al grano, el archivo importa exactamente los mismos módulos y librerías vistas en el [archivo anterior](Login.md/#archivo-loginpy). También usa el mismo método de [acceso a directorios](Login.md/#acceso-a-directorios) de Login.py para obtener los recursos y accesos necesarios.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yendo directo al grano, el archivo importa exactamente los mismos módulos y librerías vistas en el [archivo anterior](01_Login.md/#archivo-loginpy). También usa el mismo método de [acceso a directorios](01_Login.md/#acceso-a-directorios) de Login.py para obtener los recursos y accesos necesarios.
 
 <br></br>
 
@@ -41,29 +41,29 @@ def user_signup():
 
 ## _Configuración de ventana_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La configuración de la ventana de registro es exactamente la misma a la vista en la [ventana de login](Login.md/#configuración-de-ventana), por lo que pasaremos al siguiente punto.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La configuración de la ventana de registro es exactamente la misma a la vista en la [ventana de login](01_Login.md/#configuración-de-ventana), por lo que pasaremos al siguiente punto.
 <br></br>
 
 ## _Entradas de texto_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Las entradas de texto de esta ventana también son exactamente las mismas que las de la [ventana anterior](Login.md/#entradas-de-texto), con la diferencia de que ahora hay una 3ra entrada para ingresar un mail.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Las entradas de texto de esta ventana también son exactamente las mismas que las de la [ventana anterior](01_Login.md/#entradas-de-texto), con la diferencia de que ahora hay una 3ra entrada para ingresar un mail.
 <br></br>
 
 ## _Botones_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;En cuanto a los botones, esta pantalla solo cuenta con 2: uno para cerrar la ventana y otro para registrar el usuario. Siguen exactamente la misma estructura que los [botones vistos anteriormente](Login.md/#botones), por lo que solo se va a mencionar el comando de cada uno:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;En cuanto a los botones, esta pantalla solo cuenta con 2: uno para cerrar la ventana y otro para registrar el usuario. Siguen exactamente la misma estructura que los [botones vistos anteriormente](01_Login.md/#botones), por lo que solo se va a mencionar el comando de cada uno:
 * El _boton exit_ usa window.destroy() para terminar la ejecución de la ventana.
-* El _boton sign_up_ llama a la función [user_signup()](Register.md/#registro-de-usuarios) vista anteriormente y ejecuta sus comandos.
+* El _boton sign_up_ llama a la función [user_signup()](02_Register.md/#registro-de-usuarios) vista anteriormente y ejecuta sus comandos.
 <br></br>
 
 ## _Textos_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Siguen la misma estructura que los [anteriormente vistos](Login.md/#textos), con la diferencia de que son 3 en este caso: uno para cada entrada de texto.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Siguen la misma estructura que los [anteriormente vistos](01_Login.md/#textos), con la diferencia de que son 3 en este caso: uno para cada entrada de texto.
 <br></br>
 
 ## _Adicional_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adicionalmente, cuenta con el mismo comando de la tecla **enter** usada en la [pantalla anterior](Login.md/#adicional), asi como _window.resizable(_) y _window.mainloop()_
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adicionalmente, cuenta con el mismo comando de la tecla **enter** usada en la [pantalla anterior](01_Login.md/#adicional), asi como _window.resizable(_) y _window.mainloop()_
 
 <br></br>
 

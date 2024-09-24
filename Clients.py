@@ -12,16 +12,21 @@ cols = ("ID", "Dueño", "Teléfono", "DNI")
 def close():
     root.destroy()
 
-def load_data():
-    cursor.execute("SELECT * FROM clients")
-    db_data = cursor.fetchall()
+def load_data(x):
+    match x:
+        case 1:
+            cursor.execute("SELECT * FROM clients")
+            db_data = cursor.fetchall()
 
-    for col_name in cols:
-        treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
-        treeview.column(col_name, anchor=tk.CENTER)
+            for col_name in cols:
+                treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
+                treeview.column(col_name, anchor=tk.CENTER)
 
+        case 2:
+            cursor.execute("SELECT * FROM clients")
+            db_data = cursor.fetchall()
     for value_tuple in db_data:
-        treeview.insert('', tk.END, values=value_tuple)       
+        treeview.insert('', tk.END, values=value_tuple)
 
 def insert_row():
     name = name_entry.get()

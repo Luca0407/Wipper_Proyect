@@ -17,7 +17,7 @@
 
 <br></br>
 
-> ###### Archivo: [getpath.py](/Wipper_Proyect/getpath/getpath.py)
+> ###### Archivo: [getpath.py](/getpath/getpath.py)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Este módulo es importante para obtener la dirección en donde se encuentran almacenados los diferentes archivos de los que el software hace uso. Como siempre, lo primero son las librerías que se importan, siendo 3 en este caso:
 1. _inspect_
@@ -71,7 +71,13 @@ def getPath():
 
 ## _Funcion **vxl(screen)**_
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Esta función recibe como argumento un string el cual determina qué módulo debe ejecutarse. Toma una lista con los nombres de cada módulo y, si el argumento dado coincide con algún nombre, obtiene su dirección y lo abre usando **subprocess.Popen**.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Esta función recibe como argumento un string el cual determina qué módulo debe ejecutarse. Toma una lista con los nombres de cada módulo y, si el argumento dado coincide con algún nombre, obtiene su dirección y lo abre usando **subprocess.Popen**, que toma 2 argumentos: el primero indica que se trata de un archivo python el que quiere abrirse, y el segundo le otorga la dirección del archivo como string (ya que esta se encuentra como tipo Path).
+```python
+def vxl(screen):
+    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Commerce"}:
+        goto_path = OUTPUT_PATH / f'{screen}.py'
+        subprocess.Popen(["python", str(goto_path)])
+```
 <br></br>
 
 <br></br>

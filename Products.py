@@ -13,9 +13,8 @@ def close():
     root.destroy()
 
 def load_data():
-    cursor.execute("SELECT ID_Productos, marca, modelo, cantidad, fecha_ingreso FROM productos")
+    cursor.execute("SELECT ID_Products, brand, model, quantity, entry_date FROM products")
     db_data = cursor.fetchall()
-    print(db_data)
 
     for col_marca in cols:
         treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
@@ -35,17 +34,16 @@ def insert_row():
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
         return 0
     
-    product = cursor.execute("SELECT marca, modelo, cantidad FROM productos")
+    product = cursor.execute("SELECT brand, model, quantity FROM products")
     product_reg = product.fetchall()
     product_data = (marca, int(modelo), int(cantidad))
-    print(product_data)
     for entry in product_reg:
         print(entry)
         if entry == product_data:
             messagebox.showwarning("Advertencia", "Este producto ya se encuentra registrado")
             break
     else:
-        cursor.execute("""INSERT INTO productos ('marca', 'modelo', 'cantidad', 'fecha_ingreso')
+        cursor.execute("""INSERT INTO products ('brand', 'model', 'quantity', 'entry_date')
                         VALUES (?, ?, ?, ?)""", (marca, modelo, cantidad, fecha_ingreso))
         connect.commit()
         reset_entries()  # Reiniciar los campos

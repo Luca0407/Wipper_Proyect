@@ -6,7 +6,7 @@ cursor = connect.cursor()  # Crea un cursor para ejecutar consultas SQL.
 
 # --Función para registrar usuarios--
 def register(entry1, entry2, entry3):
-    user = cursor.execute("""INSERT INTO users ('name', 'passwd', 'mail', 'active')
+    cursor.execute("""INSERT INTO users ('name', 'passwd', 'mail', 'active')
                         VALUES (?, ?, ?, ?)""", (entry1, entry2, entry3, 0))
     connect.commit()
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
