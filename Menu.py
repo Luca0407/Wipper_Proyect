@@ -3,18 +3,22 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 from getpath import getpath as gp
 from users import users
-import time
+from time import strftime
+import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
-username = users.current_user()
 window = Tk()
-PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
+PATH = gp.getPath()
+username = users.current_user()
+if username is None:
+    window.destroy()
+    sys.exit()
 
 def relative_to_assets(path: str) -> Path:
-    return PATH / Path(path)  # Retorna la ubicación de las imágenes usadas en la ventana.
+    return PATH / Path(path)
 
-# --Función que permite mover la ventana si el clic está en los primeros 30 píxeles--
+
+# --- Movimiento de la ventana ---
 def start_move(event):
     if event.y <= 30:
         window.x = event.x
@@ -22,27 +26,9 @@ def start_move(event):
     else:
         window.x = None
         window.y = None
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --´
 
-def update_clock(canvas, clock_text):
-    current_time = time.strftime('%H:%M')  # Obtén la hora actual
-    canvas.itemconfig(clock_text, text=current_time)  # Actualiza el texto en el canvas
-    canvas.after(1000, update_clock, canvas, clock_text)  # Llama de nuevo después de 1 segundo
-
-def update_date(canvas, date_text):
-    current_date = time.strftime('%d/%m/%y')  # Obtén la hora actual
-    canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
-    canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
-
-# --Función que detiene el movimiento de la ventana--
-def stop_move(event):
-    window.x = None
-    window.y = None
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Función que mueve la ventana si las coordenadas no son None--
 def do_move(event):
-    if window.x is not None and window.y is not None:  # Solo mueve si las coordenadas no son None
+    if window.x is not None and window.y is not None:
         deltax = event.x - window.x
         deltay = event.y - window.y
         x = window.winfo_x() + deltax
@@ -50,7 +36,19 @@ def do_move(event):
         window.geometry(f"+{x}+{y}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# --Función para registrar un nuevo usuario--.
+# --- Fecha y hora ---
+def update_clock(canvas, clock_text):
+    current_time = strftime('%H:%M')  # Obtén la hora actual
+    canvas.itemconfig(clock_text, text=current_time)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_clock, canvas, clock_text)  # Llama de nuevo después de 1 segundo
+
+def update_date(canvas, date_text):
+    current_date = strftime('%d/%m/%y')  # Obtén la hora actual
+    canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
+    canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
+
+
+# --- Cierre de sesión ---
 def logout():
     window.destroy()
     users.logout(username)
@@ -323,7 +321,7 @@ products = Button(
     image=products_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("products clicked"),
+    command=lambda: gp.vxl("Products"),
     relief="flat"
 )
 
@@ -382,7 +380,6 @@ canvas.create_text(
 
 # --Se llama a las funciones para interactuar con la ventana--
 canvas.bind("<Button-1>", start_move)
-canvas.bind("<ButtonRelease-1>", stop_move)
 canvas.bind("<B1-Motion>", do_move)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 

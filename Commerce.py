@@ -2,10 +2,15 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Button, PhotoImage
 from getpath import getpath as gp
 import time
+from users import users
+import sys
 
 window = Tk()
 PATH = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-
+username = users.current_user()
+if username is None:
+    window.destroy()
+    sys.exit()
 
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)

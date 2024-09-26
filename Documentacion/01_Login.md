@@ -20,10 +20,10 @@
 > ###### Archivo: [Login.py](/Login.py)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para su funcionamiento se utilizan las siguientes librerías y los siguientes módulos:
-* pathlib (módulo Path)
-* tkinter (módulos Tk, Canvas, Entry, Button, PhotoImage, messagebox)
-* getpath (módulo propio)
-* users (módulo propio)
+* **pathlib** (módulo Path)
+* **tkinter** (módulos Tk, Canvas, Entry, Button, PhotoImage, messagebox)
+* **getpath** ([módulo propio](03_getpath))
+* **users** ([módulo propio](04_users))
 <br></br>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Respecto a los módulos propios, sus funcionamientos se verán más adelante en el documento. La primera acción inicializar la variable _**window**_, a la cual se le asigna el valor _Tk()_ (esto es algo que se repetirá para los demás modulos del software).

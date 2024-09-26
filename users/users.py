@@ -1,4 +1,5 @@
 import sqlite3  # Importa librería
+from getpath import getpath as gp
 
 
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
@@ -40,9 +41,14 @@ def login(entry1, entry2):
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 def current_user():
-    cursor.execute("SELECT name FROM users WHERE active = 1")
-    username = cursor.fetchone()
-    return username[0]
+    try:
+        cursor.execute("SELECT name FROM users WHERE active = 1")
+        username = cursor.fetchone()
+        return username[0]
+    except Exception as e:
+        print("No se encuentra ningun usuario activo.")
+        gp.vxl("Login")
+        return
 
 def logout(name):
     cursor.execute(f"UPDATE users SET active = 0 WHERE name = '{name}'")

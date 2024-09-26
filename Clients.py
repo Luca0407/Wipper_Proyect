@@ -23,8 +23,12 @@ def load_data(x):
                 treeview.column(col_name, anchor=tk.CENTER)
 
         case 2:
-            cursor.execute("SELECT * FROM clients")
+            cursor.execute("SELECT * FROM clients ORDER BY ID_Clients DESC LIMIT 1;")
             db_data = cursor.fetchall()
+
+        case other:
+            messagebox.showerror("el pepe")
+
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
 
@@ -50,6 +54,7 @@ def insert_row():
                         VALUES (?, ?, ?)""", (name, phone, dni))
         connect.commit()
         reset_entries()  # Reiniciar los campos
+        load_data(2)
 
 def reset_entries():
     name_entry.delete(0, "")
@@ -153,5 +158,5 @@ treeview.column("DNI", width=300)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-load_data()
+load_data(1)
 root.mainloop()

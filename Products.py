@@ -12,13 +12,23 @@ cols = ("ID", "Marca", "Modelo", "Cantidad", "Fecha Ingreso")
 def close():
     root.destroy()
 
-def load_data():
-    cursor.execute("SELECT ID_Products, brand, model, quantity, entry_date FROM products")
-    db_data = cursor.fetchall()
+def load_data(x):
+    match x:
+        case 1:
+            cursor.execute("SELECT ID_Products, brand, model, quantity, entry_date FROM products")
+            db_data = cursor.fetchall()
 
-    for col_marca in cols:
-        treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
-        treeview.column(col_marca, anchor=tk.CENTER)
+            for col_marca in cols:
+                treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
+                treeview.column(col_marca, anchor=tk.CENTER)
+
+        case 2:
+            cursor.execute("""SELECT ID_Products, brand, model, quantity, entry_date
+                            FROM products ORDER BY ID_Products DESC LIMIT 1;""")
+            db_data = cursor.fetchall()
+
+        case other:
+            messagebox.showerror("el pepe")
 
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
@@ -36,9 +46,8 @@ def insert_row():
     
     product = cursor.execute("SELECT brand, model, quantity FROM products")
     product_reg = product.fetchall()
-    product_data = (marca, int(modelo), int(cantidad))
+    product_data = (marca, modelo, int(cantidad))
     for entry in product_reg:
-        print(entry)
         if entry == product_data:
             messagebox.showwarning("Advertencia", "Este producto ya se encuentra registrado")
             break
@@ -47,6 +56,7 @@ def insert_row():
                         VALUES (?, ?, ?, ?)""", (marca, modelo, cantidad, fecha_ingreso))
         connect.commit()
         reset_entries()  # Reiniciar los campos
+        load_data(2)
 
 def reset_entries():
     marca_entry.delete(0, "")
@@ -151,5 +161,5 @@ treeview.column("Fecha Ingreso", width=210)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-load_data()
+load_data(1)
 root.mainloop()
