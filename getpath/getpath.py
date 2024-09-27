@@ -27,6 +27,9 @@ def getPath():
         case "Products":
             assets_path = OUTPUT_PATH
 
+        case "Records":
+            assets_path = OUTPUT_PATH
+
         case "Commerce":
             assets_path = OUTPUT_PATH / 'Commerce_Screen' / 'build' / 'assets' / 'frame0'
 
@@ -34,6 +37,6 @@ def getPath():
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 def vxl(screen):
-    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Commerce"}:
+    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Commerce", "Records"}:
         goto_path = OUTPUT_PATH / f'{screen}.py'
         subprocess.Popen(["python", str(goto_path)])

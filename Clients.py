@@ -26,9 +26,6 @@ def load_data(x):
             cursor.execute("SELECT * FROM clients ORDER BY ID_Clients DESC LIMIT 1;")
             db_data = cursor.fetchall()
 
-        case other:
-            messagebox.showerror("el pepe")
-
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
 

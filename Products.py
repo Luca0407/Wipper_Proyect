@@ -7,7 +7,7 @@ import time
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
 cursor = connect.cursor()
 init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-cols = ("ID", "Marca", "Modelo", "Cantidad", "Fecha Ingreso")
+cols = ("ID", "Marca", "Modelo", "Cantidad", "Cliente")
 
 def close():
     root.destroy()
@@ -15,7 +15,7 @@ def close():
 def load_data(x):
     match x:
         case 1:
-            cursor.execute("SELECT ID_Products, brand, model, quantity, entry_date FROM products")
+            cursor.execute("SELECT ID_Products, brand, model, quantity, ID_Clients FROM products")
             db_data = cursor.fetchall()
 
             for col_marca in cols:
@@ -23,12 +23,9 @@ def load_data(x):
                 treeview.column(col_marca, anchor=tk.CENTER)
 
         case 2:
-            cursor.execute("""SELECT ID_Products, brand, model, quantity, entry_date
+            cursor.execute("""SELECT ID_Products, brand, model, quantity, ID_Clients
                             FROM products ORDER BY ID_Products DESC LIMIT 1;""")
             db_data = cursor.fetchall()
-
-        case other:
-            messagebox.showerror("el pepe")
 
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
@@ -37,26 +34,19 @@ def insert_row():
     marca = marca_entry.get()
     cantidad = cantidad_entry.get()
     modelo = modelo_entry.get()
-    fecha_ingreso = time.strftime('%d/%m/%y')
+    cliente = cliente_entry.get()
+    cli = cursor.execute("SELECT owner_name FROM clients WHERE")
     
     # Validación de campos vacíos
     if not all([marca, cantidad, modelo]):
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
         return 0
     
-    product = cursor.execute("SELECT brand, model, quantity FROM products")
-    product_reg = product.fetchall()
-    product_data = (marca, modelo, int(cantidad))
-    for entry in product_reg:
-        if entry == product_data:
-            messagebox.showwarning("Advertencia", "Este producto ya se encuentra registrado")
-            break
-    else:
-        cursor.execute("""INSERT INTO products ('brand', 'model', 'quantity', 'entry_date')
-                        VALUES (?, ?, ?, ?)""", (marca, modelo, cantidad, fecha_ingreso))
-        connect.commit()
-        reset_entries()  # Reiniciar los campos
-        load_data(2)
+    cursor.execute("""INSERT INTO products ('brand', 'model', 'quantity', 'ID_Clients')
+                    VALUES (?, ?, ?, ?)""", (marca, modelo, cantidad, cliente))
+    connect.commit()
+    reset_entries()  # Reiniciar los campos
+    load_data(2)
 
 def reset_entries():
     marca_entry.delete(0, "")
@@ -65,6 +55,8 @@ def reset_entries():
     modelo_entry.insert(0, "Modelo")
     cantidad_entry.delete(0, "")
     cantidad_entry.insert(0, "Cantidad")
+    cliente_entry.delete(0, "")
+    cliente_entry.insert(0, "Cliente")
 
 def keep_used():
     if marca_entry.get() == "":
@@ -74,6 +66,9 @@ def keep_used():
         reset_entries()
 
     if cantidad_entry.get() == "":
+        reset_entries()
+    
+    if cliente_entry.get() == "":
         reset_entries()
 
 def clear_entry(event, entry, default_text):
@@ -126,6 +121,12 @@ cantidad_entry.bind("<FocusIn>", lambda e: clear_entry(e, cantidad_entry, "Canti
 cantidad_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
 cantidad_entry.bind("<FocusOut>", lambda e: keep_used())
 
+cliente_entry = ttk.Entry(widgets_frame)
+cliente_entry.insert(0, "Cliente")
+cliente_entry.bind("<FocusIn>", lambda e: clear_entry(e, cliente_entry, "Cliente"))
+cliente_entry.grid(row=3, column=0, padx=5, pady=(0, 5), sticky="ew")
+cliente_entry.bind("<FocusOut>", lambda e: keep_used())
+
 separator = ttk.Separator(widgets_frame)
 separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
 
@@ -157,7 +158,7 @@ treeview.column("ID", width=20)
 treeview.column("Marca", width=260)
 treeview.column("Modelo", width=220)
 treeview.column("Cantidad", width=210)
-treeview.column("Fecha Ingreso", width=210)
+treeview.column("Cliente", width=210)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 

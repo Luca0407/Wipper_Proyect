@@ -306,7 +306,7 @@ canvas.create_text(
     44.0,
     695.0,
     anchor="nw",
-    text="User",
+    text=username,
     fill="#FFFFFF",
     font=("Montserrat Medium", 13 * -1)
 )

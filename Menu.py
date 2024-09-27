@@ -241,7 +241,7 @@ records = Button(
     image=records_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("records clicked"),
+    command=lambda: gp.vxl("Records"),
     relief="flat"
 )
 
