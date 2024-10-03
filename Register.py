@@ -20,10 +20,10 @@ def relative_to_assets(path: str) -> Path:
 # --- Registro de usuario ---
 def user_signup():
     if users.check(user_input.get(), mail_input.get()) is False:
-        users.register(user_input.get(), password_input.get(), mail_input.get())
-        messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
-        window.destroy()
-        gp.vxl("Login")
+        if users.register(user_input.get(), password_input.get(), mail_input.get()) is True:
+            messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
+            window.destroy()
+            gp.vxl("Login")
     else:
         messagebox.showerror("ERROR","Este usuario ya se encuentra registrado.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

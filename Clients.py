@@ -7,10 +7,12 @@ import sqlite3
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
 cursor = connect.cursor()
 init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-cols = ("ID", "Dueño", "Teléfono", "DNI")
+cols = ("ID", "Nombre", "Apellido", "Teléfono")
+root = tk.Tk()
 
 def close():
     root.destroy()
+    connect.close()
 
 def load_data(x):
     match x:
@@ -30,46 +32,63 @@ def load_data(x):
         treeview.insert('', tk.END, values=value_tuple)
 
 def insert_row():
+    columns = []
+    values = []
     name = name_entry.get()
-    dni = dni_entry.get()
+    surname = surname_entry.get()
     phone = phone_entry.get()
-    
-    # Validación de campos vacíos
-    if not all([name, dni, phone]):
-        messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
-        return 0
-    
-    client = cursor.execute("SELECT phone, doc_no FROM clients")
-    client_reg = client.fetchall()
-    client_data = (int(phone), int(dni))
-    for entry in client_reg:
-        if entry == client_data:
+
+    if (name_entry.get()) not in cols:
+        columns.append('owner_name')
+        values.append(name)
+
+    if (surname_entry.get()) not in cols:
+        columns.append('owner_surname')
+        values.append(surname)
+
+    columns.append('phone')
+    values.append(phone)
+
+    client = cursor.execute("SELECT phone FROM clients")
+    client_data = client.fetchall()
+    for entry in client_data:
+        if entry[0] == int(phone):
             messagebox.showwarning("Advertencia", "Este cliente ya se encuentra registrado")
             break
     else:
-        cursor.execute("""INSERT INTO clients ('owner_name', 'phone', 'doc_no')
-                        VALUES (?, ?, ?)""", (name, phone, dni))
+        query = f"INSERT INTO clients ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
+        cursor.execute(query, values)
         connect.commit()
-        reset_entries()  # Reiniciar los campos
+        for i in range(1, 4):
+            reset_entries(i)
+
         load_data(2)
 
-def reset_entries():
-    name_entry.delete(0, "")
-    name_entry.insert(0, "Nombre y Apellido")
-    phone_entry.delete(0, "")
-    phone_entry.insert(0, "Teléfono")
-    dni_entry.delete(0, "")
-    dni_entry.insert(0, "DNI")
+def reset_entries(x):
+    match x:
+        case 1:
+            name_entry.delete(0, "")
+            name_entry.insert(0, "Nombre")
+            
+        case 2:
+            surname_entry.delete(0, "")
+            surname_entry.insert(0, "Apellido")
+        
+        case 3:
+            phone_entry.delete(0, "")
+            phone_entry.insert(0, "Teléfono")
+        
+        
 
 def keep_used():
     if name_entry.get() == "":
-        reset_entries()
+        reset_entries(1)
+
+    if surname_entry.get() == "":
+        reset_entries(2)
 
     if phone_entry.get() == "":
-        reset_entries()
-
-    if dni_entry.get() == "":
-        reset_entries()
+        reset_entries(3)
 
 def clear_entry(event, entry, default_text):
     if entry.get() == default_text:
@@ -83,12 +102,7 @@ def center_window(window, width=800, height=600):
     y = (screen_height // 2) - (height // 2) + 37  # Mueve la ventana 37px hacia abajo
     window.geometry(f"{width}x{height}+{x}+{y}")
 
-root = tk.Tk()
-
-# Ocultar la barra superior (title bar)
 root.overrideredirect(True)
-
-# Centrar la ventana en la pantalla y moverla 37px hacia abajo
 center_window(root, 1360, 550)
 
 style = ttk.Style(root)
@@ -102,24 +116,24 @@ frame.pack()
 widgets_frame = ttk.LabelFrame(frame, text="Datos del Cliente")
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
-# Entradas de texto
+
 name_entry = ttk.Entry(widgets_frame)
-name_entry.insert(0, "Nombre y Apellido")
-name_entry.bind("<FocusIn>", lambda e: clear_entry(e, name_entry, "Nombre y Apellido"))
+name_entry.insert(0, "Nombre")
+name_entry.bind("<FocusIn>", lambda e: clear_entry(e, name_entry, "Nombre"))
 name_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
 name_entry.bind("<FocusOut>", lambda e: keep_used())
+
+surname_entry = ttk.Entry(widgets_frame)
+surname_entry.insert(0, "Apellido")
+surname_entry.bind("<FocusIn>", lambda e: clear_entry(e, surname_entry, "Apellido"))
+surname_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+surname_entry.bind("<FocusOut>", lambda e: keep_used())
 
 phone_entry = ttk.Entry(widgets_frame)
 phone_entry.insert(0, "Teléfono")
 phone_entry.bind("<FocusIn>", lambda e: clear_entry(e, phone_entry, "Teléfono"))
-phone_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+phone_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
 phone_entry.bind("<FocusOut>", lambda e: keep_used())
-
-dni_entry = ttk.Entry(widgets_frame)
-dni_entry.insert(0, "DNI")
-dni_entry.bind("<FocusIn>", lambda e: clear_entry(e, dni_entry, "DNI"))
-dni_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
-dni_entry.bind("<FocusOut>", lambda e: keep_used())
 
 separator = ttk.Separator(widgets_frame)
 separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
@@ -148,10 +162,10 @@ treeScroll.pack(side="right", fill="y")
 
 treeview = ttk.Treeview(treeFrame, show="headings",
     yscrollcommand=treeScroll.set, columns=cols, height=23)
-treeview.column("ID", width=20)
-treeview.column("Dueño", width=310)
+treeview.column("ID", width=30)
+treeview.column("Nombre", width=300)
+treeview.column("Apellido", width=300)
 treeview.column("Teléfono", width=300)
-treeview.column("DNI", width=300)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 

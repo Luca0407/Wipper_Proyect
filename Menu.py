@@ -7,12 +7,15 @@ from time import strftime
 import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 window = Tk()
 PATH = gp.getPath()
 username = users.current_user()
 if username is None:
     window.destroy()
+    gp.vxl("Login")
     sys.exit()
+    
 
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)
@@ -36,6 +39,7 @@ def do_move(event):
         window.geometry(f"+{x}+{y}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 # --- Fecha y hora ---
 def update_clock(canvas, clock_text):
     current_time = strftime('%H:%M')  # Obtén la hora actual
@@ -47,6 +51,9 @@ def update_date(canvas, date_text):
     canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
     canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
 
+def goto_commerce():
+    window.destroy()
+    gp.vxl("Commerce")
 
 # --- Cierre de sesión ---
 def logout():
@@ -251,6 +258,7 @@ records.place(
     width=190.0,
     height=60.0
 )
+
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona --
@@ -261,7 +269,7 @@ commerce = Button(
     image=commerce_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.vxl("Commerce"),
+    command=lambda: goto_commerce(),
     relief="flat"
 )
 

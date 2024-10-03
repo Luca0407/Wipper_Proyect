@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from getpath import getpath as gp
 import sqlite3
-import time
+from time import strftime
 
 connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
 cursor = connect.cursor()
@@ -31,45 +31,76 @@ def load_data(x):
         treeview.insert('', tk.END, values=value_tuple)
 
 def insert_row():
+    columns = []
+    values = []
     marca = marca_entry.get()
     cantidad = cantidad_entry.get()
     modelo = modelo_entry.get()
     cliente = cliente_entry.get()
-    cli = cursor.execute("SELECT owner_name FROM clients WHERE")
+    fecha_ing = strftime('%d/%m/%y')
+    fecha_egr = "-"
+    
+    if (marca_entry.get()) not in cols:
+        columns.append('brand')
+        values.append(marca)
+    
+    if (modelo_entry.get()) not in cols:
+        columns.append('model')
+        values.append(modelo)
+    
+    columns.append('quantity')
+    values.append(cantidad)
+    
+    columns.append('entry_date')
+    values.append(fecha_ing)
+    
+    columns.append('left_date')
+    values.append(fecha_egr)
+    
+    columns.append('ID_Clients')
+    values.append(cliente)
     
     # Validación de campos vacíos
     if not all([marca, cantidad, modelo]):
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
         return 0
     
-    cursor.execute("""INSERT INTO products ('brand', 'model', 'quantity', 'ID_Clients')
-                    VALUES (?, ?, ?, ?)""", (marca, modelo, cantidad, cliente))
+    query = f"INSERT INTO products ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
+    cursor.execute(query, values)
     connect.commit()
-    reset_entries()  # Reiniciar los campos
+    for i in range(1, 4):
+        reset_entries(i)  # Reiniciar los campos
     load_data(2)
 
-def reset_entries():
-    marca_entry.delete(0, "")
-    marca_entry.insert(0, "Marca")
-    modelo_entry.delete(0, "")
-    modelo_entry.insert(0, "Modelo")
-    cantidad_entry.delete(0, "")
-    cantidad_entry.insert(0, "Cantidad")
-    cliente_entry.delete(0, "")
-    cliente_entry.insert(0, "Cliente")
+def reset_entries(x):
+    match x:
+        case 1:
+            marca_entry.delete(0, "")
+            marca_entry.insert(0, "Marca")
+            
+        case 2:
+            modelo_entry.delete(0, "")
+            modelo_entry.insert(0, "Modelo")
+        
+        case 3:
+            cantidad_entry.delete(0, "")
+            cantidad_entry.insert(0, "Cantidad")
+        case 4:
+            cliente_entry.delete(0, "")
+            cliente_entry.insert(0, "Cliente")
 
 def keep_used():
     if marca_entry.get() == "":
-        reset_entries()
+        reset_entries(1)
 
     if modelo_entry.get() == "":
-        reset_entries()
+        reset_entries(2)
 
     if cantidad_entry.get() == "":
-        reset_entries()
+        reset_entries(3)
     
     if cliente_entry.get() == "":
-        reset_entries()
+        reset_entries(4)
 
 def clear_entry(event, entry, default_text):
     if entry.get() == default_text:

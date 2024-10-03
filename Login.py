@@ -3,10 +3,16 @@ from tkinter import Tk, Canvas, Entry, Button, PhotoImage, messagebox
 from pathlib import Path
 from getpath import getpath as gp
 from users import users
+import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
 window = Tk()
+username = users.current_user()
+if username is not None:
+    window.destroy()
+    gp.vxl("Menu")
+    sys.exit()
 
 
 # --- Acceso a directorios ---

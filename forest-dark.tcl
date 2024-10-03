@@ -11,7 +11,7 @@ namespace eval ttk::theme::forest-dark {
     variable colors
     array set colors {
         -fg             "#eeeeee"
-        -bg             "#303030"
+        -bg             "#313131"
         -disabledfg     "#595959"
         -disabledbg     "#ffffff"
         -selectfg       "#ffffff"
