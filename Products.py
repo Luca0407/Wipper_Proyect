@@ -4,9 +4,10 @@ from getpath import getpath as gp
 import sqlite3
 from time import strftime
 
-connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
+
+connect = sqlite3.connect('wipper.db')
 cursor = connect.cursor()
-init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
+init_path = gp.getPath()
 cols = ("ID", "Marca", "Modelo", "Cantidad", "Cliente")
 
 def close():
@@ -17,6 +18,7 @@ def load_data(x):
         case 1:
             cursor.execute("SELECT ID_Products, brand, model, quantity, ID_Clients FROM products")
             db_data = cursor.fetchall()
+
 
             for col_marca in cols:
                 treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
@@ -181,7 +183,6 @@ treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y")
-
 
 treeview = ttk.Treeview(treeFrame, show="headings",
     yscrollcommand=treeScroll.set, columns=cols, height=23)
