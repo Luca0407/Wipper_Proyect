@@ -3,20 +3,23 @@ from tkinter import ttk
 from getpath import getpath as gp
 import sqlite3
 
-connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
+connect = sqlite3.connect('wipper.db')
 cursor = connect.cursor()
-init_path = gp.getPath()  # Constante PATH obtiene la ubicación donde estan las imágenes.
-cols = ("ID Producto", "Marca y Modelo", "Cantidad", "Fecha Ingreso", "Fecha Egreso", "Cliente", "Teléfono")
+init_path = gp.getPath()
+cols = ("Servicio", "Cliente", "Producto", "Nombre del Servicio", "Cantidad", "Precio Final", "Fecha de Ingreso", "Fecha de Egreso", "Hecho")
 
 def close():
     root.destroy()
 
 def load_data():
-    cursor.execute("""SELECT ID_Products, concat(brand, " - ", model), quantity, entry_date,
-                left_date, clients.owner_name, clients.phone
-                FROM products
-                JOIN clients ON
-                products.ID_Clients = clients.ID_Clients""")
+    cursor.execute("""SELECT ID_Services, concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ', products.model),
+                service_name, quantity, sum(products.initial_cost * quantity + aditional_cost ), entry_date, left_date, done
+        FROM services
+        JOIN clients ON
+            services.ID_Clients = clients.ID_Clients
+        JOIN products ON
+            services.ID_Products = products.ID_Products
+        GROUP BY ID_Services;""")
 
     db_data = cursor.fetchall()
 
@@ -86,15 +89,16 @@ button_del.grid(row=0, column=1, padx=50, pady=(0, 5), sticky="ns")
 
 treeview = ttk.Treeview(treeFrame, show="headings",
     yscrollcommand=treeScroll.set, columns=cols, height=20)
-treeview.column("ID Producto", width=70)
-treeview.column("Marca y Modelo", width=300)
+treeview.column("Servicio", width=70)
+treeview.column("Cliente", width=190)
+treeview.column("Producto", width=200)
+treeview.column("Nombre del Servicio", width=190)
 treeview.column("Cantidad", width=70)
-treeview.column("Fecha Ingreso", width=180)
-treeview.column("Fecha Egreso", width=180)
-treeview.column("Cliente", width=300)
-treeview.column("Teléfono", width=200)
+treeview.column("Precio Final", width=150)
+treeview.column("Fecha de Ingreso", width=180)
+treeview.column("Fecha de Egreso", width=180)
+treeview.column("Hecho", width=70)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
-
 load_data()
 root.mainloop()

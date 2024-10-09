@@ -11,8 +11,8 @@ def register(entry1, entry2, entry3):
     if "" in (entry1, entry2, entry3):
         return messagebox.showerror("ERROR", "Uno o más campos se encuentran vacíos")
     else:
-        cursor.execute("""INSERT INTO users ('name', 'passwd', 'mail', 'active')
-                        VALUES (?, ?, ?, ?)""", (entry1, entry2, entry3, 0))
+        cursor.execute("""INSERT INTO users ('name', 'passwd', 'mail')
+                        VALUES (?, ?, ?, ?)""", (entry1, entry2, entry3))
         connect.commit()
         return True
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

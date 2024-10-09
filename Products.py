@@ -8,7 +8,7 @@ from time import strftime
 connect = sqlite3.connect('wipper.db')
 cursor = connect.cursor()
 init_path = gp.getPath()
-cols = ("ID", "Marca", "Modelo", "Cantidad", "Cliente")
+cols = ("ID", "Marca", "Modelo", "Costo Inicial")
 
 def close():
     root.destroy()
@@ -16,7 +16,7 @@ def close():
 def load_data(x):
     match x:
         case 1:
-            cursor.execute("SELECT ID_Products, brand, model, quantity, ID_Clients FROM products")
+            cursor.execute("SELECT ID_Products, brand, model, initial_cost FROM products")
             db_data = cursor.fetchall()
 
 
@@ -25,7 +25,7 @@ def load_data(x):
                 treeview.column(col_marca, anchor=tk.CENTER)
 
         case 2:
-            cursor.execute("""SELECT ID_Products, brand, model, quantity, ID_Clients
+            cursor.execute("""SELECT ID_Products, brand, model, initial_cost
                             FROM products ORDER BY ID_Products DESC LIMIT 1;""")
             db_data = cursor.fetchall()
 
@@ -35,35 +35,23 @@ def load_data(x):
 def insert_row():
     columns = []
     values = []
-    marca = marca_entry.get()
-    cantidad = cantidad_entry.get()
-    modelo = modelo_entry.get()
-    cliente = cliente_entry.get()
-    fecha_ing = strftime('%d/%m/%y')
-    fecha_egr = "-"
+    brand = brand_entry.get()
+    model = model_entry.get()
+    cost = cost_entry.get()
     
-    if (marca_entry.get()) not in cols:
+    if (brand_entry.get()) not in cols:
         columns.append('brand')
-        values.append(marca)
+        values.append(brand)
     
-    if (modelo_entry.get()) not in cols:
+    if (model_entry.get()) not in cols:
         columns.append('model')
-        values.append(modelo)
+        values.append(model)
     
-    columns.append('quantity')
-    values.append(cantidad)
-    
-    columns.append('entry_date')
-    values.append(fecha_ing)
-    
-    columns.append('left_date')
-    values.append(fecha_egr)
-    
-    columns.append('ID_Clients')
-    values.append(cliente)
+    columns.append('initial_cost')
+    values.append(cost)
     
     # Validación de campos vacíos
-    if not all([marca, cantidad, modelo]):
+    if not all([brand, model, cost]):
         messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
         return 0
     
@@ -77,32 +65,27 @@ def insert_row():
 def reset_entries(x):
     match x:
         case 1:
-            marca_entry.delete(0, "")
-            marca_entry.insert(0, "Marca")
+            brand_entry.delete(0, "")
+            brand_entry.insert(0, "Marca")
             
         case 2:
-            modelo_entry.delete(0, "")
-            modelo_entry.insert(0, "Modelo")
+            model_entry.delete(0, "")
+            model_entry.insert(0, "Modelo")
         
         case 3:
-            cantidad_entry.delete(0, "")
-            cantidad_entry.insert(0, "Cantidad")
-        case 4:
-            cliente_entry.delete(0, "")
-            cliente_entry.insert(0, "Cliente")
+            cost_entry.delete(0, "")
+            cost_entry.insert(0, "Costo Inicial")
+
 
 def keep_used():
-    if marca_entry.get() == "":
+    if brand_entry.get() == "":
         reset_entries(1)
 
-    if modelo_entry.get() == "":
+    if model_entry.get() == "":
         reset_entries(2)
 
-    if cantidad_entry.get() == "":
+    if cost_entry.get() == "":
         reset_entries(3)
-    
-    if cliente_entry.get() == "":
-        reset_entries(4)
 
 def clear_entry(event, entry, default_text):
     if entry.get() == default_text:
@@ -136,29 +119,23 @@ widgets_frame = ttk.LabelFrame(frame, text="Datos del Producto")
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
 # Entradas de texto
-marca_entry = ttk.Entry(widgets_frame)
-marca_entry.insert(0, "Marca")
-marca_entry.bind("<FocusIn>", lambda e: clear_entry(e, marca_entry, "Marca"))
-marca_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
-marca_entry.bind("<FocusOut>", lambda e: keep_used())
+brand_entry = ttk.Entry(widgets_frame)
+brand_entry.insert(0, "Marca")
+brand_entry.bind("<FocusIn>", lambda e: clear_entry(e, brand_entry, "Marca"))
+brand_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
+brand_entry.bind("<FocusOut>", lambda e: keep_used())
 
-modelo_entry = ttk.Entry(widgets_frame)
-modelo_entry.insert(0, "Modelo")
-modelo_entry.bind("<FocusIn>", lambda e: clear_entry(e, modelo_entry, "Modelo"))
-modelo_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-modelo_entry.bind("<FocusOut>", lambda e: keep_used())
+model_entry = ttk.Entry(widgets_frame)
+model_entry.insert(0, "Modelo")
+model_entry.bind("<FocusIn>", lambda e: clear_entry(e, model_entry, "Modelo"))
+model_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
+model_entry.bind("<FocusOut>", lambda e: keep_used())
 
-cantidad_entry = ttk.Entry(widgets_frame)
-cantidad_entry.insert(0, "Cantidad")
-cantidad_entry.bind("<FocusIn>", lambda e: clear_entry(e, cantidad_entry, "Cantidad"))
-cantidad_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
-cantidad_entry.bind("<FocusOut>", lambda e: keep_used())
-
-cliente_entry = ttk.Entry(widgets_frame)
-cliente_entry.insert(0, "Cliente")
-cliente_entry.bind("<FocusIn>", lambda e: clear_entry(e, cliente_entry, "Cliente"))
-cliente_entry.grid(row=3, column=0, padx=5, pady=(0, 5), sticky="ew")
-cliente_entry.bind("<FocusOut>", lambda e: keep_used())
+cost_entry = ttk.Entry(widgets_frame)
+cost_entry.insert(0, "Costo Inicial")
+cost_entry.bind("<FocusIn>", lambda e: clear_entry(e, cost_entry, "Costo Inicial"))
+cost_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
+cost_entry.bind("<FocusOut>", lambda e: keep_used())
 
 separator = ttk.Separator(widgets_frame)
 separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
@@ -186,11 +163,10 @@ treeScroll.pack(side="right", fill="y")
 
 treeview = ttk.Treeview(treeFrame, show="headings",
     yscrollcommand=treeScroll.set, columns=cols, height=23)
-treeview.column("ID", width=20)
-treeview.column("Marca", width=260)
-treeview.column("Modelo", width=220)
-treeview.column("Cantidad", width=210)
-treeview.column("Cliente", width=210)
+treeview.column("ID", width=50)
+treeview.column("Marca", width=292)
+treeview.column("Modelo", width=296)
+treeview.column("Costo Inicial", width=292)
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
