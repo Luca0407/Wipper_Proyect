@@ -78,6 +78,36 @@ y_cordinate = int((screen_height/2) - (window_height/2))
 window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+# --Carga las imágenes de los botones normales y clickeados--
+clients_normal = PhotoImage(file=relative_to_assets("clients.png"))
+clients_clicked = PhotoImage(file=relative_to_assets("clients_clicked.png"))
+
+records_normal = PhotoImage(file=relative_to_assets("records.png"))
+records_clicked = PhotoImage(file=relative_to_assets("records_clicked.png"))
+
+products_normal = PhotoImage(file=relative_to_assets("products.png"))
+products_clicked = PhotoImage(file=relative_to_assets("products_clicked.png"))
+
+# Variables para mantener el estado del botón actual
+current_button = None
+current_image = None
+
+def change_button_image(button, normal_image, clicked_image):
+    global current_button, current_image
+    
+    # Cambia la imagen del botón clickeado
+    button.config(image=clicked_image)
+    
+    # Si hay un botón actualmente seleccionado, reestablece su imagen
+    if current_button and current_button != button:
+        current_button.config(image=current_image)
+    
+    # Actualiza el botón actual
+    current_button = button
+    current_image = normal_image  # Guarda la imagen normal del botón actual
+
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 # --Crea y posiciona la ventana--
 canvas = Canvas(
     window,
@@ -91,13 +121,22 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Crea y posiciona el fondo--
+bg = PhotoImage(
+    file=relative_to_assets("background.png"))
+bg_menu = canvas.create_image(
+    680.0,
+    404.0,
+    image=bg
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona el logo decorativo (transparente)--
 logo_watermark = PhotoImage(
     file=relative_to_assets("watermark.png"))
 
 background_logo = canvas.create_image(
-    678.0,
+    499.0,
     392.0,
     image=logo_watermark
 )
@@ -233,7 +272,7 @@ logout_b = Button(
 )
 
 logout_b.place(
-    x=1159.0,
+    x=1125.0,
     y=50.0,
     width=190.0,
     height=60.0
@@ -245,15 +284,18 @@ records_button = PhotoImage(
     file=relative_to_assets("records.png"))
 
 records = Button(
-    image=records_button,
+    image=records_normal,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.vxl("Records"),
+    command=lambda: [
+        change_button_image(records, records_normal, records_clicked), 
+        gp.vxl("Records")
+    ],
     relief="flat"
 )
 
 records.place(
-    x=929.0,
+    x=855.0,
     y=50.0,
     width=190.0,
     height=60.0
@@ -274,47 +316,29 @@ commerce = Button(
 )
 
 commerce.place(
-    x=9.0,
+    x=45.0,
     y=50.0,
     width=190.0,
     height=60.0
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-costs_button = PhotoImage(
-    file=relative_to_assets("costs.png"))
-
-costs = Button(
-    image=costs_button,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("costs clicked"),
-    relief="flat"
-)
-
-costs.place(
-    x=239.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 # --Crea y posiciona --
 clients_button = PhotoImage(
     file=relative_to_assets("clients.png"))
 
 clients = Button(
-    image=clients_button,
+    image=clients_normal,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.vxl("Clients"),
+    command=lambda: [
+        change_button_image(clients, clients_normal, clients_clicked), 
+        gp.vxl("Clients")
+    ],
     relief="flat"
 )
 
 clients.place(
-    x=469.0,
+    x=315.0,
     y=50.0,
     width=190.0,
     height=60.0
@@ -326,21 +350,52 @@ products_button = PhotoImage(
     file=relative_to_assets("products.png"))
 
 products = Button(
-    image=products_button,
+    image=products_normal,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: gp.vxl("Products"),
+    command=lambda: [
+        change_button_image(products, products_normal, products_clicked), 
+        gp.vxl("Products")
+    ],
     relief="flat"
 )
 
 products.place(
-    x=699.0,
+    x=585.0,
     y=50.0,
     width=190.0,
     height=60.0
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Crea y posiciona teclas rapidas--
+canvas.create_text(
+    726.0,
+    356.0,
+    anchor="nw",
+    text="F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro",
+    fill="#555454",
+    font=("Montserrat Bold", 16 * -1)
+)
 
+canvas.create_text(
+    726.0,
+    288.0,
+    anchor="nw",
+    text="Teclas Rápidas",
+    fill="#555454",
+    font=("Montserrat Bold", 36 * -1)
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Crea y posiciona version--
+canvas.create_text(
+    14.0,
+    657.0,
+    anchor="nw",
+    text="v0.8.0",
+    fill="#555454",
+    font=("Montserrat Bold", 10 * -1)
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 # --create_text() inserta texto en la ventana segun los parametros que se le den--
 canvas.create_text(
     58.0,
@@ -384,11 +439,25 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
 # --Se llama a las funciones para interactuar con la ventana--
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", do_move)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# --Funciones para teclas rápidas
+def press_clients(event):
+    clients.invoke()  # Simula el clic en el botón de clientes
+
+def press_products(event):
+    products.invoke()  # Simula el clic en el botón de productos
+
+def press_records(event):
+    records.invoke()  # Simula el clic en el botón de registros
+
+# Asignar las teclas F2, F3 y F4 a sus respectivas funciones
+window.bind("<F2>", press_clients)
+window.bind("<F3>", press_products)
+window.bind("<F4>", press_records)
+
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).
