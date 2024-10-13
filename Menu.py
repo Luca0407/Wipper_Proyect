@@ -391,7 +391,7 @@ canvas.create_text(
     14.0,
     657.0,
     anchor="nw",
-    text="v0.8.0",
+    text="v0.8.1.1",
     fill="#555454",
     font=("Montserrat Bold", 10 * -1)
 )
