@@ -8,10 +8,14 @@ import sys
 
 
 window = Tk()
+
+def goto_window(x):
+    window.destroy()
+    gp.vxl(x)
+
 username = users.current_user()
 if username is not None:
-    window.destroy()
-    gp.vxl("Menu")
+    goto_window("Menu")
     sys.exit()
 
 
@@ -25,13 +29,11 @@ def relative_to_assets(path: str) -> Path:
 
 # --- Gestión de usuarios ---
 def new_user():
-    window.destroy()
-    gp.vxl("Register")
+    goto_window("Register")
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        window.destroy()
-        gp.vxl("Menu")
+        goto_window("Menu")
     else:
         messagebox.showerror("Ingreso incorrecto", "Usuario o contraseña incorrectos.")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
