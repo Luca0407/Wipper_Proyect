@@ -1,11 +1,12 @@
 # --Librerías y módulos--
 from pathlib import Path
-from tkinter import Tk, Canvas, Button, PhotoImage
+from tkinter import Tk, Canvas, Button, PhotoImage, messagebox
 from getpath import getpath as gp
 from users import users
 from time import strftime
 import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 
 window = Tk()
@@ -15,7 +16,7 @@ if username is None:
     window.destroy()
     gp.vxl("Login")
     sys.exit()
-    
+
 
 def relative_to_assets(path: str) -> Path:
     return PATH / Path(path)
@@ -39,21 +40,18 @@ def do_move(event):
         window.geometry(f"+{x}+{y}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
 # --- Fecha y hora ---
-def update_clock(canvas, clock_text):
+def update_clock_and_date(win, clock_text, date_text):
+    # Actualizar la hora
     current_time = strftime('%H:%M')  # Obtén la hora actual
-    canvas.itemconfig(clock_text, text=current_time)  # Actualiza el texto en el canvas
-    canvas.after(1000, update_clock, canvas, clock_text)  # Llama de nuevo después de 1 segundo
+    win.itemconfig(clock_text, text=current_time)
 
-def update_date(canvas, date_text):
-    current_date = strftime('%d/%m/%y')  # Obtén la hora actual
-    canvas.itemconfig(date_text, text=current_date)  # Actualiza el texto en el canvas
-    canvas.after(1000, update_date, canvas, date_text)  # Llama de nuevo después de 1 segundo
+    # Actualizar la fecha
+    current_date = strftime('%d/%m/%Y')  # Obtén la fecha actual
+    win.itemconfig(date_text, text=current_date)
 
-def goto_commerce():
-    window.destroy()
-    gp.vxl("Commerce")
+    # Ejecutar la función nuevamente después de 1 segundo
+    win.after(1000, update_clock_and_date, win, clock_text, date_text)  # Llama de nuevo después de 1 segundo
 
 # --- Cierre de sesión ---
 def logout():
@@ -62,8 +60,7 @@ def logout():
     gp.vxl("Login")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window.configure(bg = "#191919")
-window.overrideredirect(True)  # Elimina los bordes y decoraciones de la ventana.
+window.overrideredirect(True)
 
 # --Centra y posiciona la ventana en pantalla--
 screen_width = window.winfo_screenwidth()
@@ -116,19 +113,18 @@ canvas = Canvas(
     width = 1360,
     bd = 0,
     highlightthickness = 0,
-    relief = "ridge"
-)
+    relief = "ridge")
 
 canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 # --Crea y posiciona el fondo--
 bg = PhotoImage(
     file=relative_to_assets("background.png"))
+
 bg_menu = canvas.create_image(
     680.0,
     404.0,
-    image=bg
-)
+    image=bg)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Crea y posiciona el logo decorativo (transparente)--
@@ -311,7 +307,7 @@ commerce = Button(
     image=commerce_button,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: goto_commerce(),
+    command=lambda: messagebox.showinfo("No disponible", "Esta funcionalidad solo es accesible en la versión completa."),
     relief="flat"
 )
 
@@ -333,6 +329,7 @@ clients = Button(
     command=lambda: [
         change_button_image(clients, clients_normal, clients_clicked), 
         gp.vxl("Clients")
+        
     ],
     relief="flat"
 )
@@ -415,9 +412,6 @@ clock_text = canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 
-# Inicia la actualización del reloj
-update_clock(canvas, clock_text)
-
 date_text = canvas.create_text(
     1151.0,
     695.0,
@@ -428,7 +422,7 @@ date_text = canvas.create_text(
 )
 
 # Inicia la actualización del reloj
-update_date(canvas, date_text)
+update_clock_and_date(canvas, clock_text, date_text)
 
 canvas.create_text(
     44.0,
@@ -457,7 +451,6 @@ def press_records(event):
 window.bind("<F2>", press_clients)
 window.bind("<F3>", press_products)
 window.bind("<F4>", press_records)
-
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).

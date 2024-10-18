@@ -1,174 +1,160 @@
+# --- Librerías y Módulos ---
 import tkinter as tk
 from tkinter import ttk, messagebox
 from getpath import getpath as gp
 import sqlite3
-from time import strftime
+from strings import strings as txt
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 
 
-connect = sqlite3.connect('wipper.db')
+
+# --- x ---
+connect = sqlite3.connect(txt.general()[13])
 cursor = connect.cursor()
 init_path = gp.getPath()
-cols = ("ID", "Marca", "Modelo", "Costo Inicial")
+cols = (txt.general()[20], txt.products()[0], txt.products()[1], txt.products()[2])
+
 
 def close():
     root.destroy()
+    connect.close()
+
 
 def load_data(x):
-    match x:
-        case 1:
-            cursor.execute("SELECT ID_Products, brand, model, initial_cost FROM products")
-            db_data = cursor.fetchall()
+    query_map = {1: txt.queries()[4], 2: txt.queries()[5]}
+    cursor.execute(query_map.get(x))
+    db_data = cursor.fetchall()
 
-
-            for col_marca in cols:
-                treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
-                treeview.column(col_marca, anchor=tk.CENTER)
-
-        case 2:
-            cursor.execute("""SELECT ID_Products, brand, model, initial_cost
-                            FROM products ORDER BY ID_Products DESC LIMIT 1;""")
-            db_data = cursor.fetchall()
+    if x == 1:
+        for col_marca in cols:
+            treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
+            treeview.column(col_marca, anchor=tk.CENTER)
 
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
 
+
 def insert_row():
-    columns = []
-    values = []
-    brand = brand_entry.get()
-    model = model_entry.get()
-    cost = cost_entry.get()
-    
-    if (brand_entry.get()) not in cols:
-        columns.append('brand')
-        values.append(brand)
-    
-    if (model_entry.get()) not in cols:
-        columns.append('model')
-        values.append(model)
-    
-    columns.append('initial_cost')
-    values.append(cost)
-    
-    # Validación de campos vacíos
-    if not all([brand, model, cost]):
-        messagebox.showwarning("Advertencia", "Todos los campos son obligatorios")
-        return 0
-    
+    columns, values = [], []
+    brand, model, cost = brand_entry.get(), model_entry.get(), cost_entry.get()
+
+    if brand not in cols:
+        columns.append(txt.products()[3])
+        values.append(brand.strip().capitalize())
+
+    if model not in cols:
+        columns.append(txt.products()[4])
+        values.append(model.upper().strip())
+
+    try:
+        if cost not in cols:
+            columns.append(txt.products()[5])
+            values.append(float(cost))
+    except ValueError:
+        messagebox.showerror(txt.general()[28], txt.products()[8])
+        return
+
+    product_name = f"{brand} {model}"
+    cursor.execute(txt.queries()[6])
+    product_data = cursor.fetchall()
+    if any(entry[0] == product_name for entry in product_data):
+        messagebox.showwarning(txt.general()[27], txt.products()[7])
+        return
+
     query = f"INSERT INTO products ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
     cursor.execute(query, values)
     connect.commit()
     for i in range(1, 4):
-        reset_entries(i)  # Reiniciar los campos
+        reset_entries(i)
     load_data(2)
+
 
 def reset_entries(x):
     match x:
         case 1:
             brand_entry.delete(0, "")
-            brand_entry.insert(0, "Marca")
+            brand_entry.insert(0, txt.products()[0])
             
         case 2:
             model_entry.delete(0, "")
-            model_entry.insert(0, "Modelo")
+            model_entry.insert(0, txt.products()[1])
         
         case 3:
             cost_entry.delete(0, "")
-            cost_entry.insert(0, "Costo Inicial")
+            cost_entry.insert(0, txt.products()[2])
 
 
 def keep_used():
-    if brand_entry.get() == "":
+    if brand_entry.get().strip() == "":
         reset_entries(1)
-
-    if model_entry.get() == "":
+    if model_entry.get().strip() == "":
         reset_entries(2)
-
-    if cost_entry.get() == "":
+    if cost_entry.get().strip() == "":
         reset_entries(3)
+
 
 def clear_entry(event, entry, default_text):
     if entry.get() == default_text:
         entry.delete(0, tk.END)
 
-# Función para centrar la ventana en la pantalla, pero 37px más abajo
-def center_window(window, width=800, height=600):
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
+
+def center_window(window, width, height):
+    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
     x = (screen_width // 2) - (width // 2)
-    y = (screen_height // 2) - (height // 2) + 37  # Mueve la ventana 37px hacia abajo
+    y = (screen_height // 2) - (height // 2) + 37
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 root = tk.Tk()
-
-# Ocultar la barra superior (title bar)
 root.overrideredirect(True)
-
-# Centrar la ventana en la pantalla y moverla 37px hacia abajo
 center_window(root, 1360, 550)
 
 style = ttk.Style(root)
 theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call('source', theme_path)
-style.theme_use("forest-dark")
+root.tk.call(txt.general()[15], theme_path)
+style.theme_use(txt.general()[16])
 
 frame = ttk.Frame(root)
 frame.pack()
 
-widgets_frame = ttk.LabelFrame(frame, text="Datos del Producto")
+widgets_frame = ttk.LabelFrame(frame, text=txt.products()[6])
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
-# Entradas de texto
-brand_entry = ttk.Entry(widgets_frame)
-brand_entry.insert(0, "Marca")
-brand_entry.bind("<FocusIn>", lambda e: clear_entry(e, brand_entry, "Marca"))
-brand_entry.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="ew")
-brand_entry.bind("<FocusOut>", lambda e: keep_used())
+entries = [
+    (brand_entry := ttk.Entry(widgets_frame), txt.products()[0]),
+    (model_entry := ttk.Entry(widgets_frame), txt.products()[1]),
+    (cost_entry := ttk.Entry(widgets_frame), txt.products()[2])
+]
 
-model_entry = ttk.Entry(widgets_frame)
-model_entry.insert(0, "Modelo")
-model_entry.bind("<FocusIn>", lambda e: clear_entry(e, model_entry, "Modelo"))
-model_entry.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="ew")
-model_entry.bind("<FocusOut>", lambda e: keep_used())
-
-cost_entry = ttk.Entry(widgets_frame)
-cost_entry.insert(0, "Costo Inicial")
-cost_entry.bind("<FocusIn>", lambda e: clear_entry(e, cost_entry, "Costo Inicial"))
-cost_entry.grid(row=2, column=0, padx=5, pady=(0, 5), sticky="ew")
-cost_entry.bind("<FocusOut>", lambda e: keep_used())
+for i, (entry, default_text) in enumerate(entries):
+    entry.insert(0, default_text)
+    entry.bind(txt.general()[21], lambda e, entry=entry, dt=default_text: clear_entry(e, entry, dt))
+    entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=txt.general()[22])
+    entry.bind(txt.general()[23], lambda e: keep_used())
 
 separator = ttk.Separator(widgets_frame)
-separator.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+separator.grid(row=3, column=0, padx=10, pady=10, sticky=txt.general()[22])
 
-def on_enter(event):
-    button.invoke()
+button = ttk.Button(widgets_frame, text=txt.general()[24], command=insert_row)
+button.grid(row=4, column=0, padx=5, pady=(0, 5), sticky=txt.general()[26])
 
-def on_escape(event):
-    button_close.invoke()
-
-root.bind('<Return>', on_enter)
-
-root.bind('<Escape>', on_escape)
-
-button = ttk.Button(widgets_frame, text="Agregar", command=insert_row)
-button.grid(row=9, column=0, padx=5, pady=(0, 5), sticky="nsew")
-
-button_close = ttk.Button(widgets_frame, text="Cerrar", command=close)
-button_close.grid(row=10, column=0, padx=5, pady=(0, 5), sticky="nsew")
+button_close = ttk.Button(widgets_frame, text=txt.general()[25], command=close)
+button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=txt.general()[26])
 
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
-treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side="right", fill="y")
 
-treeview = ttk.Treeview(treeFrame, show="headings",
-    yscrollcommand=treeScroll.set, columns=cols, height=23)
-treeview.column("ID", width=50)
-treeview.column("Marca", width=292)
-treeview.column("Modelo", width=296)
-treeview.column("Costo Inicial", width=292)
+treeScroll = ttk.Scrollbar(treeFrame)
+treeScroll.pack(side=txt.general()[17], fill=txt.general()[18])
+
+treeview = ttk.Treeview(treeFrame, show=txt.general()[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
+for col, width in zip(cols, [50, 292, 296, 292]):
+    treeview.column(col, width=width)
+
 treeview.pack()
 treeScroll.config(command=treeview.yview)
+
+root.bind(txt.general()[5], lambda e: button.invoke())
+root.bind(txt.general()[14], lambda e: button_close.invoke())
 
 load_data(1)
 root.mainloop()

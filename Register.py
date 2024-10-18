@@ -3,7 +3,9 @@ from tkinter import Tk, Canvas, Entry, Button, PhotoImage, messagebox
 from pathlib import Path
 from getpath import getpath as gp
 from users import users
+from strings import strings as txt
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 
 window = Tk()
@@ -21,11 +23,11 @@ def relative_to_assets(path: str) -> Path:
 def user_signup():
     if users.check(user_input.get(), mail_input.get()) is False:
         if users.register(user_input.get(), password_input.get(), mail_input.get()) is True:
-            messagebox.showinfo("Registro exitoso", "Cuenta registrada con exito.")
+            messagebox.showinfo(txt.register()[0], txt.register()[1])
             window.destroy()
-            gp.vxl("Login")
+            gp.vxl(txt.register()[2])
     else:
-        messagebox.showerror("ERROR","Este usuario ya se encuentra registrado.")
+        messagebox.showerror(txt.general()[28], txt.register()[4])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
@@ -45,7 +47,7 @@ window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
 
 canvas = Canvas(
     window,
-    bg = "#191919",
+    bg = txt.general()[0],
     height = 480,
     width = 300,
     bd = 0,
@@ -57,7 +59,7 @@ canvas.place(x = 0, y = 0)
 
 # --- Entradas de texto ---
 data_image = PhotoImage(
-    file=relative_to_assets("input.png"))
+    file=relative_to_assets(txt.general()[1]))
 
 mail_bg = canvas.create_image(
     150.0,
@@ -66,10 +68,10 @@ mail_bg = canvas.create_image(
 
 mail_input = Entry(
     bd=0,
-    bg="#D9D9D9",
-    fg="#000716",
+    bg=txt.general()[2],
+    fg=txt.general()[3],
     highlightthickness=0,
-    font=("Montserrat Regular",12))
+    font=(txt.general()[4],12))
 
 mail_input.place(
     x=46.0,
@@ -85,10 +87,10 @@ user_bg = canvas.create_image(
 
 user_input = Entry(
     bd=0,
-    bg="#D9D9D9",
-    fg="#000716",
+    bg=txt.general()[2],
+    fg=txt.general()[3],
     highlightthickness=0,
-    font=("Montserrat Regular",12))
+    font=(txt.general()[4],12))
 
 user_input.place(
     x=46.0,
@@ -104,11 +106,11 @@ password_bg = canvas.create_image(
 
 password_input = Entry(
     bd=0,
-    bg="#D9D9D9",
-    fg="#000716",
+    bg=txt.general()[2],
+    fg=txt.general()[3],
     highlightthickness=0,
-    font=("Montserrat Regular",12),
-    show="●")
+    font=(txt.general()[4],12),
+    show=txt.general()[6])
 
 password_input.place(
     x=46.0,
@@ -120,14 +122,14 @@ password_input.place(
 
 # --- Botones ---
 exit_image = PhotoImage(
-    file=relative_to_assets("exit.png"))
+    file=relative_to_assets(txt.general()[7]))
 
 exit_button = Button(
     image=exit_image,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: window.destroy(),
-    relief="flat")
+    relief=txt.register()[5])
 
 exit_button.place(
     x=268.0,
@@ -137,14 +139,14 @@ exit_button.place(
 
 
 sign_up_image = PhotoImage(
-    file=relative_to_assets("sign_up.png"))
+    file=relative_to_assets(txt.general()[8]))
 
 sign_up_button = Button(
     image=sign_up_image,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: user_signup(),
-    relief="flat")
+    relief=txt.register()[5])
 
 sign_up_button.place(
     x=71.0,
@@ -158,33 +160,33 @@ sign_up_button.place(
 canvas.create_text(
     41.0,
     249.0,
-    anchor="nw",
-    text="Contraseña",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1))
+    anchor=txt.general()[9],
+    text=txt.general()[12],
+    fill=txt.general()[11],
+    font=(txt.general()[4], 18 * -1))
 
 canvas.create_text(
     41.0,
     159.0,
-    anchor="nw",
-    text="Usuario",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1))
+    anchor=txt.general()[9],
+    text=txt.general()[10],
+    fill=txt.general()[11],
+    font=(txt.general()[4], 18 * -1))
 
 canvas.create_text(
     41.0,
     69.0,
-    anchor="nw",
-    text="Correo",
-    fill="#FFFFFF",
-    font=("Montserrat Regular", 18 * -1))
+    anchor=txt.general()[9],
+    text=txt.register()[6],
+    fill=txt.general()[11],
+    font=(txt.general()[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
 def on_enter(event):
     sign_up_button.invoke()
 
-window.bind('<Return>', on_enter)
+window.bind(txt.general()[5], on_enter)
 
 window.resizable(False, False)
 window.mainloop()
