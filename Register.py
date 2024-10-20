@@ -8,9 +8,6 @@ from strings import strings as txt
 
 
 
-window = Tk()
-
-
 # --- Acceso a directorios ---
 PATH = gp.getPath()
 
@@ -25,25 +22,22 @@ def user_signup():
         if users.register(user_input.get(), password_input.get(), mail_input.get()) is True:
             messagebox.showinfo(txt.register()[0], txt.register()[1])
             window.destroy()
-            gp.vxl(txt.register()[2])
+            gp.vxl(txt.general()[29])
     else:
-        messagebox.showerror(txt.general()[28], txt.register()[4])
+        messagebox.showerror(txt.general()[28], txt.register()[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
 # --- Configuración de ventana ---
+def center_window(window, width, height):
+    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
+    x_cordinate = (screen_width//2) - (width//2)
+    y_cordinate = (screen_height//2) - (height//2)
+    window.geometry(f"{width}x{height}+{x_cordinate}+{y_cordinate}")
+
+window = Tk()
 window.overrideredirect(True)
-
-window_width = 300
-window_height = 480
-
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-
-x_cordinate = int((screen_width/2) - (window_width/2))
-y_cordinate = int((screen_height/2) - (window_height/2))
-
-window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
+center_window(window, 300, 480)
 
 canvas = Canvas(
     window,
@@ -79,7 +73,6 @@ mail_input.place(
     width=208.0,
     height=38.0)
 
-
 user_bg = canvas.create_image(
     150.0,
     202.0,
@@ -90,14 +83,13 @@ user_input = Entry(
     bg=txt.general()[2],
     fg=txt.general()[3],
     highlightthickness=0,
-    font=(txt.general()[4],12))
+    font=(txt.general()[4], 12))
 
 user_input.place(
     x=46.0,
     y=182.0,
     width=208.0,
     height=38.0)
-
 
 password_bg = canvas.create_image(
     150.0,
@@ -109,7 +101,7 @@ password_input = Entry(
     bg=txt.general()[2],
     fg=txt.general()[3],
     highlightthickness=0,
-    font=(txt.general()[4],12),
+    font=(txt.general()[4], 12),
     show=txt.general()[6])
 
 password_input.place(
@@ -129,14 +121,13 @@ exit_button = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: window.destroy(),
-    relief=txt.register()[5])
+    relief=txt.register()[3])
 
 exit_button.place(
     x=268.0,
     y=13.0,
     width=19.0,
     height=19.0)
-
 
 sign_up_image = PhotoImage(
     file=relative_to_assets(txt.general()[8]))
@@ -146,7 +137,7 @@ sign_up_button = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: user_signup(),
-    relief=txt.register()[5])
+    relief=txt.register()[3])
 
 sign_up_button.place(
     x=71.0,
@@ -177,16 +168,12 @@ canvas.create_text(
     41.0,
     69.0,
     anchor=txt.general()[9],
-    text=txt.register()[6],
+    text=txt.register()[4],
     fill=txt.general()[11],
     font=(txt.general()[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
-def on_enter(event):
-    sign_up_button.invoke()
-
-window.bind(txt.general()[5], on_enter)
+window.bind(txt.general()[5], lambda e: sign_up_button.invoke())
 
 window.resizable(False, False)
 window.mainloop()

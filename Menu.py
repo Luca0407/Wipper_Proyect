@@ -4,9 +4,9 @@ from tkinter import Tk, Canvas, Button, PhotoImage, messagebox
 from getpath import getpath as gp
 from users import users
 from time import strftime
+from strings import strings as txt
 import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 
 
 window = Tk()
@@ -14,7 +14,7 @@ PATH = gp.getPath()
 username = users.current_user()
 if username is None:
     window.destroy()
-    gp.vxl("Login")
+    gp.vxl(txt.general()[30])
     sys.exit()
 
 
@@ -25,11 +25,10 @@ def relative_to_assets(path: str) -> Path:
 # --- Movimiento de la ventana ---
 def start_move(event):
     if event.y <= 30:
-        window.x = event.x
-        window.y = event.y
+        window.x, window.y = event.x, event.y
     else:
-        window.x = None
-        window.y = None
+        window.x, window.y = None, None
+
 
 def do_move(event):
     if window.x is not None and window.y is not None:
@@ -60,19 +59,14 @@ def logout():
     gp.vxl("Login")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+def center_window(window, width, height):
+    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
 window.overrideredirect(True)
-
-# --Centra y posiciona la ventana en pantalla--
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-
-window_width = 1360
-window_height = 728
-
-x_cordinate = int((screen_width/2) - (window_width/2))
-y_cordinate = int((screen_height/2) - (window_height/2))
-
-window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
+center_window(window, 1360, 728)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Carga las imágenes de los botones normales y clickeados--
@@ -86,24 +80,23 @@ products_normal = PhotoImage(file=relative_to_assets("products.png"))
 products_clicked = PhotoImage(file=relative_to_assets("products_clicked.png"))
 
 # Variables para mantener el estado del botón actual
-current_button = None
-current_image = None
+current_button, current_image = None, None
 
 def change_button_image(button, normal_image, clicked_image):
     global current_button, current_image
-    
+
     # Cambia la imagen del botón clickeado
     button.config(image=clicked_image)
-    
+
     # Si hay un botón actualmente seleccionado, reestablece su imagen
     if current_button and current_button != button:
         current_button.config(image=current_image)
-    
+
     # Actualiza el botón actual
     current_button = button
     current_image = normal_image  # Guarda la imagen normal del botón actual
-
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 # --Crea y posiciona la ventana--
 canvas = Canvas(
@@ -117,6 +110,8 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
 # --Crea y posiciona el fondo--
 bg = PhotoImage(
     file=relative_to_assets("background.png"))
@@ -126,6 +121,7 @@ bg_menu = canvas.create_image(
     404.0,
     image=bg)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 # --Crea y posiciona el logo decorativo (transparente)--
 logo_watermark = PhotoImage(
@@ -138,6 +134,7 @@ background_logo = canvas.create_image(
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 # --Crea y posiciona la barra de titulo--
 title_bar = PhotoImage(
     file=relative_to_assets("title_bar.png"))
@@ -148,6 +145,7 @@ title = canvas.create_image(
     image=title_bar
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 # --Crea y posiciona la barra de menú--
 menu_bar = PhotoImage(
@@ -160,6 +158,7 @@ menu = canvas.create_image(
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 # --Crea y posiciona la barra de estado--
 status_bar = PhotoImage(
     file=relative_to_assets("status_bar.png"))
@@ -171,6 +170,7 @@ status = canvas.create_image(
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 # --Crea y posiciona el icono del logo--
 logo_icon = PhotoImage(
     file=relative_to_assets("logo_icon.png"))
@@ -181,6 +181,7 @@ logo = canvas.create_image(
     image=logo_icon
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 # --Crea y posiciona el icono del usuario--
 user_icon = PhotoImage(
@@ -388,7 +389,7 @@ canvas.create_text(
     14.0,
     657.0,
     anchor="nw",
-    text="v0.8.1.1",
+    text="v0.8.3",
     fill="#555454",
     font=("Montserrat Bold", 10 * -1)
 )
@@ -433,24 +434,16 @@ canvas.create_text(
     font=("Montserrat Medium", 13 * -1)
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 # --Se llama a las funciones para interactuar con la ventana--
 canvas.bind("<Button-1>", start_move)
 canvas.bind("<B1-Motion>", do_move)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-# --Funciones para teclas rápidas
-def press_clients(event):
-    clients.invoke()  # Simula el clic en el botón de clientes
-
-def press_products(event):
-    products.invoke()  # Simula el clic en el botón de productos
-
-def press_records(event):
-    records.invoke()  # Simula el clic en el botón de registros
 
 # Asignar las teclas F2, F3 y F4 a sus respectivas funciones
-window.bind("<F2>", press_clients)
-window.bind("<F3>", press_products)
-window.bind("<F4>", press_records)
+window.bind("<F2>", lambda e: clients.invoke())
+window.bind("<F3>", lambda e: products.invoke())
+window.bind("<F4>", lambda e: records.invoke())
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).

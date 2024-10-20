@@ -16,7 +16,7 @@ def goto_window(x):
 
 username = users.current_user()
 if username is not None:
-    goto_window(txt.login()[0])
+    goto_window(txt.general()[29])
     sys.exit()
 
 
@@ -30,29 +30,25 @@ def relative_to_assets(path: str) -> Path:
 
 # --- Gestión de usuarios ---
 def new_user():
-    goto_window(txt.login()[1])
+    goto_window(txt.login()[0])
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        goto_window(txt.login()[0])
+        goto_window(txt.general()[29])
     else:
-        messagebox.showerror(txt.login()[2], txt.login()[3])
+        messagebox.showerror(txt.login()[1], txt.login()[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
 # --- Configuración de ventana ---
+def center_window(window, width, height):
+    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2)
+    window.geometry(f"{width}x{height}+{x}+{y}")
+
 window.overrideredirect(True)
-
-window_width = 300
-window_height = 480
-
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-
-x_cordinate = int((screen_width/2) - (window_width/2))
-y_cordinate = int((screen_height/2) - (window_height/2))
-
-window.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
+center_window(window, 300, 480)
 
 canvas = Canvas(
     window,
@@ -112,7 +108,7 @@ pass_input.place(
 
 # --- Logo en pantalla ---
 logo_image = PhotoImage(
-    file=relative_to_assets(txt.login()[4]))
+    file=relative_to_assets(txt.login()[3]))
 
 logo = canvas.create_image(
     150.0,
@@ -139,7 +135,7 @@ sign_up_button.place(
 
 
 login_image = PhotoImage(
-    file=relative_to_assets(txt.login()[5]))
+    file=relative_to_assets(txt.login()[4]))
 
 login_button = Button(
     image=login_image,
@@ -155,13 +151,13 @@ login_button.place(
 
 
 forgot_pass_image = PhotoImage(
-    file=relative_to_assets(txt.login()[6]))
+    file=relative_to_assets(txt.login()[5]))
 
 forgot_pass_button = Button(
     image=forgot_pass_image,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print(txt.login()[7]))# TO_DO
+    command=lambda: print(txt.login()[6]))# TO_DO
 
 forgot_pass_button.place(
     x=74.0,
