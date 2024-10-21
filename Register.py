@@ -121,7 +121,7 @@ exit_button = Button(
     borderwidth=0,
     highlightthickness=0,
     command=lambda: window.destroy(),
-    relief=txt.register()[3])
+    relief=txt.general()[31])
 
 exit_button.place(
     x=268.0,

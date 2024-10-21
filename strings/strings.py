@@ -5,7 +5,7 @@ def general():
                         'source',  "forest-dark",  "right", "y",  "headings",
                         "ID", "<FocusIn>", "ew", "<FocusOut>", "Agregar",
                         "Cerrar", "nsew", "Advertencia", "ERROR", "Menu",
-                        "Login"]
+                        "Login", "flat"]
     return general_strings
 
 
@@ -51,13 +51,12 @@ def queries():
 
 def login():
     login_strings = ["Register", "Ingreso incorrecto", "Usuario o contraseña incorrectos.", "logo.png",
-                    "login.png", "forgot_pass.png", "forgot_pass_button clicked"]
+                    "login.png", "forgot_pass.png"]
     return login_strings
 
 
 def register():
-    register_strings = ["Registro exitoso", "Cuenta registrada con exito.", "Este usuario ya se encuentra registrado.", "flat",
-                        "Correo"]
+    register_strings = ["Registro exitoso", "Cuenta registrada con exito.", "Este usuario ya se encuentra registrado.", "Correo"]
     return register_strings
 
 
@@ -80,5 +79,12 @@ def products():
     return products_strings
 
 def menu():
-    menu_strings = []
+    menu_strings = ['%H:%M', '%d/%m/%Y', "clients.png", "clients_clicked.png", "records.png",
+                    "records_clicked.png", "products.png", "products_clicked.png", "ridge", "background.png",
+                    "watermark.png", "title_bar.png", "menu_bar.png", "status_bar.png", "logo_icon.png",
+                    "user_icon.png", "date_icon.png", "time_icon.png", "minimize.png","close.png",
+                    "logout.png", "Records", "commerce.png", "No disponible", "Esta funcionalidad solo es accesible en la versión completa.",
+                    "Clients", "Products", "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold",
+                    "Teclas Rápidas", "v0.8.3.1", "Wipper Insumos", "Montserrat Medium", "<Button-1>",
+                    "<B1-Motion>", "<F2>", "<F3>", "<F4>"]
     return menu_strings
