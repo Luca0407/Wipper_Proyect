@@ -6,13 +6,15 @@ import sqlite3
 from strings import strings as txt
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 
-
+general = txt.general()
+clients = txt.clients()
+queries = txt.queries()
 
 # --- x ---
-connect = sqlite3.connect(txt.general()[13])
+connect = sqlite3.connect(general[13])
 cursor = connect.cursor()
 init_path = gp.getPath()
-cols = (txt.general()[20], txt.clients()[0], txt.clients()[1], txt.clients()[2])
+cols = (general[20], clients[0], clients[1], clients[2])
 
 
 def close():
@@ -21,7 +23,7 @@ def close():
 
 
 def load_data(x):
-    query_map = {1: txt.queries()[1] , 2: txt.queries()[2]}
+    query_map = {1: queries[1] , 2: queries[2]}
     cursor.execute(query_map.get(x))
     db_data = cursor.fetchall()
     
@@ -38,24 +40,24 @@ def insert_row():
     name, surname, phone = name_entry.get(), surname_entry.get(), phone_entry.get()
 
     if (name_entry.get()) not in cols:
-        columns.append(txt.clients()[3])
+        columns.append(clients[3])
         values.append(name.strip().capitalize())
 
     if (surname_entry.get()) not in cols:
-        columns.append(txt.clients()[4])
+        columns.append(clients[4])
         values.append(surname.strip().capitalize())
 
     try:
-        columns.append(txt.clients()[5])
+        columns.append(clients[5])
         values.append(int(phone))
     except ValueError:
-        messagebox.showerror(txt.general()[28], txt.clients()[8])
+        messagebox.showerror(general[28], clients[8])
         return
 
-    cursor.execute(txt.queries()[3])
+    cursor.execute(queries[3])
     client_data = cursor.fetchall()
     if any(entry[0] == phone for entry in client_data): 
-            messagebox.showwarning(txt.general()[27], txt.clients()[6])
+            messagebox.showwarning(general[27], clients[6])
             return
 
     query = f"INSERT INTO clients ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
@@ -70,15 +72,15 @@ def reset_entries(x):
     match x:
         case 1:
             name_entry.delete(0, "")
-            name_entry.insert(0, txt.clients()[0])
+            name_entry.insert(0, clients[0])
             
         case 2:
             surname_entry.delete(0, "")
-            surname_entry.insert(0, txt.clients()[1])
+            surname_entry.insert(0, clients[1])
         
         case 3:
             phone_entry.delete(0, "")
-            phone_entry.insert(0, txt.clients()[2])
+            phone_entry.insert(0, clients[2])
 
 
 def keep_used():
@@ -107,51 +109,51 @@ center_window(root, 1360, 550)
 
 style = ttk.Style(root)
 theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call(txt.general()[15], theme_path)
-style.theme_use(txt.general()[16])
+root.tk.call(general[15], theme_path)
+style.theme_use(general[16])
 
 frame = ttk.Frame(root)
 frame.pack()
 
-widgets_frame = ttk.LabelFrame(frame, text=txt.clients()[7])
+widgets_frame = ttk.LabelFrame(frame, text=clients[7])
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
 entries = [
-    (name_entry := ttk.Entry(widgets_frame), txt.clients()[0]),
-    (surname_entry := ttk.Entry(widgets_frame), txt.clients()[1]),
-    (phone_entry := ttk.Entry(widgets_frame), txt.clients()[2]),
+    (name_entry := ttk.Entry(widgets_frame), clients[0]),
+    (surname_entry := ttk.Entry(widgets_frame), clients[1]),
+    (phone_entry := ttk.Entry(widgets_frame), clients[2]),
 ]
 
 for i, (entry, default_text) in enumerate(entries):
     entry.insert(0, default_text)
-    entry.bind(txt.general()[21], lambda e, entry=entry, dt=default_text: clear_entry(e, entry, dt))
-    entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=txt.general()[22])
-    entry.bind(txt.general()[23], lambda e: keep_used())
+    entry.bind(general[21], lambda e, entry=entry, dt=default_text: clear_entry(e, entry, dt))
+    entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=general[22])
+    entry.bind(general[23], lambda e: keep_used())
 
 separator = ttk.Separator(widgets_frame)
-separator.grid(row=4, column=0, padx=10, pady=10, sticky=txt.general()[22])
+separator.grid(row=4, column=0, padx=10, pady=10, sticky=general[22])
 
-button = ttk.Button(widgets_frame, text=txt.general()[24], command=insert_row)
-button.grid(row=9, column=0, padx=5, pady=(0, 5), sticky=txt.general()[26])
+button = ttk.Button(widgets_frame, text=general[24], command=insert_row)
+button.grid(row=9, column=0, padx=5, pady=(0, 5), sticky=general[26])
 
-button_close = ttk.Button(widgets_frame, text=txt.general()[25], command=close)
-button_close.grid(row=10, column=0, padx=5, pady=(0, 5), sticky=txt.general()[26])
+button_close = ttk.Button(widgets_frame, text=general[25], command=close)
+button_close.grid(row=10, column=0, padx=5, pady=(0, 5), sticky=general[26])
 
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
 
 treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side=txt.general()[17], fill=txt.general()[18])
+treeScroll.pack(side=general[17], fill=general[18])
 
-treeview = ttk.Treeview(treeFrame, show=txt.general()[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
+treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
 for col, width in zip(cols, [30, 300, 300, 300]):
     treeview.column(col, width=width)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-root.bind(txt.general()[5], lambda e: button.invoke())
-root.bind(txt.general()[14], lambda e: button_close.invoke())
+root.bind(general[5], lambda e: button.invoke())
+root.bind(general[14], lambda e: button_close.invoke())
 
 load_data(1)
 root.mainloop()

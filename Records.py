@@ -6,15 +6,17 @@ import sqlite3
 from strings import strings as txt
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
+general = txt.general()
+records = txt.records()
+queries = txt.queries()
 
 # --- x ---
-connect = sqlite3.connect(txt.general()[13])
+connect = sqlite3.connect(general[13])
 cursor = connect.cursor()
 init_path = gp.getPath()
-cols = (txt.records()[0], txt.records()[1], txt.records()[2],
-        txt.records()[3], txt.records()[4], txt.records()[5],
-        txt.records()[6], txt.records()[7], txt.records()[8])
+cols = (records[0], records[1], records[2],
+        records[3], records[4], records[5],
+        records[6], records[7], records[8])
 
 
 def close():
@@ -23,7 +25,7 @@ def close():
 
 
 def load_data(x):
-    query_map = {1: txt.queries()[0], 2: txt.queries()[7]}
+    query_map = {1: queries[0], 2: queries[7]}
     cursor.execute(query_map.get(x))
     db_data = cursor.fetchall()
 
@@ -48,8 +50,8 @@ center_window(root, 1360, 550)
 
 style = ttk.Style(root)
 theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call(txt.general()[15], theme_path)
-style.theme_use(txt.general()[16])
+root.tk.call(general[15], theme_path)
+style.theme_use(general[16])
 
 frame = ttk.Frame(root)
 frame.pack()
@@ -57,29 +59,29 @@ frame.pack()
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side=txt.general()[17], fill=txt.general()[18])
-widgets_frame = ttk.LabelFrame(frame, text=txt.records()[9])
+treeScroll.pack(side=general[17], fill=general[18])
+widgets_frame = ttk.LabelFrame(frame, text=records[9])
 widgets_frame.grid(row=1, column=1, padx=1, pady=0)
 
-button_close = ttk.Button(widgets_frame, text=txt.general()[25], command=close)
-button_close.grid(row=0, column=2, padx=(20, 5), pady=(0, 5), sticky=txt.records()[10])
+button_close = ttk.Button(widgets_frame, text=general[25], command=close)
+button_close.grid(row=0, column=2, padx=(20, 5), pady=(0, 5), sticky=records[10])
 
 
 # --Crea y posiciona --
 def on_enter(event):
     button_mod.invoke()
 
-button_mod = ttk.Button(widgets_frame, text=txt.records()[11], command=print("modificando"))
-button_mod.grid(row=0, column=0, padx=(5, 20), pady=(0, 5), sticky=txt.records()[10])
+button_mod = ttk.Button(widgets_frame, text=records[11], command=print("modificando"))
+button_mod.grid(row=0, column=0, padx=(5, 20), pady=(0, 5), sticky=records[10])
 
-button_del = ttk.Button(widgets_frame, text=txt.records()[12], command=print("borrando"))
-button_del.grid(row=0, column=1, padx=50, pady=(0, 5), sticky=txt.records()[10])
+button_del = ttk.Button(widgets_frame, text=records[12], command=print("borrando"))
+button_del.grid(row=0, column=1, padx=50, pady=(0, 5), sticky=records[10])
 
-root.bind(txt.general()[14], lambda e: button_close.invoke())
-root.bind(txt.general()[5], lambda e: button_mod.invoke())
+root.bind(general[14], lambda e: button_close.invoke())
+root.bind(general[5], lambda e: button_mod.invoke())
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 
-treeview = ttk.Treeview(treeFrame, show=txt.general()[19], yscrollcommand=treeScroll.set, columns=cols, height=20)
+treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=20)
 
 for col, width in zip(cols, [70, 190, 200, 190, 70, 150, 180, 180, 70]):
     treeview.column(col, width=width)

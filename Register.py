@@ -6,7 +6,8 @@ from users import users
 from strings import strings as txt
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
+general = txt.general()
+register = txt.register()
 
 # --- Acceso a directorios ---
 PATH = gp.getPath()
@@ -20,11 +21,11 @@ def relative_to_assets(path: str) -> Path:
 def user_signup():
     if users.check(user_input.get(), mail_input.get()) is False:
         if users.register(user_input.get(), password_input.get(), mail_input.get()) is True:
-            messagebox.showinfo(txt.register()[0], txt.register()[1])
+            messagebox.showinfo(register[0], register[1])
             window.destroy()
-            gp.vxl(txt.general()[29])
+            gp.vxl(general[29])
     else:
-        messagebox.showerror(txt.general()[28], txt.register()[2])
+        messagebox.showerror(general[28], register[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
@@ -41,7 +42,7 @@ center_window(window, 300, 480)
 
 canvas = Canvas(
     window,
-    bg = txt.general()[0],
+    bg = general[0],
     height = 480,
     width = 300,
     bd = 0,
@@ -53,7 +54,7 @@ canvas.place(x = 0, y = 0)
 
 # --- Entradas de texto ---
 data_image = PhotoImage(
-    file=relative_to_assets(txt.general()[1]))
+    file=relative_to_assets(general[1]))
 
 mail_bg = canvas.create_image(
     150.0,
@@ -62,10 +63,10 @@ mail_bg = canvas.create_image(
 
 mail_input = Entry(
     bd=0,
-    bg=txt.general()[2],
-    fg=txt.general()[3],
+    bg=general[2],
+    fg=general[3],
     highlightthickness=0,
-    font=(txt.general()[4],12))
+    font=(general[4],12))
 
 mail_input.place(
     x=46.0,
@@ -80,10 +81,10 @@ user_bg = canvas.create_image(
 
 user_input = Entry(
     bd=0,
-    bg=txt.general()[2],
-    fg=txt.general()[3],
+    bg=general[2],
+    fg=general[3],
     highlightthickness=0,
-    font=(txt.general()[4], 12))
+    font=(general[4], 12))
 
 user_input.place(
     x=46.0,
@@ -98,11 +99,11 @@ password_bg = canvas.create_image(
 
 password_input = Entry(
     bd=0,
-    bg=txt.general()[2],
-    fg=txt.general()[3],
+    bg=general[2],
+    fg=general[3],
     highlightthickness=0,
-    font=(txt.general()[4], 12),
-    show=txt.general()[6])
+    font=(general[4], 12),
+    show=general[6])
 
 password_input.place(
     x=46.0,
@@ -114,14 +115,14 @@ password_input.place(
 
 # --- Botones ---
 exit_image = PhotoImage(
-    file=relative_to_assets(txt.general()[7]))
+    file=relative_to_assets(general[7]))
 
 exit_button = Button(
     image=exit_image,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: window.destroy(),
-    relief=txt.general()[31])
+    relief=general[31])
 
 exit_button.place(
     x=268.0,
@@ -130,14 +131,14 @@ exit_button.place(
     height=19.0)
 
 sign_up_image = PhotoImage(
-    file=relative_to_assets(txt.general()[8]))
+    file=relative_to_assets(general[8]))
 
 sign_up_button = Button(
     image=sign_up_image,
     borderwidth=0,
     highlightthickness=0,
     command=lambda: user_signup(),
-    relief=txt.register()[3])
+    relief=general[31])
 
 sign_up_button.place(
     x=71.0,
@@ -150,30 +151,32 @@ sign_up_button.place(
 # --- Textos ---
 canvas.create_text(
     41.0,
-    249.0,
-    anchor=txt.general()[9],
-    text=txt.general()[12],
-    fill=txt.general()[11],
-    font=(txt.general()[4], 18 * -1))
+    69.0,
+    anchor=general[9],
+    text=register[3],
+    fill=general[11],
+    font=(general[4], 18 * -1))
+
 
 canvas.create_text(
     41.0,
     159.0,
-    anchor=txt.general()[9],
-    text=txt.general()[10],
-    fill=txt.general()[11],
-    font=(txt.general()[4], 18 * -1))
+    anchor=general[9],
+    text=general[10],
+    fill=general[11],
+    font=(general[4], 18 * -1))
+
 
 canvas.create_text(
     41.0,
-    69.0,
-    anchor=txt.general()[9],
-    text=txt.register()[4],
-    fill=txt.general()[11],
-    font=(txt.general()[4], 18 * -1))
+    249.0,
+    anchor=general[9],
+    text=general[12],
+    fill=general[11],
+    font=(general[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window.bind(txt.general()[5], lambda e: sign_up_button.invoke())
+window.bind(general[5], lambda e: sign_up_button.invoke())
 
 window.resizable(False, False)
 window.mainloop()

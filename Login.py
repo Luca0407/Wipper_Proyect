@@ -8,15 +8,16 @@ from strings import strings as txt
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
+general = txt.general()
+login = txt.login()
 
 username = users.current_user()
 if username is not None:
-    gp.vxl(txt.general()[29])
+    gp.vxl(general[29])
     sys.exit()  # No creamos la ventana si el usuario ya está autenticado
 
 window = Tk()
-general = txt.general()
-login = txt.login()
+
 
 def goto_window(x):
     window.destroy()
@@ -29,13 +30,13 @@ def relative_to_assets(path: str) -> Path:
 
 # --- Gestión de usuarios ---
 def new_user():
-    goto_window(txt.login()[0])
+    goto_window(login[0])
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        goto_window(txt.general()[29])
+        goto_window(general[29])
     else:
-        messagebox.showerror(txt.login()[1], txt.login()[2])
+        messagebox.showerror(login[1], login[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
@@ -110,7 +111,7 @@ user = canvas.create_text(41.0, 161.0, anchor=general[9], text=general[10], fill
 passwd = canvas.create_text(41.0, 251.0, anchor=general[9], text=general[12], fill=general[11], font=(general[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-window.bind(txt.general()[5], lambda e: login_button.invoke())
+window.bind(general[5], lambda e: login_button.invoke())
 
 window.resizable(False, False)  # Fija el tamaño de la ventana en ambas posiciones (x, y).
 window.mainloop()  # Hace que la ventana se mantenga abierta.
