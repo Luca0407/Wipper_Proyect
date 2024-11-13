@@ -8,7 +8,6 @@ from strings import strings as txt
 
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
 general = txt.general()
 login = txt.login()
 
@@ -19,7 +18,6 @@ if username is not None:
 
 window = Tk()
 
-
 def goto_window(x):
     window.destroy()
     gp.vxl(x)
@@ -27,7 +25,6 @@ def goto_window(x):
 def relative_to_assets(path: str) -> Path:
     assets_path = gp.getPath()  # Centralizamos dentro de la función
     return assets_path / Path(path)
-
 
 # --- Gestión de usuarios ---
 def new_user():
@@ -40,7 +37,6 @@ def check_login():
         messagebox.showerror(login[1], login[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
 # --- Configuración de ventana ---
 def center_window(window, width, height):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
@@ -51,19 +47,26 @@ def center_window(window, width, height):
 center_window(window, 300, 480)
 window.overrideredirect(True)
 
+window.geometry("300x480")
+window.configure(bg = "#191919")
+
 # Crear el canvas
 canvas = Canvas(
     window,
-    bg=general[0],
-    height=480,
-    width=300,
-    bd=0,
-    highlightthickness=0
+    bg = "#191919",
+    height = 480,
+    width = 300,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge"
 )
-canvas.place(x=0, y=0)
+canvas.place(x = 0, y = 0)
 
 # --- Entradas de texto ---
 userpass_image = PhotoImage(file=relative_to_assets(general[1]))
+
+def entry_bg(x, y):
+    canvas.create_image(x, y, image=userpass_image)
 
 entry_config = {
     "bd": 0,
@@ -73,9 +76,6 @@ entry_config = {
     "font": (general[4], 11)
 }
 
-def entry_bg(x, y):
-    canvas.create_image(x, y, image=userpass_image)
-
 # Campo de usuario
 entry_bg(150, 204)
 user_input = Entry(**entry_config)
@@ -84,11 +84,14 @@ user_input.place(x=46.0, y=184.0, width=208.0, height=38.0)
 # Campo de contraseña
 entry_bg(150, 294)
 pass_input = Entry(**entry_config, show=general[6])
-pass_input.place(x=46.0, y=274.0, width=208.0, height=38.0)
+pass_input.place(x=46.0, y=274.0, width=170.0, height=38.0)
 
 # --- Logo en pantalla ---
 logo_image = PhotoImage(file=relative_to_assets(login[3]))
 canvas.create_image(150.0, 82.0, image=logo_image)
+
+def entry_bg(x, y):
+    canvas.create_image(x, y, image=userpass_image)
 
 # --- Botones ---
 def create_button(image_path, command, x, y, width, height):
@@ -102,10 +105,61 @@ def create_button(image_path, command, x, y, width, height):
     button.place(x=x, y=y, width=width, height=height)
     return button
 
+image_image_2 = PhotoImage(
+    file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(
+    234.0,
+    294.0,
+    image=image_image_2
+)
+
+button_image_4 = PhotoImage(
+    file=relative_to_assets("button_4.png"))
+button_4 = Button(
+    image=button_image_4,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_4 clicked"),
+    relief="flat"
+)
+button_4.place(
+    x=225.0,
+    y=280.0,
+    width=27.0,
+    height=27.0
+)
+
+image_image_3 = PhotoImage(
+    file=relative_to_assets("image_3.png"))
+image_3 = canvas.create_image(
+    219.0,
+    293.0,
+    image=image_image_3
+)
+
+button_image_6 = PhotoImage(file=relative_to_assets("button_4.png"))
+
+# Estado de visibilidad de la contraseña
+password_visible_1 = False
+
+# Función para el botón 5
+def toggle_password_1():
+    global password_visible_1
+    if password_visible_1:
+        pass_input.config(show="●")
+        button_4.config(image=button_image_4)
+    else:
+        pass_input.config(show="")
+        button_4.config(image=button_image_6)
+    password_visible_1 = not password_visible_1
+
+# Cambia el parámetro `command` de los botones 5 y 7 para que usen las nuevas funciones
+button_4.config(command=toggle_password_1)
+
 signup_button = create_button(general[8], lambda: new_user(), 74.0, 422.0, 152.0, 16.0)
 login_button = create_button(login[4], lambda: check_login(), 71.0, 360.0, 158.0, 48.0)
 forgot_button = create_button(login[5], lambda: print("forgot_pass_button clicked"), 74.0, 331.0, 152.0, 17.0)
-exit_button = create_button(general[7], window.destroy, 268.0, 13.0, 19.0, 19.0)
+exit_button = create_button(general[7], window.destroy, 268.0, 13.0, 22.0, 22.0)
 
 # --- Textos ---
 user = canvas.create_text(41.0, 161.0, anchor=general[9], text=general[10], fill=general[11], font=(general[4], 18 * -1))
