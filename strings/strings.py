@@ -44,8 +44,16 @@ def queries():
                 GROUP BY ID_Services
                 ORDER BY ID_Services
                 DESC
-                LIMIT 1;"""  # 7 actualización de listado en records.
-                ]
+                LIMIT 1;""",  # 7 actualización de listado en records.
+                
+                "INSERT INTO users ('name', 'passwd', 'mail', 'active') VALUES (?, ?, ?, ?)",  # 8 Insertar nuevo usuario.
+                
+                "SELECT name, mail FROM users",  # 9 verificación en users para register.
+                
+                "SELECT name FROM users WHERE active = 1 LIMIT 1",  # 10 identifica al usuario activo.
+                
+                "UPDATE users SET active = 0 WHERE name = ?"  # 11 desmarca al usuario que estaba activo.
+    ]
     return every_query
 
 
@@ -85,6 +93,6 @@ def menu():
                     "user_icon.png", "date_icon.png", "time_icon.png", "minimize.png","close.png",
                     "logout.png", "Records", "commerce.png", "No disponible", "Esta funcionalidad solo es accesible en la versión completa.",
                     "Clients", "Products", "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold",
-                    "Teclas Rápidas", "v0.8.3.1", "Wipper Insumos", "Montserrat Medium", "<Button-1>",
+                    "Teclas Rápidas", "v0.8.3.3", "Wipper Insumos", "Montserrat Medium", "<Button-1>",
                     "<B1-Motion>", "<F2>", "<F3>", "<F4>"]
     return menu_strings

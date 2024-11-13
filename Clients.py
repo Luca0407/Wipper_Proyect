@@ -2,8 +2,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from getpath import getpath as gp
-import sqlite3
 from strings import strings as txt
+from db_manager import db_manager as db
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 
 general = txt.general()
@@ -11,22 +11,18 @@ clients = txt.clients()
 queries = txt.queries()
 
 # --- x ---
-connect = sqlite3.connect(general[13])
-cursor = connect.cursor()
 init_path = gp.getPath()
 cols = (general[20], clients[0], clients[1], clients[2])
 
 
 def close():
     root.destroy()
-    connect.close()
 
 
 def load_data(x):
-    query_map = {1: queries[1] , 2: queries[2]}
-    cursor.execute(query_map.get(x))
-    db_data = cursor.fetchall()
-    
+    query_map = {1: queries[1], 2: queries[2]}
+    db_data = db.fetch_all(query_map.get(x))
+
     if x == 1:
         for col_name in cols:
             treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
@@ -34,6 +30,7 @@ def load_data(x):
 
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
+
 
 def insert_row():
     columns, values = [], []
@@ -54,18 +51,18 @@ def insert_row():
         messagebox.showerror(general[28], clients[8])
         return
 
-    cursor.execute(queries[3])
-    client_data = cursor.fetchall()
+    client_data = db.fetch_all(queries[3])
     if any(entry[0] == phone for entry in client_data): 
-            messagebox.showwarning(general[27], clients[6])
-            return
+        messagebox.showwarning(general[27], clients[6])
+        return
 
     query = f"INSERT INTO clients ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
-    cursor.execute(query, values)
-    connect.commit()
+    db.other_queries(query, values)
+
     for i in range(1, 4):
         reset_entries(i)
     load_data(2)
+
 
 
 def reset_entries(x):

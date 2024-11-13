@@ -44,6 +44,7 @@ def do_move(event):
         window.geometry(f"+{x}+{y}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+
 # --- Fecha y hora ---
 def update_clock_and_date(win, clock_text, date_text):
     current_time = strftime(mainmenu[0])
@@ -54,12 +55,14 @@ def update_clock_and_date(win, clock_text, date_text):
 
     win.after(1000, update_clock_and_date, win, clock_text, date_text)  # Llama de nuevo después de 1 segundo
 
+
 # --- Cierre de sesión ---
 def logout():
     window.destroy()
     users.logout(username)
     gp.vxl(general[30])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 def center_window(window, width, height):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
@@ -80,7 +83,6 @@ records_clicked = PhotoImage(file=relative_to_assets(mainmenu[5]))
 
 products_normal = PhotoImage(file=relative_to_assets(mainmenu[6]))
 products_clicked = PhotoImage(file=relative_to_assets(mainmenu[7]))
-
 current_button, current_image = None, None
 
 def change_button_image(button, normal_image, clicked_image):
