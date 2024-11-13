@@ -4,18 +4,16 @@ from pathlib import Path
 from getpath import getpath as gp
 from users import users
 from strings import strings as txt
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 
 general = txt.general()
 register = txt.register()
 
 # --- Acceso a directorios ---
-PATH = gp.getPath()
-
 def relative_to_assets(path: str) -> Path:
-    return PATH / Path(path)
+    assets_path = gp.getPath()
+    return assets_path / Path(path)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 
 # --- Registro de usuario ---
 def user_signup():
@@ -27,7 +25,6 @@ def user_signup():
     else:
         messagebox.showerror(general[28], register[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 
 # --- Configuración de ventana ---
 def center_window(window, width, height):
@@ -50,7 +47,6 @@ canvas = Canvas(
 
 canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 
 # --- Entradas de texto ---
 data_image = PhotoImage(
@@ -92,6 +88,7 @@ user_input.place(
     width=208.0,
     height=38.0)
 
+
 password_bg = canvas.create_image(
     150.0,
     292.0,
@@ -108,10 +105,60 @@ password_input = Entry(
 password_input.place(
     x=46.0,
     y=272.0,
-    width=208.0,
+    width=165.0,
     height=38.0)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+image_image_1 = PhotoImage(
+    file=relative_to_assets("image_1.png"))
+image_1 = canvas.create_image(
+    234.0,
+    292.0,
+    image=image_image_1
+)
+
+image_image_2 = PhotoImage(
+    file=relative_to_assets("image_2.png"))
+image_2 = canvas.create_image(
+    219.0,
+    292.0,
+    image=image_image_2
+)
+# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# Agregar las imágenes adicionales para el cambio de estado
+button_image_3 = PhotoImage(file=relative_to_assets("button_3.png"))
+
+# Estado de visibilidad de la contraseña
+password_visible_1 = False
+
+button_image_2 = PhotoImage(
+    file=relative_to_assets("button_2.png"))
+button_2 = Button(
+    image=button_image_2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=lambda: print("button_2 clicked"),
+    relief="flat"
+)
+button_2.place(
+    x=225.0,
+    y=278.0,
+    width=27.0,
+    height=27.0
+)
+
+# Función para el botón 5
+def toggle_password_1():
+    global password_visible_1
+    if password_visible_1:
+        password_input.config(show="●")
+        button_2.config(image=button_image_2)
+    else:
+        password_input.config(show="")
+        button_2.config(image=button_image_3)
+    password_visible_1 = not password_visible_1
+
+# Cambia el parámetro `command` de los botones 5 y 7 para que usen las nuevas funciones
+button_2.config(command=toggle_password_1)
 
 # --- Botones ---
 exit_image = PhotoImage(
@@ -175,6 +222,8 @@ canvas.create_text(
     fill=general[11],
     font=(general[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
 
 window.bind(general[5], lambda e: sign_up_button.invoke())
 
