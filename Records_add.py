@@ -40,15 +40,15 @@ frame.pack()
 widgets_frame = ttk.LabelFrame(frame, text=("Encargo"))
 widgets_frame.grid(row=10, column=10, padx=10, pady=10)
 
-status_combobox = ttk.Combobox(widgets_frame, values=clients_list)
+status_combobox = ttk.Combobox(widgets_frame, state="readonly", values=clients_list)
 status_combobox.current(0)
 status_combobox.grid(row=0, column=0,padx=(10, 20), pady=(5, 10), sticky="ew")
 
-status_combobox = ttk.Combobox(widgets_frame, values=products_list)
-status_combobox.current(0)
+status_combobox = ttk.Combobox(widgets_frame, state="readonly", values=products_list)
+status_combobox.current(0) 
 status_combobox.grid(row=0, column=1,padx=(10, 20), pady=(5, 10), sticky="ew")
 
-status_combobox = ttk.Combobox(widgets_frame, values=services_list)
+status_combobox = ttk.Combobox(widgets_frame, state="readonly", values=services_list)
 status_combobox.current(0)
 status_combobox.grid(row=0, column=2,padx=(10, 20), pady=(5, 10), sticky="ew")
 
