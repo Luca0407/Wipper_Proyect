@@ -10,15 +10,7 @@ def general():
 
 
 def queries():
-    every_query = ["""SELECT ID_Services, concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ',
-                    products.model), service_name, quantity, sum(products.initial_cost * quantity + aditional_cost ), entry_date,
-                    left_date, done
-                FROM services
-                JOIN clients ON
-                    services.ID_Clients = clients.ID_Clients
-                JOIN products ON
-                    services.ID_Products = products.ID_Products
-                GROUP BY ID_Services;""",  # 0 listado en records.
+    every_query = ["""SELECT * FROM records""",  # 0 listado en records.
                 
                 "SELECT * FROM clients;",  # 1 listado en clients.
                 
@@ -33,14 +25,14 @@ def queries():
                 
                 "SELECT concat(brand, ' ', model) FROM products;",  # 6 verificación en products.
                 
-                """SELECT ID_Services, concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ',
+                """SELECT concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ',
                     products.model), service_name, quantity, sum(products.initial_cost * quantity + aditional_cost ), entry_date,
                     left_date, done
-                FROM services
+                FROM records
                 JOIN clients ON
-                    services.ID_Clients = clients.ID_Clients
+                    records.ID_Clients = clients.ID_Clients
                 JOIN products ON
-                    services.ID_Products = products.ID_Products
+                    records.ID_Products = products.ID_Products
                 GROUP BY ID_Services
                 ORDER BY ID_Services
                 DESC
@@ -71,7 +63,7 @@ def register():
 def records():
     records_strings = ["Servicio", "Cliente", "Producto", "Nombre del Servicio", "Cantidad",
                         "Precio Final", "Fecha de Ingreso", "Fecha de Egreso", "Hecho", "Comandos",
-                        "ns", "Modificar", "Borrar"]
+                        "ns", "Modificar", "Borrar", "Encargo"]
     return records_strings
 
 

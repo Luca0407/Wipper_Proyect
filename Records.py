@@ -4,6 +4,11 @@ from tkinter import ttk
 from getpath import getpath as gp
 import sqlite3
 from strings import strings as txt
+import subprocess
+
+def open_records_add():
+    subprocess.Popen(["python", "Records_add.py"])
+
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 general = txt.general()
@@ -64,18 +69,21 @@ widgets_frame = ttk.LabelFrame(frame, text=records[9])
 widgets_frame.grid(row=1, column=1, padx=1, pady=0)
 
 button_close = ttk.Button(widgets_frame, text=general[25], command=close)
-button_close.grid(row=0, column=2, padx=(20, 5), pady=(0, 5), sticky=records[10])
+button_close.grid(row=0, column=3, padx=(20, 5), pady=(0, 5), sticky=records[10])
 
 
 # --Crea y posiciona --
 def on_enter(event):
     button_mod.invoke()
 
-button_mod = ttk.Button(widgets_frame, text=records[11], command=print("modificando"))
+button_mod = ttk.Button(widgets_frame, text=records[13], command=open_records_add)
 button_mod.grid(row=0, column=0, padx=(5, 20), pady=(0, 5), sticky=records[10])
 
+button_mod = ttk.Button(widgets_frame, text=records[11], command=print("modificando"))
+button_mod.grid(row=0, column=1, padx=50, pady=(0, 5), sticky=records[10])
+
 button_del = ttk.Button(widgets_frame, text=records[12], command=print("borrando"))
-button_del.grid(row=0, column=1, padx=50, pady=(0, 5), sticky=records[10])
+button_del.grid(row=0, column=2, padx=(20,50), pady=(0, 5), sticky=records[10])
 
 root.bind(general[14], lambda e: button_close.invoke())
 root.bind(general[5], lambda e: button_mod.invoke())
