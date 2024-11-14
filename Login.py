@@ -137,12 +137,11 @@ image_3 = canvas.create_image(
     image=image_image_3
 )
 
-button_image_6 = PhotoImage(file=relative_to_assets("button_4.png"))
+button_image_6 = PhotoImage(file=relative_to_assets("button_6.png"))
 
 # Estado de visibilidad de la contraseña
 password_visible_1 = False
 
-# Función para el botón 5
 def toggle_password_1():
     global password_visible_1
     if password_visible_1:
@@ -158,7 +157,6 @@ button_4.config(command=toggle_password_1)
 
 signup_button = create_button(general[8], lambda: new_user(), 74.0, 422.0, 152.0, 16.0)
 login_button = create_button(login[4], lambda: check_login(), 71.0, 360.0, 158.0, 48.0)
-forgot_button = create_button(login[5], lambda: print("forgot_pass_button clicked"), 74.0, 331.0, 152.0, 17.0)
 exit_button = create_button(general[7], window.destroy, 268.0, 13.0, 22.0, 22.0)
 
 # --- Textos ---

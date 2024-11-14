@@ -174,8 +174,8 @@ exit_button = Button(
 exit_button.place(
     x=268.0,
     y=13.0,
-    width=19.0,
-    height=19.0)
+    width=22.0,
+    height=22.0)
 
 sign_up_image = PhotoImage(
     file=relative_to_assets(general[8]))

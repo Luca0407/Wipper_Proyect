@@ -71,7 +71,4 @@ def current_user():
 
 def logout(name):
     db.other_queries(queries[11], name)
-    connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
-    cursor = connect.cursor()  # Crea un cursor para ejecutar consultas SQL.
-    cursor.execute(f"UPDATE users SET active = 0 WHERE name = '{name}'")
-    connect.commit()
+    return

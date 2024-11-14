@@ -12,7 +12,7 @@ root.grab_set()  # Captura eventos y bloquea acceso a otras ventanas
 def center_window(window, width, height):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
     x = (screen_width // 2) - (width // 2)
-    y = (screen_height // 2) - (height // 2) - 155
+    y = (screen_height // 2) - (height // 2)
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 # Eliminar título y icono
@@ -58,4 +58,5 @@ button.grid(row=0, column=3,padx=(10, 20), pady=(5, 10), sticky="ew")
 button = ttk.Button(widgets_frame, text="Encargar", command=root.destroy)
 button.grid(row=0, column=4,padx=(10, 10), pady=(5, 10), sticky="ew")
 
+root.resizable(False, False)
 root.mainloop()

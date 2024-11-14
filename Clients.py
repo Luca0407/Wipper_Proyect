@@ -64,7 +64,6 @@ def insert_row():
     load_data(2)
 
 
-
 def reset_entries(x):
     match x:
         case 1:

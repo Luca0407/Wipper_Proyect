@@ -10,7 +10,19 @@ def general():
 
 
 def queries():
-    every_query = ["""SELECT * FROM records""",  # 0 listado en records.
+    every_query = ["""SELECT concat('(', clients.ID_Clients, ') - ', clients.owner_name),
+                concat(products.brand, products.model), r.service_name, r.quantity,
+                sum(products.initial_cost * quantity + services.aditional_cost),
+                r.entry_date, r.left_date, r.done
+                FROM records r
+                JOIN clients ON
+                    r.ID_Clients = clients.ID_Clients
+                JOIN products ON
+                    r.ID_Products = products.ID_Products
+                JOIN services ON
+                    r.ID_Services = services.ID_Services
+                GROUP BY r.ID_Records
+                ORDER BY r.ID_Records;""",  # 0 listado en records.
                 
                 "SELECT * FROM clients;",  # 1 listado en clients.
                 
@@ -61,7 +73,7 @@ def register():
 
 
 def records():
-    records_strings = ["Servicio", "Cliente", "Producto", "Nombre del Servicio", "Cantidad",
+    records_strings = ["Cliente", "Producto", "Nombre del Servicio", "Cantidad",
                         "Precio Final", "Fecha de Ingreso", "Fecha de Egreso", "Hecho", "Comandos",
                         "ns", "Modificar", "Borrar", "Encargo"]
     return records_strings
