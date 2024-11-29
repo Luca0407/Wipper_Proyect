@@ -15,7 +15,6 @@ mainmenu = txt.menu()
 
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 window = Tk()
-PATH = gp.getPath()
 username = users.current_user()
 if username is None:
     window.destroy()
@@ -24,11 +23,12 @@ if username is None:
 
 
 def relative_to_assets(path: str) -> Path:
+    PATH = gp.getPath()
     return PATH / Path(path)
 
 
 # --- Movimiento de la ventana ---
-def start_move(event):
+"""def start_move(event):
     if event.y <= 30:
         window.x, window.y = event.x, event.y
     else:
@@ -41,7 +41,7 @@ def do_move(event):
         deltay = event.y - window.y
         x = window.winfo_x() + deltax
         y = window.winfo_y() + deltay
-        window.geometry(f"+{x}+{y}")
+        window.geometry(f"+{x}+{y}")"""
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
@@ -432,8 +432,8 @@ canvas.create_text(
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # --Se llama a las funciones para interactuar con la ventana--
-canvas.bind(mainmenu[34], start_move)
-canvas.bind(mainmenu[35], do_move)
+"""canvas.bind(mainmenu[34], start_move)
+canvas.bind(mainmenu[35], do_move)"""
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 # Asignar las teclas F2, F3 y F4 a sus respectivas funciones
