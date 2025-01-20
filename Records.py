@@ -1,32 +1,123 @@
 # --- Librerías y Módulos ---
 import tkinter as tk
-from tkinter import ttk
-from getpath import getpath as gp
+from tkinter import ttk, messagebox
+from time import strftime
 import sqlite3
+from db_manager import db_manager as db
 from strings import strings as txt
+from getpath import getpath as gp
 import subprocess
 
-def open_records_add():
-    subprocess.Popen(["python", "Records_add.py"])
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 general = txt.general()
+mainmenu = txt.menu()
 records = txt.records()
 queries = txt.queries()
 
-# --- x ---
 connect = sqlite3.connect(general[13])
 cursor = connect.cursor()
-init_path = gp.getPath()
-cols = (records[0], records[1], records[2],
-        records[3], records[4], records[5],
-        records[6], records[7])
 
 
-def close():
-    root.destroy()
-    connect.close()
+def center_window(window, width, height):
+    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 2) - (height // 2) + 37
+    window.geometry(f"{width}x{height}+{x}+{y}")
 
+
+def load_client(entry1, entry2, entry3):
+    e1 = entry1.get()
+    e2 = entry2.get()
+    e3 = entry3.get()
+    
+    if any("- Seleccione " in e for e in (e1, e2, e3)):
+        messagebox.showerror("ERROR", "Uno o más campos se encuentran vacíos.")
+        return
+    
+    try:
+        query = """INSERT INTO records (ID_Services, ID_Clients, ID_Products, quantity, entry_date, left_date, done) VALUES
+        ((SELECT ID_Services FROM services WHERE service_name = ?), (SELECT ID_Clients FROM clients WHERE owner_name = ?),
+        (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?), ?, ?, ?, ?)"""
+        params = (e3, e1, e2, 1, strftime(mainmenu[1]), strftime(mainmenu[1]), 0)
+        db.other_queries(query, params)
+        messagebox.showinfo("Éxito", "Registro agregado correctamente.")
+        load_data(2)
+    except Exception as e:
+        messagebox.showerror("Error en la base de datos", str(e))
+
+
+def open_records_add():
+    subprocess.Popen(["python", "Records_add.py"])
+
+
+root = tk.Tk()
+root.overrideredirect(True)
+center_window(root, 1360, 550)
+
+style = ttk.Style(root)
+theme_path = rf"{gp.getPath()}\forest-dark.tcl"
+root.tk.call(general[15], theme_path)
+style.theme_use(general[16])
+
+frame = ttk.Frame(root)
+frame.pack()
+
+widgets_frame = ttk.LabelFrame(frame, text="Encargo")
+widgets_frame.grid(row=0, column=0, padx=10, pady=10)
+
+def nokeys(x):
+    new_arr = []
+    for i in x:
+        new_arr.append(i.strip("{}"))
+    return new_arr
+
+cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients")]
+cl.insert(0, "- Seleccione Cliente -")
+clients = nokeys(cl)
+
+pr = [row[0] for row in db.fetch_all("SELECT concat(brand, ' ', model) FROM products")]
+pr.insert(0, "- Seleccione Producto -")
+products = nokeys(pr)
+
+sv = [row[0] for row in db.fetch_all("SELECT service_name FROM services")]
+sv.insert(0, "- Seleccione Servicio -")
+services = nokeys(sv)
+
+clientsbox = ttk.Combobox(widgets_frame, state="readonly", values=clients)
+clientsbox.current(0)
+clientsbox.grid(row=0, column=0, padx=10, pady=10)
+
+productsbox = ttk.Combobox(widgets_frame, state="readonly", values=products)
+productsbox.current(0)
+productsbox.grid(row=0, column=1, padx=10, pady=10)
+
+servicesbox = ttk.Combobox(widgets_frame, state="readonly", values=services)
+servicesbox.current(0)
+servicesbox.grid(row=0, column=2, padx=10, pady=10)
+
+button_new_service = ttk.Button(widgets_frame, text="Nuevo Servicio", command=open_records_add)
+button_new_service.grid(row=0, column=3, padx=10, pady=10)
+
+button_submit = ttk.Button(widgets_frame, text="Encargar", command=lambda: load_client(clientsbox, productsbox, servicesbox))
+button_submit.grid(row=0, column=4, padx=10, pady=10)
+
+button_close = ttk.Button(widgets_frame, text="Cerrar", command=root.destroy)
+button_close.grid(row=0, column=5, padx=10, pady=10)
+
+treeFrame = ttk.Frame(frame)
+treeFrame.grid(row=1, column=0, pady=20)
+treeScroll = ttk.Scrollbar(treeFrame)
+treeScroll.pack(side="right", fill="y")
+
+cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
+treeview = ttk.Treeview(treeFrame, show="headings", yscrollcommand=treeScroll.set, columns=cols, height=18)
+
+for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
+    treeview.column(col, width=width)
+    treeview.heading(col, text=col, anchor="center")
+
+treeview.pack()
+treeScroll.config(command=treeview.yview)
 
 def load_data(x):
     query_map = {1: queries[0], 2: queries[7]}
@@ -41,60 +132,6 @@ def load_data(x):
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
 
-
-def center_window(window, width, height):
-    screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
-    x = (screen_width // 2) - (width // 2)
-    y = (screen_height // 2) - (height // 2) + 37
-    window.geometry(f"{width}x{height}+{x}+{y}")
-
-root = tk.Tk()
-root.overrideredirect(True)
-center_window(root, 1360, 550)
-
-style = ttk.Style(root)
-theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call(general[15], theme_path)
-style.theme_use(general[16])
-
-frame = ttk.Frame(root)
-frame.pack()
-
-treeFrame = ttk.Frame(frame)
-treeFrame.grid(row=0, column=1, pady=10)
-treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side=general[17], fill=general[18])
-widgets_frame = ttk.LabelFrame(frame, text=records[8])
-widgets_frame.grid(row=1, column=1, padx=1, pady=0)
-
-button_close = ttk.Button(widgets_frame, text=general[25], command=close)
-button_close.grid(row=0, column=3, padx=(20, 5), pady=(0, 5), sticky=records[9])
-
-
-# --Crea y posiciona --
-def on_enter(event):
-    button_mod.invoke()
-
-button_mod = ttk.Button(widgets_frame, text=records[12], command=open_records_add)
-button_mod.grid(row=0, column=0, padx=(5, 20), pady=(0, 5), sticky=records[9])
-
-button_mod = ttk.Button(widgets_frame, text=records[10], command=print("modificando"))
-button_mod.grid(row=0, column=1, padx=50, pady=(0, 5), sticky=records[9])
-
-button_del = ttk.Button(widgets_frame, text=records[11], command=print("borrando"))
-button_del.grid(row=0, column=2, padx=(20,50), pady=(0, 5), sticky=records[9])
-
-root.bind(general[14], lambda e: button_close.invoke())
-root.bind(general[5], lambda e: button_mod.invoke())
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
-
-treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=20)
-
-for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
-    treeview.column(col, width=width)
-
-treeview.pack()
-treeScroll.config(command=treeview.yview)
-
 load_data(1)
+
 root.mainloop()

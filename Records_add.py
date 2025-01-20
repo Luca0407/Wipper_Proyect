@@ -1,10 +1,11 @@
 from pathlib import Path
 import tkinter as tk
-from tkinter import Button, Canvas, PhotoImage, ttk
+from tkinter import Button, PhotoImage, ttk
 from tkinter import messagebox
 from db_manager import db_manager as db
 from strings import strings as txt
 from getpath import getpath as gp
+from time import strftime
 
 
 def relative_to_assets(path: str) -> Path:
@@ -43,20 +44,37 @@ services = db.fetch_all("SELECT service_name FROM services")
 services.insert(0, "- Seleccione Servicio -")
 
 def load_client(entry1, entry2, entry3):
-  e1 = entry1.get()
-  e2 = entry2.get()
-  e3 = entry3.get()
-  if any("- Seleccione " in e for e in (e1, e2, e3)):
-    messagebox.showerror("ERROR", "Uno o más campos se encuentran vacíos.")
-  else:
-    db.fetch_all()
-    db.other_queries()
+    e1 = entry1.get().strip("{}")
+    e2 = entry2.get().strip("{}")
+    e3 = entry3.get().strip("{}")
+    if any("- Seleccione " in e for e in (e1, e2, e3)):
+        messagebox.showerror("ERROR", "Uno o más campos se encuentran vacíos.")
+        return
+
+    try:
+        # Consulta combinada con subconsultas
+        query = """
+            INSERT INTO records (ID_Services, ID_Clients, ID_Products, quantity, entry_date, left_date, done)
+            VALUES (
+                (SELECT ID_Services FROM services WHERE service_name = ?),
+                (SELECT ID_Clients FROM clients WHERE owner_name = ?),
+                (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?),
+                ?, ?, ?, ?
+            )
+        """
+        params = (e3, e1, e2, 1, strftime(mainmenu[1]), strftime(mainmenu[1]), 1)
+        print(e1, e2, e3)
+        db.other_queries(query, params)
+
+        messagebox.showinfo("Éxito", "Registro agregado correctamente.")
+    except Exception as e:
+        messagebox.showerror("Error en la base de datos", str(e))
 
 frame = ttk.Frame(root)
 frame.pack()
 
 close_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[19]))
+    file=relative_to_assets(mainmenu[39]))
 
 close = Button(
     image=close_icon,
@@ -88,7 +106,7 @@ servicesbox = ttk.Combobox(widgets_frame, state="readonly", values=services)
 servicesbox.current(0)
 servicesbox.grid(row=0, column=2,padx=(10, 20), pady=(5, 10), sticky="ew")
 
-brand_entry := ttk.Entry(widgets_frame), products[0]
+brand_entry = ttk.Entry(widgets_frame), products[0]
 
 button = ttk.Button(widgets_frame, text="Nuevo Servicio")
 button.grid(row=0, column=3,padx=(10, 20), pady=(5, 10), sticky="ew")

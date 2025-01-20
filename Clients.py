@@ -69,11 +69,9 @@ def reset_entries(x):
         case 1:
             name_entry.delete(0, "")
             name_entry.insert(0, clients[0])
-            
         case 2:
             surname_entry.delete(0, "")
             surname_entry.insert(0, clients[1])
-        
         case 3:
             phone_entry.delete(0, "")
             phone_entry.insert(0, clients[2])

@@ -30,9 +30,6 @@ def getPath():
         case "Records":
             assets_path = OUTPUT_PATH
 
-        case "Records_add":
-            assets_path = OUTPUT_PATH / 'Menu_Screen' / 'build' / 'assets' / 'frame0'
-
     return assets_path
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 

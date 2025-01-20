@@ -15,6 +15,10 @@ def fetch_all(query):
         cursor.execute(query)
         return cursor.fetchall()
 
+def fetch_all2(query, params=()):
+    with closing(get_connection()) as conn, closing(conn.cursor()) as cursor:
+        cursor.execute(query, params)
+        return cursor.fetchall()
 
 # Función genérica para ejecutar consultas de modificación (INSERT, UPDATE, DELETE)
 def other_queries(query, params=()):
