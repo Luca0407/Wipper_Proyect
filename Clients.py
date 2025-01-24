@@ -12,7 +12,7 @@ queries = txt.queries()
 
 # --- x ---
 init_path = gp.getPath()
-cols = (general[20], clients[0], clients[1], clients[2])
+cols = (general[20], clients[0], clients[1])
 
 
 def close():
@@ -34,26 +34,22 @@ def load_data(x):
 
 def insert_row():
     columns, values = [], []
-    name, surname, phone = name_entry.get(), surname_entry.get(), phone_entry.get()
+    name, phone = name_entry.get(), phone_entry.get()
 
     if (name_entry.get()) not in cols:
         columns.append(clients[3])
         values.append(name.strip().capitalize())
 
-    if (surname_entry.get()) not in cols:
-        columns.append(clients[4])
-        values.append(surname.strip().capitalize())
-
     try:
-        columns.append(clients[5])
+        columns.append(clients[3])
         values.append(int(phone))
     except ValueError:
-        messagebox.showerror(general[28], clients[8])
+        messagebox.showerror(general[28], clients[6])
         return
 
     client_data = db.fetch_all(queries[3])
     if any(entry[0] == phone for entry in client_data): 
-        messagebox.showwarning(general[27], clients[6])
+        messagebox.showwarning(general[27], clients[4])
         return
 
     query = f"INSERT INTO clients ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
@@ -69,19 +65,14 @@ def reset_entries(x):
         case 1:
             name_entry.delete(0, "")
             name_entry.insert(0, clients[0])
-        case 2:
-            surname_entry.delete(0, "")
-            surname_entry.insert(0, clients[1])
         case 3:
             phone_entry.delete(0, "")
-            phone_entry.insert(0, clients[2])
+            phone_entry.insert(0, clients[1])
 
 
 def keep_used():
     if name_entry.get().strip() == "":
         reset_entries(1)
-    if surname_entry.get().strip() == "":
-        reset_entries(2)
     if phone_entry.get().strip() == "":
         reset_entries(3)
 
@@ -109,13 +100,12 @@ style.theme_use(general[16])
 frame = ttk.Frame(root)
 frame.pack()
 
-widgets_frame = ttk.LabelFrame(frame, text=clients[7])
+widgets_frame = ttk.LabelFrame(frame, text=clients[5])
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
 entries = [
     (name_entry := ttk.Entry(widgets_frame), clients[0]),
-    (surname_entry := ttk.Entry(widgets_frame), clients[1]),
-    (phone_entry := ttk.Entry(widgets_frame), clients[2]),
+    (phone_entry := ttk.Entry(widgets_frame), clients[1]),
 ]
 
 for i, (entry, default_text) in enumerate(entries):

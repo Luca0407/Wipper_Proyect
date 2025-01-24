@@ -21,7 +21,7 @@ def user_signup():
         if users.register(user_input.get(), password_input.get(), mail_input.get()) is True:
             messagebox.showinfo(register[0], register[1])
             window.destroy()
-            gp.vxl(general[29])
+            return gp.vxl(general[29])
     else:
         messagebox.showerror(general[28], register[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
