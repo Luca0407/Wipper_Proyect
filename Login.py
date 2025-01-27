@@ -5,7 +5,6 @@ from getpath import getpath as gp
 from users import users
 import sys
 from strings import strings as txt
-
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 general = txt.general()
@@ -19,8 +18,8 @@ if username is not None:
 window = Tk()
 
 def goto_window(x):
-    window.destroy()
     gp.vxl(x)
+    window.destroy()
 
 def relative_to_assets(path: str) -> Path:
     assets_path = gp.getPath()  # Centralizamos dentro de la función
@@ -32,7 +31,7 @@ def new_user():
 
 def check_login():
     if users.login(user_input.get(), pass_input.get()) is True:
-        goto_window(general[29])
+        return goto_window(general[29])
     else:
         messagebox.showerror(login[1], login[2])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -47,8 +46,6 @@ def center_window(window, width, height):
 center_window(window, 300, 480)
 window.overrideredirect(True)
 
-window.geometry("300x480")
-window.configure(bg = "#191919")
 
 # Crear el canvas
 canvas = Canvas(

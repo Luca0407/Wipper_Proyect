@@ -2,8 +2,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from getpath import getpath as gp
-import sqlite3
 from strings import strings as txt
+from db_manager import db_manager as db
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 
 general = txt.general()
@@ -11,21 +11,17 @@ products = txt.products()
 queries = txt.queries()
 
 # --- x ---
-connect = sqlite3.connect(general[13])
-cursor = connect.cursor()
 init_path = gp.getPath()
 cols = (general[20], products[0], products[1], products[2])
 
 
 def close():
-    root.destroy()
-    connect.close()
+    window.destroy()
 
 
 def load_data(x):
     query_map = {1: queries[4], 2: queries[5]}
-    cursor.execute(query_map.get(x))
-    db_data = cursor.fetchall()
+    db_data = db.fetch_all(query_map.get(x))
 
     if x == 1:
         for col_marca in cols:
@@ -57,15 +53,13 @@ def insert_row():
         return
 
     product_name = f"{brand} {model}"
-    cursor.execute(queries[6])
-    product_data = cursor.fetchall()
+    product_data = db.fetch_all(queries[6])
     if any(entry[0] == product_name for entry in product_data):
         messagebox.showwarning(general[27], products[7])
         return
 
     query = f"INSERT INTO products ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
-    cursor.execute(query, values)
-    connect.commit()
+    db.other_queries(query, values)
     for i in range(1, 4):
         reset_entries(i)
     load_data(2)
@@ -106,16 +100,16 @@ def center_window(window, width, height):
     y = (screen_height // 2) - (height // 2) + 37
     window.geometry(f"{width}x{height}+{x}+{y}")
 
-root = tk.Tk()
-root.overrideredirect(True)
-center_window(root, 1360, 550)
+window = tk.Tk()
+window.overrideredirect(True)
+center_window(window, 1360, 550)
 
-style = ttk.Style(root)
+style = ttk.Style(window)
 theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call(general[15], theme_path)
+window.tk.call(general[15], theme_path)
 style.theme_use(general[16])
 
-frame = ttk.Frame(root)
+frame = ttk.Frame(window)
 frame.pack()
 
 widgets_frame = ttk.LabelFrame(frame, text=products[6])
@@ -155,8 +149,8 @@ for col, width in zip(cols, [50, 292, 296, 292]):
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-root.bind(general[5], lambda e: button.invoke())
-root.bind(general[14], lambda e: button_close.invoke())
+window.bind(general[5], lambda e: button.invoke())
+window.bind(general[14], lambda e: button_close.invoke())
 
 load_data(1)
-root.mainloop()
+window.mainloop()

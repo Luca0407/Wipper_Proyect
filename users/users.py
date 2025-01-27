@@ -1,12 +1,11 @@
-import sqlite3
 from db_manager import db_manager as db
 from tkinter import messagebox
 import re
 from strings import strings as txt
 
 
-
 queries = txt.queries()
+general = txt.queries()
 
 def validate_mail(mail):
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z]+$'
@@ -21,7 +20,7 @@ def validate_pass(passwd):
 # --- Función para registrar usuarios ---
 def register(entry1, entry2, entry3):
     if "" in (entry1, entry2, entry3):
-        return messagebox.showerror("ERROR", "Uno o más campos se encuentran vacíos.")
+        return messagebox.showerror(general[28], general[32])
     else:
         if (validate_mail(entry3) and validate_pass(entry2)) is True:
             values = (entry1, entry2, entry3, 1)
@@ -45,17 +44,12 @@ def check(entry1, entry2):
 
 # --Función para iniciar sesión con la cuenta de un determinado usuario--
 def login(entry1, entry2):
-    connect = sqlite3.connect('wipper.db')  # Crea la conexión a la base de datos.
-    cursor = connect.cursor()  # Crea un cursor para ejecutar consultas SQL.
-    user = cursor.execute("SELECT name, passwd FROM users")
-    usuarios = user.fetchall()
+    usuarios = db.fetch_all(queries[13])
     user_data = (entry1, entry2)
     for entry in usuarios:
         if entry == user_data:
-            cursor.execute(f"UPDATE users SET active = 1 WHERE name = '{user_data[0]}'")
-            connect.commit()
+            db.other_queries("UPDATE users SET active = 1 WHERE name = ?", (user_data[0],))
             return True
-        
     else:
         return False
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

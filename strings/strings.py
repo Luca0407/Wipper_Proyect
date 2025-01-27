@@ -5,7 +5,7 @@ def general():
                         'source',  "forest-dark",  "right", "y",  "headings",
                         "ID", "<FocusIn>", "ew", "<FocusOut>", "Agregar",
                         "Cerrar", "nsew", "Advertencia", "ERROR", "Menu",
-                        "Login", "flat"]
+                        "Login", "flat", "Uno o más campos se encuentran vacíos."]
     return general_strings
 
 
@@ -55,15 +55,11 @@ def queries():
                 
                 "UPDATE users SET active = 0 WHERE name = ?;",  # 11 desmarca al usuario que estaba activo.
                 
-                "SELECT owner_name FROM clients;", # 12 nombre de los clientes para el registro.
-                
-                "SELECT concat(brand, ' ', model) FROM products;" # 13 nombre y modelo de los productos para el registro.
-                
-                "SELECT service_name FROM services;" # 14 nombre de los servicios para el registro.
-                
                 """INSERT INTO records (ID_Services, ID_Clients, ID_Products, quantity, entry_date, left_date, done) VALUES
                 ((SELECT ID_Services FROM services WHERE service_name = ?), (SELECT ID_Clients FROM clients WHERE owner_name = ?),
-                (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?), ?, ?, ?, ?);""" # 15 carga una linea en el registro.
+                (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?), ?, ?, ?, ?);""",  # 12 carga una linea en el registro.
+                
+                "SELECT name, passwd FROM users"  # 13 consulta todos los usuarios.
     ]
     return every_query
 
@@ -80,9 +76,11 @@ def register():
 
 
 def records():
-    records_strings = ["Cliente", "Producto", "Nombre del Servicio", "Cantidad",
-                        "Precio Final", "Fecha de Ingreso", "Fecha de Egreso", "Hecho", "Comandos",
-                        "ns", "Modificar", "Borrar", "Encargo"]
+    records_strings = ["Cliente", "Producto", "Nombre del Servicio", "Cantidad", "Precio Final",
+                    "Fecha de Ingreso", "Fecha de Egreso", "Hecho", "Comandos", "ns",
+                    "Modificar", "Borrar", "Encargo", "readonly", "center",
+                    "Éxito", "Registro agregado correctamente.", "Error en la base de datos", "- Seleccione Cliente -", "- Seleccione Producto -",
+                    "- Seleccione Servicio -", "Nuevo Servicio", "Encargar"]
     return records_strings
 
 
@@ -104,6 +102,6 @@ def menu():
                     "user_icon.png", "date_icon.png", "time_icon.png", "minimize.png","close.png",
                     "logout.png", "Records", "commerce.png", "No disponible", "Esta funcionalidad solo es accesible en la versión completa.",
                     "Clients", "Products", "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold",
-                    "Teclas Rápidas", "v0.9.4", "Wipper Insumos", "Montserrat Medium", "<Button-1>",
+                    "Teclas Rápidas", "v0.9.4.2", "Wipper Insumos", "Montserrat Medium", "<Button-1>",
                     "<B1-Motion>", "<F2>", "<F3>", "<F4>", "exit.png"]
     return menu_strings

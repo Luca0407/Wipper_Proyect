@@ -16,7 +16,7 @@ cols = (general[20], clients[0], clients[1])
 
 
 def close():
-    root.destroy()
+    window.destroy()
 
 
 def load_data(x):
@@ -37,7 +37,7 @@ def insert_row():
     name, phone = name_entry.get(), phone_entry.get()
 
     if (name_entry.get()) not in cols:
-        columns.append(clients[3])
+        columns.append(clients[2])
         values.append(name.strip().capitalize())
 
     try:
@@ -65,7 +65,7 @@ def reset_entries(x):
         case 1:
             name_entry.delete(0, "")
             name_entry.insert(0, clients[0])
-        case 3:
+        case 2:
             phone_entry.delete(0, "")
             phone_entry.insert(0, clients[1])
 
@@ -74,7 +74,7 @@ def keep_used():
     if name_entry.get().strip() == "":
         reset_entries(1)
     if phone_entry.get().strip() == "":
-        reset_entries(3)
+        reset_entries(2)
 
 
 def clear_entry(event, entry, default_text):
@@ -82,22 +82,22 @@ def clear_entry(event, entry, default_text):
         entry.delete(0, tk.END)
 
 
-def center_window(window, width=800, height=600):
+def center_window(window, width=1360, height=550):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
     x = (screen_width // 2) - (width // 2)
     y = (screen_height // 2) - (height // 2) + 37
     window.geometry(f"{width}x{height}+{x}+{y}")
 
-root = tk.Tk()
-root.overrideredirect(True)
-center_window(root, 1360, 550)
+window = tk.Tk()
+window.overrideredirect(True)
+center_window(window, 1360, 550)
 
-style = ttk.Style(root)
+style = ttk.Style(window)
 theme_path = rf"{init_path}\forest-dark.tcl"
-root.tk.call(general[15], theme_path)
+window.tk.call(general[15], theme_path)
 style.theme_use(general[16])
 
-frame = ttk.Frame(root)
+frame = ttk.Frame(window)
 frame.pack()
 
 widgets_frame = ttk.LabelFrame(frame, text=clients[5])
@@ -130,14 +130,14 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
-for col, width in zip(cols, [30, 300, 300, 300]):
+for col, width in zip(cols, [50, 500, 500]):
     treeview.column(col, width=width)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-root.bind(general[5], lambda e: button.invoke())
-root.bind(general[14], lambda e: button_close.invoke())
+window.bind(general[5], lambda e: button.invoke())
+window.bind(general[14], lambda e: button_close.invoke())
 
 load_data(1)
-root.mainloop()
+window.mainloop()
