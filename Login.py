@@ -50,12 +50,12 @@ window.overrideredirect(True)
 # Crear el canvas
 canvas = Canvas(
     window,
-    bg = "#191919",
+    bg = general[0],
     height = 480,
     width = 300,
     bd = 0,
     highlightthickness = 0,
-    relief = "ridge"
+    relief = general[34]
 )
 canvas.place(x = 0, y = 0)
 
@@ -102,22 +102,13 @@ def create_button(image_path, command, x, y, width, height):
     button.place(x=x, y=y, width=width, height=height)
     return button
 
-image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
-image_2 = canvas.create_image(
-    234.0,
-    294.0,
-    image=image_image_2
-)
-
 button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
+    file=relative_to_assets(general[38]))
 button_4 = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_4 clicked"),
-    relief="flat"
+    relief=general[31]
 )
 button_4.place(
     x=225.0,
@@ -127,14 +118,14 @@ button_4.place(
 )
 
 image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
+    file=relative_to_assets(general[36]))
 image_3 = canvas.create_image(
     219.0,
     293.0,
     image=image_image_3
 )
 
-button_image_6 = PhotoImage(file=relative_to_assets("button_6.png"))
+button_image_6 = PhotoImage(file=relative_to_assets(general[37]))
 
 # Estado de visibilidad de la contraseña
 password_visible_1 = False

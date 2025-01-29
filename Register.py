@@ -108,16 +108,8 @@ password_input.place(
     width=165.0,
     height=38.0)
 
-image_image_1 = PhotoImage(
-    file=relative_to_assets("image_1.png"))
-image_1 = canvas.create_image(
-    234.0,
-    292.0,
-    image=image_image_1
-)
-
 image_image_2 = PhotoImage(
-    file=relative_to_assets("image_2.png"))
+    file=relative_to_assets(general[36]))
 image_2 = canvas.create_image(
     219.0,
     292.0,
@@ -125,19 +117,19 @@ image_2 = canvas.create_image(
 )
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 # Agregar las imágenes adicionales para el cambio de estado
-button_image_3 = PhotoImage(file=relative_to_assets("button_3.png"))
+button_image_3 = PhotoImage(file=relative_to_assets(general[37]))
 
 # Estado de visibilidad de la contraseña
 password_visible_1 = False
 
 button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
+    file=relative_to_assets(general[38]))
+
 button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
-    relief="flat"
+    relief=general[31]
 )
 button_2.place(
     x=225.0,
@@ -150,7 +142,7 @@ button_2.place(
 def toggle_password_1():
     global password_visible_1
     if password_visible_1:
-        password_input.config(show="●")
+        password_input.config(show=general[6])
         button_2.config(image=button_image_2)
     else:
         password_input.config(show="")

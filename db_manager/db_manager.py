@@ -15,7 +15,7 @@ def fetch_all(query):
         cursor.execute(query)
         return cursor.fetchall()
 
-def fetch_all2(query, params=()):
+def fetch_all2(query, params=()):  # cambiar nombre
     with closing(get_connection()) as conn, closing(conn.cursor()) as cursor:
         cursor.execute(query, params)
         return cursor.fetchall()

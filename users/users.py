@@ -27,7 +27,7 @@ def register(entry1, entry2, entry3):
             db.other_queries(queries[8], values)
             return True
         else:
-            return messagebox.showerror("ERROR", "Contraseña o correo invalido.")
+            return messagebox.showerror(general[28], general[33])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 

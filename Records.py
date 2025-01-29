@@ -30,7 +30,7 @@ def load_client(entry1, entry2, entry3):
         return
     
     try:
-        params = (e3, e1, e2, 1, strftime(mainmenu[1]), strftime(mainmenu[1]), 0)
+        params = (e3, e1, e2, 1, strftime(general[35]), strftime(general[35]), 0)
         db.other_queries(queries[12], params)
         messagebox.showinfo(records[15], records[16])
         load_data(2)
