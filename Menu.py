@@ -16,6 +16,7 @@ mainmenu = txt.menu()
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 window = Tk()
 username = users.current_user()
+
 if username is None:
     window.destroy()
     gp.vxl(general[30])
@@ -44,7 +45,6 @@ def do_move(event):
         window.geometry(f"+{x}+{y}")
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
 # --- Fecha y hora ---
 def update_clock_and_date(win, clock_text, date_text):
     current_time = strftime(mainmenu[0])
@@ -55,14 +55,12 @@ def update_clock_and_date(win, clock_text, date_text):
 
     win.after(1000, update_clock_and_date, win, clock_text, date_text)  # Llama de nuevo después de 1 segundo
 
-
 # --- Cierre de sesión ---
 def logout():
     window.destroy()
     users.logout(username)
     gp.vxl(general[30])
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
 
 def center_window(window, width, height):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
@@ -74,33 +72,6 @@ window.overrideredirect(True)
 center_window(window, 1360, 728)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# --Carga las imágenes de los botones normales y clickeados--
-clients_normal = PhotoImage(file=relative_to_assets(mainmenu[1]))
-clients_clicked = PhotoImage(file=relative_to_assets(mainmenu[2]))
-
-records_normal = PhotoImage(file=relative_to_assets(mainmenu[3]))
-records_clicked = PhotoImage(file=relative_to_assets(mainmenu[4]))
-
-products_normal = PhotoImage(file=relative_to_assets(mainmenu[5]))
-products_clicked = PhotoImage(file=relative_to_assets(mainmenu[6]))
-current_button, current_image = None, None
-
-def change_button_image(button, normal_image, clicked_image):
-    global current_button, current_image
-    # Cambia la imagen del botón clickeado
-    button.config(image=clicked_image)
-
-    # Si hay un botón actualmente seleccionado, reestablece su imagen
-    if current_button and current_button != button:
-        current_button.config(image=current_image)
-
-    # Actualiza el botón actual
-    current_button = button
-    current_image = normal_image  # Guarda la imagen normal del botón actual
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-# --Crea y posiciona la ventana--
 canvas = Canvas(
     window,
     bg = general[0],
@@ -113,333 +84,143 @@ canvas = Canvas(
 canvas.place(x = 0, y = 0)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+# Lista con las configuraciones de imágenes
+images = [
+    (mainmenu[7],  680.0, 404.0), 
+    (mainmenu[8],  499.0, 392.0), 
+    (mainmenu[9],  680.0, 15.0),  
+    (mainmenu[10], 680.0, 80.0),  
+    (mainmenu[11], 680.0, 703.0), 
+    (mainmenu[12], 28.0,  15.0),  
+    (mainmenu[13], 24.0,  703.0), 
+    (mainmenu[14], 1131.0, 703.0),
+    (mainmenu[15], 1275.0, 703.0),
+    (mainmenu[16], 1290.0, 14.5),
+    (mainmenu[17], 1335.0, 14.5),
+    (mainmenu[18], 1200.0, 79.3),
+    (mainmenu[20], 150.0, 79.3),
+    (mainmenu[1], 413, 83),
+    (mainmenu[3], 954, 83),
+    (mainmenu[5], 680, 83)
+    ]
 
-# --Crea y posiciona el fondo--
-bg = PhotoImage(
-    file=relative_to_assets(mainmenu[7]))
+image_references = {}
+# Diccionarios para almacenar posiciones de imágenes
+image_positions = {}
 
-bg_menu = canvas.create_image(
-    680.0,
-    404.0,
-    image=bg)
+# Crear y posicionar imágenes en el canvas
+for index, (image_path, x, y) in enumerate(images):
+    image_references[f"img_{index}"] = PhotoImage(file=relative_to_assets(image_path))
+    
+    # Guardamos la posición de la imagen en el diccionario
+    image_positions[f"img_{index}"] = (x, y)
+    
+    # Crear la imagen en el canvas con una etiqueta
+    canvas.create_image(x, y, image=image_references[f"img_{index}"], tags=f"img_{index}")
+
+alternate_images = {
+    "img_1a": PhotoImage(file=relative_to_assets(mainmenu[2])),  # Por ejemplo, la imagen de otro color
+    "img_2a": PhotoImage(file=relative_to_assets(mainmenu[4])),
+    "img_3a": PhotoImage(file=relative_to_assets(mainmenu[6])),
+    # Agrega más imágenes alternas según sea necesario
+}
+
+button_images = {
+    "img_1": {
+        "original": image_references["img_13"],
+        "alternative": PhotoImage(file=relative_to_assets(mainmenu[2]))
+    },
+    "img_2": {
+        "original": image_references["img_14"],
+        "alternative": PhotoImage(file=relative_to_assets(mainmenu[4]))
+    },
+    "img_3": {
+        "original": image_references["img_15"],
+        "alternative": PhotoImage(file=relative_to_assets(mainmenu[6]))
+    },
+}
+
+def cambiar_imagen_boton(btn, image_type, button_key, func=None):
+    if image_type == "alternative":
+        btn.configure(image=button_images[button_key]["alternative"])
+    else:
+        btn.configure(image=button_images[button_key]["original"])
+    
+    if func:
+            func()
+
+# Función que llama a la función vxl del archivo 2 y pasa la información necesaria
+def ejecutar_vxl(screen, btn, button_images, bk):
+    # Llamamos a la función vxl pasando el botón y las imágenes
+    gp.vxl(screen, btn, button_images, bk)
+
+button_data = [
+    (image_references["img_12"], lambda: messagebox.showinfo(mainmenu[21], mainmenu[22]), 60.0, 51),
+    (image_references["img_13"], lambda: (ejecutar_vxl(mainmenu[23], buttons_dict["img_1"], button_images, "img_1")), 315, 51),
+    (image_references["img_14"], lambda: (ejecutar_vxl(mainmenu[19], buttons_dict["img_2"], button_images, "img_2")), 855, 51),
+    (image_references["img_15"], lambda: (ejecutar_vxl(mainmenu[24], buttons_dict["img_3"], button_images, "img_3")), 585, 51),
+    (image_references["img_9"], lambda: print("minimize clicked"), 1280.0, 2),  # Minimizar
+    (image_references["img_10"], window.destroy, 1325, 2),  # Cerrar
+    (image_references["img_11"], logout, 1100, 51),  # Logout
+]
+
+buttons_dict = {}  # Diccionario para almacenar referencias a botones
+buttons = []
+
+for index, (img, cmd, x, y) in enumerate(button_data):
+    btn = Button(
+        image=img,
+        borderwidth=0,
+        highlightthickness=0,
+        command=cmd,
+        relief=general[31]
+    )
+    buttons_dict[f"img_{index}"] = btn  # Guardamos la referencia del botón en el diccionario
+    print(str(img))
+    # Colocamos los botones en el canvas
+    if str(img) in ("pyimage12", "pyimage13", "pyimage14", "pyimage15", "pyimage16"):
+        btn.place(x=x, y=y, width=190, height=60)
+    else:
+        btn.place(x=x, y=y, width=26, height=26)
+
+    buttons.append(btn)
+
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-# --Crea y posiciona el logo decorativo (transparente)--
-logo_watermark = PhotoImage(
-    file=relative_to_assets(mainmenu[8]))
+# Lista con las configuraciones de los textos
+texts = [
+    (726.0, 356.0, mainmenu[25], mainmenu[26], mainmenu[27], 16),  # Teclas rápidas
+    (726.0, 288.0, mainmenu[28], mainmenu[26], mainmenu[27], 36),  
+    (14.0, 657.0, mainmenu[29], mainmenu[26], mainmenu[27], 10),   # Versión
+    (58.0, 7.0, mainmenu[30], general[11], mainmenu[31], 13),      # Otro texto
+    (44.0, 695.0, username, general[11], mainmenu[31], 13)         # Usuario
+]
 
-background_logo = canvas.create_image(
-    499.0,
-    392.0,
-    image=logo_watermark
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# Crear los textos dinámicamente
+for x, y, text, fill, font_family, font_size in texts:
+    canvas.create_text(
+        x, y, anchor=general[9], text=text, fill=fill, font=(font_family, font_size * -1))
 
-
-# --Crea y posiciona la barra de titulo--
-title_bar = PhotoImage(
-    file=relative_to_assets(mainmenu[9]))
-
-title = canvas.create_image(
-    680.0,
-    15.0,
-    image=title_bar
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-# --Crea y posiciona la barra de menú--
-menu_bar = PhotoImage(
-    file=relative_to_assets(mainmenu[10]))
-
-menu = canvas.create_image(
-    680.0,
-    80.0,
-    image=menu_bar
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-# --Crea y posiciona la barra de estado--
-status_bar = PhotoImage(
-    file=relative_to_assets(mainmenu[11]))
-
-status = canvas.create_image(
-    680.0,
-    703.0,
-    image=status_bar
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-# --Crea y posiciona el icono del logo--
-logo_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[12]))
-
-logo = canvas.create_image(
-    28.0,
-    15.0,
-    image=logo_icon
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-
-# --Crea y posiciona el icono del usuario--
-user_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[13]))
-
-user = canvas.create_image(
-    24.0,
-    703.0,
-    image=user_icon
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona el icono de la fecha--
-date_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[14]))
-
-date = canvas.create_image(
-    1131.0,
-    703.0,
-    image=date_icon
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona el icono de la hora--
-time_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[15]))
-
-time_img = canvas.create_image(
-    1275.0,
-    703.0,
-    image=time_icon
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona--
-minimize_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[16]))
-
-minimize = Button(
-    image=minimize_icon,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("minimize clicked"),
-    relief=general[31]
-)
-
-minimize.place(
-    x=1281.0,
-    y=2.0,
-    width=26.0,
-    height=26.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-close_icon = PhotoImage(
-    file=relative_to_assets(mainmenu[17]))
-
-close = Button(
-    image=close_icon,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: window.destroy(),
-    relief=general[31]
-)
-
-close.place(
-    x=1321.0,
-    y=2.0,
-    width=26.0,
-    height=26.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-logout_button = PhotoImage(
-    file=relative_to_assets(mainmenu[18]))
-
-logout_b = Button(
-    image=logout_button,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: logout(),
-    relief=general[31]
-)
-
-logout_b.place(
-    x=1125.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-records = Button(
-    image=records_normal,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: [
-        change_button_image(records, records_normal, records_clicked), 
-        gp.vxl(mainmenu[19])
-    ],
-    relief=general[31]
-)
-
-records.place(
-    x=855.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-commerce_button = PhotoImage(
-    file=relative_to_assets(mainmenu[20]))
-
-commerce = Button(
-    image=commerce_button,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: messagebox.showinfo(mainmenu[21], mainmenu[22]),
-    relief=general[31]
-)
-
-commerce.place(
-    x=45.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-clients = Button(
-    image=clients_normal,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: [
-        change_button_image(clients, clients_normal, clients_clicked), 
-        gp.vxl(mainmenu[23])
-        
-    ],
-    relief=general[31]
-)
-
-clients.place(
-    x=315.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona --
-products = Button(
-    image=products_normal,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: [
-        change_button_image(products, products_normal, products_clicked), 
-        gp.vxl(mainmenu[24])
-    ],
-    relief=general[31]
-)
-
-products.place(
-    x=585.0,
-    y=50.0,
-    width=190.0,
-    height=60.0
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona teclas rapidas--
-canvas.create_text(
-    726.0,
-    356.0,
-    anchor=general[9],
-    text=mainmenu[25],
-    fill=mainmenu[26],
-    font=(mainmenu[27], 16 * -1)
-)
-
-canvas.create_text(
-    726.0,
-    288.0,
-    anchor=general[9],
-    text=mainmenu[28],
-    fill=mainmenu[26],
-    font=(mainmenu[27], 36 * -1)
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --Crea y posiciona version--
-canvas.create_text(
-    14.0,
-    657.0,
-    anchor=general[9],
-    text=mainmenu[29],
-    fill=mainmenu[26],
-    font=(mainmenu[27], 10 * -1)
-)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-# --create_text() inserta texto en la ventana segun los parametros que se le den--
-canvas.create_text(
-    58.0,
-    7.0,
-    anchor=general[9],
-    text=mainmenu[30],
-    fill=general[11],
-    font=(mainmenu[31], 13 * -1)
-)
-
+# Crear los textos del reloj y la fecha
 clock_text = canvas.create_text(
-    1295.0,
-    695.0,
-    anchor=general[9],
-    text="",
-    fill=general[11],
-    font=(mainmenu[31], 13 * -1)
-)
-
+    1295.0, 695.0, anchor=general[9], text="", fill=general[11], font=(mainmenu[31], 13 * -1))
 date_text = canvas.create_text(
-    1151.0,
-    695.0,
-    anchor=general[9],
-    text="",
-    fill=general[11],
-    font=(mainmenu[31], 13 * -1)
-)
+    1151.0, 695.0, anchor=general[9], text="", fill=general[11], font=(mainmenu[31], 13 * -1))
 
 # Inicia la actualización del reloj
 update_clock_and_date(canvas, clock_text, date_text)
-
-canvas.create_text(
-    44.0,
-    695.0,
-    anchor=general[9],
-    text=username,
-    fill=general[11],
-    font=(mainmenu[31], 13 * -1)
-)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-# --Se llama a las funciones para interactuar con la ventana--
-canvas.bind(mainmenu[32], start_move)
-canvas.bind(mainmenu[33], do_move)
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+# Diccionario de eventos y funciones para canvas y ventana
+bindings = {
+    mainmenu[32]: (canvas, start_move),
+    mainmenu[33]: (canvas, do_move)
+}
 
-# Asignar las teclas F2, F3 y F4 a sus respectivas funciones
-window.bind(mainmenu[34], lambda e: clients.invoke())
-window.bind(mainmenu[35], lambda e: products.invoke())
-window.bind(mainmenu[36], lambda e: records.invoke())
+# Vincula cada evento con su respectiva función en el objeto correspondiente
+for key, (obj, function) in bindings.items():
+    obj.bind(key, function)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 window.resizable(False, False)
