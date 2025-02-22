@@ -19,6 +19,37 @@ def center_window(window, width, height):
     y = (screen_height // 2) - (height // 2) + 37
     window.geometry(f"{width}x{height}+{x}+{y}")
 
+def on_double_click(event):
+    """ Función que permite editar una celda al hacer doble clic """
+    # Obtener el índice del item seleccionado
+    item_id = treeview.focus()
+    
+    # Obtener coordenadas del clic
+    col = treeview.identify_column(event.x)  # Columna en formato #n
+    col_index = int(col[1:]) - 1  # Convertir a índice de lista (0 basado)
+
+    if item_id and col_index >= 0:
+        x, y, width, height = treeview.bbox(item_id, col_index)
+        
+        # Crear Entry y posicionarlo en la celda seleccionada
+        entry = tk.Entry(window)
+        entry.place(x=x+treeview.winfo_x(), y=y+treeview.winfo_y(), width=width, height=height)
+        
+        # Insertar texto actual en el Entry
+        entry.insert(0, treeview.item(item_id, "values")[col_index])
+        entry.focus()
+
+        def save_edit(event):
+            """ Guarda el texto ingresado en la celda """
+            new_text = entry.get()
+            values = list(treeview.item(item_id, "values"))
+            values[col_index] = new_text
+            treeview.item(item_id, values=values)
+            entry.destroy()  # Elimina el Entry después de guardar
+
+        # Guardar cambios al presionar "Enter"
+        entry.bind("<Return>", save_edit)
+        entry.bind("<FocusOut>", lambda e: entry.destroy())  # Cierra si pierde foco
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
@@ -102,6 +133,8 @@ treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.s
 for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
     treeview.column(col, width=width)
     treeview.heading(col, text=col, anchor=records[14])
+
+treeview.bind("<Double-1>", on_double_click)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
