@@ -20,36 +20,43 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 def on_double_click(event):
-    """ Función que permite editar una celda al hacer doble clic """
-    # Obtener el índice del item seleccionado
-    item_id = treeview.focus()
-    
-    # Obtener coordenadas del clic
+    """Permite editar una celda al hacer doble clic"""
+    item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
     col = treeview.identify_column(event.x)  # Columna en formato #n
-    col_index = int(col[1:]) - 1  # Convertir a índice de lista (0 basado)
+    col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
 
-    if item_id and col_index >= 0:
-        x, y, width, height = treeview.bbox(item_id, col_index)
-        
-        # Crear Entry y posicionarlo en la celda seleccionada
-        entry = tk.Entry(window)
-        entry.place(x=x+treeview.winfo_x(), y=y+treeview.winfo_y(), width=width, height=height)
-        
-        # Insertar texto actual en el Entry
-        entry.insert(0, treeview.item(item_id, "values")[col_index])
-        entry.focus()
+    if not item_id or col_index < 0:
+        return  # Evita errores si no hay selección válida
 
-        def save_edit(event):
-            """ Guarda el texto ingresado en la celda """
-            new_text = entry.get()
-            values = list(treeview.item(item_id, "values"))
-            values[col_index] = new_text
-            treeview.item(item_id, values=values)
-            entry.destroy()  # Elimina el Entry después de guardar
+    bbox = treeview.bbox(item_id, col_index)
+    if not bbox:
+        return  # Evita errores si bbox es None
 
-        # Guardar cambios al presionar "Enter"
-        entry.bind("<Return>", save_edit)
-        entry.bind("<FocusOut>", lambda e: entry.destroy())  # Cierra si pierde foco
+    x, y, width, height = bbox
+
+    # Crear Entry y posicionarlo sobre la celda seleccionada
+    entry = tk.Entry(treeview)
+    entry.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
+
+    # Insertar el texto actual en el Entry
+    current_value = treeview.item(item_id, "values")[col_index]
+    entry.insert(0, current_value)
+    entry.focus()
+
+    def save_edit(event):
+        """Guarda el valor ingresado en la celda"""
+        new_text = entry.get()
+        values = list(treeview.item(item_id, "values"))
+        values[col_index] = new_text
+        treeview.item(item_id, values=values)
+        entry.destroy()  # Eliminar Entry después de guardar
+
+    # Guardar cambios al presionar "Enter"
+    entry.bind("<Return>", save_edit)
+    entry.bind("<FocusOut>", lambda e: entry.destroy())  # Cierra si pierde foco
+
+
+
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
@@ -138,6 +145,8 @@ treeview.bind("<Double-1>", on_double_click)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
+
+treeview.bind("<Double-1>", on_double_click)
 
 def load_data(x):
     query_map = {1: queries[0], 2: queries[7]}
