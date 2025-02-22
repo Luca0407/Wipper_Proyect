@@ -9,11 +9,8 @@ import sys
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-
 general = txt.general()
 mainmenu = txt.menu()
-
-# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 window = Tk()
 username = users.current_user()
 
@@ -118,13 +115,6 @@ for index, (image_path, x, y) in enumerate(images):
     # Crear la imagen en el canvas con una etiqueta
     canvas.create_image(x, y, image=image_references[f"img_{index}"], tags=f"img_{index}")
 
-alternate_images = {
-    "img_1a": PhotoImage(file=relative_to_assets(mainmenu[2])),  # Por ejemplo, la imagen de otro color
-    "img_2a": PhotoImage(file=relative_to_assets(mainmenu[4])),
-    "img_3a": PhotoImage(file=relative_to_assets(mainmenu[6])),
-    # Agrega más imágenes alternas según sea necesario
-}
-
 button_images = {
     "img_1": {
         "original": image_references["img_13"],
@@ -149,9 +139,7 @@ def cambiar_imagen_boton(btn, image_type, button_key, func=None):
     if func:
             func()
 
-# Función que llama a la función vxl del archivo 2 y pasa la información necesaria
 def ejecutar_vxl(screen, btn, button_images, bk):
-    # Llamamos a la función vxl pasando el botón y las imágenes
     gp.vxl(screen, btn, button_images, bk)
 
 button_data = [
@@ -176,7 +164,6 @@ for index, (img, cmd, x, y) in enumerate(button_data):
         relief=general[31]
     )
     buttons_dict[f"img_{index}"] = btn  # Guardamos la referencia del botón en el diccionario
-    print(str(img))
     # Colocamos los botones en el canvas
     if str(img) in ("pyimage12", "pyimage13", "pyimage14", "pyimage15", "pyimage16"):
         btn.place(x=x, y=y, width=190, height=60)
