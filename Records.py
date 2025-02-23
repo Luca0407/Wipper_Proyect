@@ -12,7 +12,6 @@ mainmenu = txt.menu()
 records = txt.records()
 queries = txt.queries()
 
-
 def center_window(window, width, height):
     screen_width, screen_height = window.winfo_screenwidth(), window.winfo_screenheight()
     x = (screen_width // 2) - (width // 2)
@@ -20,7 +19,7 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 def on_double_click(event):
-    """Permite editar una celda al hacer doble clic"""
+    """Permite editar una celda con un OptionMenu al hacer doble clic"""
     item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
     col = treeview.identify_column(event.x)  # Columna en formato #n
     col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
@@ -34,29 +33,30 @@ def on_double_click(event):
 
     x, y, width, height = bbox
 
-    # Crear Entry y posicionarlo sobre la celda seleccionada
-    entry = tk.Entry(treeview)
-    entry.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
-
-    # Insertar el texto actual en el Entry
+    # Obtener el valor actual de la celda
     current_value = treeview.item(item_id, "values")[col_index]
-    entry.insert(0, current_value)
-    entry.focus()
+    
+    # Opciones del OptionMenu (puedes personalizar estas opciones)
+    options = ["Opción 1", "Opción 2", "Opción 3", "Opción 4"]
+    
+    # Crear una variable de control para el OptionMenu
+    var = tk.StringVar()
+    var.set(current_value)
+    
+    # Crear OptionMenu y posicionarlo sobre la celda seleccionada
+    option_menu = tk.OptionMenu(treeview, var, *options, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+    option_menu.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
+    option_menu.focus()
+    
+    # Destruir OptionMenu si pierde el foco
+    option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
 
-    def save_edit(event):
-        """Guarda el valor ingresado en la celda"""
-        new_text = entry.get()
-        values = list(treeview.item(item_id, "values"))
-        values[col_index] = new_text
-        treeview.item(item_id, values=values)
-        entry.destroy()  # Eliminar Entry después de guardar
-
-    # Guardar cambios al presionar "Enter"
-    entry.bind("<Return>", save_edit)
-    entry.bind("<FocusOut>", lambda e: entry.destroy())  # Cierra si pierde foco
-
-
-
+def save_edit(value, item_id, col_index, option_menu):
+    """Guarda el valor seleccionado en la celda"""
+    values = list(treeview.item(item_id, "values"))
+    values[col_index] = value
+    treeview.item(item_id, values=values)
+    option_menu.destroy()  # Eliminar OptionMenu después de guardar
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
