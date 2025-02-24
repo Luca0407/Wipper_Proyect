@@ -37,19 +37,66 @@ def on_double_click(event):
     current_value = treeview.item(item_id, "values")[col_index]
     
     # Opciones del OptionMenu (puedes personalizar estas opciones)
-    options = ["Opción 1", "Opción 2", "Opción 3", "Opción 4"]
+    cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
+    cl.insert(0, records[18])
+    clients = nokeys(cl)
     
+    pr = [row[0] for row in db.fetch_all("SELECT concat(brand, ' ', model) FROM products;")]
+    pr.insert(0, records[19])
+    products = nokeys(pr)
+    
+    sv = [row[0] for row in db.fetch_all("SELECT service_name FROM services;")]
+    sv.insert(0, records[20])
+    services = nokeys(sv)
+
+    done = ["-", "✔", "✘"]
+
+    departure = ["-", f"{strftime(general[35])}"]
+
     # Crear una variable de control para el OptionMenu
     var = tk.StringVar()
     var.set(current_value)
-    
-    # Crear OptionMenu y posicionarlo sobre la celda seleccionada
-    option_menu = tk.OptionMenu(treeview, var, *options, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+    match col_index:
+        case 0:
+            option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+        case 1:
+            option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+        case 2:
+            option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+        case 3:
+            vcmd = (window.register(only_integer_input), "%P")
+            option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
+            option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+            option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
+        case 4:
+            vcmd = (window.register(only_decimal_input), "%P")
+            option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
+            option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+            option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
+        case 6:
+            option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+        case 7:
+            option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+        case other:
+            return
+
     option_menu.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
     option_menu.focus()
-    
+
     # Destruir OptionMenu si pierde el foco
     option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
+
+def only_integer_input(P):
+    return P.isdigit() or P == ""
+
+def only_decimal_input(P):
+    if P == "":
+        return True
+    try:
+        float(P)  # Intenta convertir la entrada a float
+        return True
+    except ValueError:
+        return False
 
 def save_edit(value, item_id, col_index, option_menu):
     """Guarda el valor seleccionado en la celda"""
@@ -57,6 +104,12 @@ def save_edit(value, item_id, col_index, option_menu):
     values[col_index] = value
     treeview.item(item_id, values=values)
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
+
+def on_return(event, option_menu, item_id, col_index):
+    if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
+        messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
+        return "break"  # Impide que se ejecute el comando asociado al Return
+    save_edit(option_menu.get(), item_id, col_index, option_menu)
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
@@ -66,9 +119,8 @@ def load_client(entry1, entry2, entry3):
     if any("- Seleccione " in e for e in (e1, e2, e3)):
         messagebox.showerror(general[28], general[32])
         return
-    
     try:
-        params = (e3, e1, e2, 1, strftime(general[35]), strftime(general[35]), 0)
+        params = (e3, e1, e2)
         db.other_queries(queries[12], params)
         messagebox.showinfo(records[15], records[16])
         load_data(2)
