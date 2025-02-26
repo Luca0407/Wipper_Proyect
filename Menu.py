@@ -140,7 +140,7 @@ def cambiar_imagen_boton(btn, image_type, button_key, func=None):
             func()
 
 def ejecutar_vxl(screen, btn, button_images, bk):
-    gp.vxl(screen, btn, button_images, bk)
+    gp.vxl_button(screen, btn, button_images, bk)
 
 button_data = [
     (image_references["img_12"], lambda: messagebox.showinfo(mainmenu[21], mainmenu[22]), 60.0, 51),

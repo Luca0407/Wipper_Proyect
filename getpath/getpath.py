@@ -40,19 +40,24 @@ def cambiar_imagen_boton(btn, image_type, button_key, button_images):
     else:
         btn.configure(image=button_images[button_key]["original"])
 
+def vxl(screen):
+    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Records"}:
+        goto_path = OUTPUT_PATH / f'{screen}.py'
+        process = subprocess.Popen(["python", str(goto_path)])
+
 # Función vxl que ejecuta un tercer archivo Python
-def vxl(screen, btn, button_images, button_key):
+def vxl_button(screen, btn, button_images, button_key):
     if screen in {"Register", "Menu", "Login", "Clients", "Products", "Records"}:
         cambiar_imagen_boton(btn, "alternative", button_key, button_images)  # Cambiar la imagen del botón
         
         # Actualizar la interfaz inmediatamente (esto es importante para que el cambio de imagen se vea)
         btn.master.update()
-
-        # Ejecutar el tercer archivo de forma asíncrona
+    
         goto_path = OUTPUT_PATH / f'{screen}.py'
         process = subprocess.Popen(["python", str(goto_path)])
-        
+
         process.wait()  # Esperamos a que el proceso termine
         
         # Restaurar la imagen después de que el proceso haya terminado
         cambiar_imagen_boton(btn, "original", button_key, button_images)
+        
