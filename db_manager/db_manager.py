@@ -30,3 +30,12 @@ def other_queries(query, params=()):
             conn.rollback()
             print(f"Error en la base de datos: {e}")
 
+def commit(query):
+    with closing(get_connection()) as conn, closing(conn.cursor()) as cursor:
+        try:
+            cursor.execute(query)
+            conn.commit()
+        except sqlite3.DatabaseError as e:
+            conn.rollback()
+            print(f"Error en la base de datos: {e}")
+

@@ -23,7 +23,8 @@ def on_double_click(event):
     item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
     col = treeview.identify_column(event.x)  # Columna en formato #n
     col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
-
+    valor = []
+    valor.append(treeview.item(item_id, "values")[col_index])
     if not item_id or col_index < 0:
         return  # Evita errores si no hay selección válida
 
@@ -41,7 +42,7 @@ def on_double_click(event):
     cl.insert(0, records[18])
     clients = nokeys(cl)
     
-    pr = [row[0] for row in db.fetch_all("SELECT concat(brand, ' ', model) FROM products;")]
+    pr = [row[0] for row in db.fetch_all("SELECT product_name FROM products;")]
     pr.insert(0, records[19])
     products = nokeys(pr)
     
@@ -58,20 +59,20 @@ def on_double_click(event):
     var.set(current_value)
     match col_index:
         case 0:
-            option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+            option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 1:
-            option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+            option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
         case 2:
-            option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+            option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
         case 3:
             vcmd = (window.register(only_numbers_input), "%P")
             option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
             option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
             option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
         case 6:
-            option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+            option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
         case 7:
-            option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu))
+            option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
         case other:
             return
 
@@ -84,21 +85,29 @@ def on_double_click(event):
 def only_numbers_input(P):
     return P.isdigit() or P == ""
 
-def save_edit(value, item_id, col_index, option_menu):
+def save_edit(value, item_id, col_index, option_menu, valor, var):
     """Guarda el valor seleccionado en la celda"""
     values = list(treeview.item(item_id, "values"))
     values[col_index] = value
     treeview.item(item_id, values=values)
-    
+
+    if col_index == 0:
+        nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
+        query = f"UPDATE clients SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Clients = (SELECT ID_Clients FROM clients WHERE owner_name = '{valor[0]}')"
+        db.commit(query)
+
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
 
 def on_return(event, option_menu, item_id, col_index):
+    valor = []
+    valor.append(treeview.item(item_id, "values")[col_index])
     if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
         messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
         return "break"  # Impide que se ejecute el comando asociado al Return
-
-    query = f"UPDATE {dbcols[col_index]} SET nombre = ?, edad = ? WHERE id = ?"
-    save_edit(option_menu.get(), item_id, col_index, option_menu)
+    
+    query = f"UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records = (SELECT ID_Records FROM records WHERE quantity = {valor[0]})"
+    db.commit(query)
+    save_edit(option_menu.get(), item_id, col_index, option_menu, valor)
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
