@@ -141,7 +141,7 @@ cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
 cl.insert(0, records[18])
 clients = nokeys(cl)
 
-pr = [row[0] for row in db.fetch_all("SELECT concat(brand, ' ', model) FROM products;")]
+pr = [row[0] for row in db.fetch_all("SELECT product_name FROM products;")]
 pr.insert(0, records[19])
 products = nokeys(pr)
 
@@ -176,7 +176,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
-dbcols = ("owner_name", "products", "service_name", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
+dbcols = ("owner_name", "product_name", "service_name", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=18)
 
 for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):

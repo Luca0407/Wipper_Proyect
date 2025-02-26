@@ -11,8 +11,8 @@ def general():
 
 
 def queries():
-    every_query = ["""SELECT clients.owner_name, concat(products.brand, ' ', products.model),
-                services.service_name, r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
+    every_query = ["""SELECT clients.owner_name, product_name, services.service_name,
+                r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
                 r.done FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON
@@ -28,15 +28,15 @@ def queries():
                 
                 "SELECT phone FROM clients;",  # 3 verificación en clients.
                 
-                "SELECT ID_Products, brand, model, initial_cost FROM products;",  # 4 listado en products.
+                "SELECT ID_Products, product_name, initial_cost FROM products;",  # 4 listado en products.
                 
-                """SELECT ID_Products, brand, model, initial_cost
+                """SELECT ID_Products, product_name, initial_cost
                     FROM products ORDER BY ID_Products DESC LIMIT 1;""",  # 5 actualización de listado en products.
                 
                 "SELECT concat(brand, ' ', model) FROM products;",  # 6 verificación en products.
                 
-                """SELECT concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ', products.model),
-                services.service_name, r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
+                """SELECT clients.owner_name, product_name, services.service_name,
+                r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
                 r.done FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON
