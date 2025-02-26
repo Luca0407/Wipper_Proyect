@@ -11,7 +11,7 @@ def general():
 
 
 def queries():
-    every_query = ["""SELECT concat('(', clients.ID_Clients, ') - ', clients.owner_name), concat(products.brand, ' ', products.model),
+    every_query = ["""SELECT clients.owner_name, concat(products.brand, ' ', products.model),
                 services.service_name, r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
                 r.done FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
@@ -60,7 +60,9 @@ def queries():
                 ((SELECT ID_Services FROM services WHERE service_name = ?), (SELECT ID_Clients FROM clients WHERE owner_name = ?),
                 (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?));""",  # 12 carga una linea en el registro.
                 
-                "SELECT name, passwd FROM users"  # 13 consulta todos los usuarios.
+                "SELECT name, passwd FROM users",  # 13 consulta todos los usuarios.
+                
+                "INSERT INTO ? (?) VALUES (?) WHERE ? = ?"
     ]
     return every_query
 

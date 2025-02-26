@@ -64,12 +64,7 @@ def on_double_click(event):
         case 2:
             option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu))
         case 3:
-            vcmd = (window.register(only_integer_input), "%P")
-            option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
-            option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-            option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
-        case 4:
-            vcmd = (window.register(only_decimal_input), "%P")
+            vcmd = (window.register(only_numbers_input), "%P")
             option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
             option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
             option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
@@ -86,36 +81,30 @@ def on_double_click(event):
     # Destruir OptionMenu si pierde el foco
     option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
 
-def only_integer_input(P):
+def only_numbers_input(P):
     return P.isdigit() or P == ""
-
-def only_decimal_input(P):
-    if P == "":
-        return True
-    try:
-        float(P)  # Intenta convertir la entrada a float
-        return True
-    except ValueError:
-        return False
 
 def save_edit(value, item_id, col_index, option_menu):
     """Guarda el valor seleccionado en la celda"""
     values = list(treeview.item(item_id, "values"))
     values[col_index] = value
     treeview.item(item_id, values=values)
+    
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
 
 def on_return(event, option_menu, item_id, col_index):
     if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
         messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
         return "break"  # Impide que se ejecute el comando asociado al Return
+
+    query = f"UPDATE {dbcols[col_index]} SET nombre = ?, edad = ? WHERE id = ?"
     save_edit(option_menu.get(), item_id, col_index, option_menu)
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
     e2 = entry2.get()
     e3 = entry3.get()
-    
+
     if any("- Seleccione " in e for e in (e1, e2, e3)):
         messagebox.showerror(general[28], general[32])
         return
@@ -187,6 +176,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
+dbcols = ("owner_name", "products", "service_name", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=18)
 
 for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
