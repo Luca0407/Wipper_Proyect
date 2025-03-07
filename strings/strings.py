@@ -58,7 +58,7 @@ def queries():
                 
                 """INSERT INTO records (ID_Services, ID_Clients, ID_Products) VALUES
                 ((SELECT ID_Services FROM services WHERE service_name = ?), (SELECT ID_Clients FROM clients WHERE owner_name = ?),
-                (SELECT ID_Products FROM products WHERE concat(brand, ' ', model) = ?));""",  # 12 carga una linea en el registro.
+                (SELECT ID_Products FROM products WHERE product_name = ?));""",  # 12 carga una linea en el registro.
                 
                 "SELECT name, passwd FROM users",  # 13 consulta todos los usuarios.
                 

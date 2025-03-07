@@ -36,6 +36,7 @@ def on_double_click(event):
 
     # Obtener el valor actual de la celda
     current_value = treeview.item(item_id, "values")[col_index]
+    date = treeview.item(item_id, "values")[5]
     
     # Opciones del OptionMenu (puedes personalizar estas opciones)
     cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
@@ -55,24 +56,29 @@ def on_double_click(event):
     departure = ["-", f"{strftime(general[35])}"]
 
     # Crear una variable de control para el OptionMenu
+    global var2
     var = tk.StringVar()
+    var2 = tk.StringVar()
     var.set(current_value)
+    var2.set(date)
+    print("xd", var.get())
+    print("xd", var2.get())
     match col_index:
         case 0:
             option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 1:
-            option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
+            option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 2:
-            option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
+            option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 3:
             vcmd = (window.register(only_numbers_input), "%P")
             option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
             option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
             option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
         case 6:
-            option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
+            option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 7:
-            option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor))
+            option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case other:
             return
 
@@ -91,10 +97,104 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
     values[col_index] = value
     treeview.item(item_id, values=values)
 
-    if col_index == 0:
-        nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
-        query = f"UPDATE clients SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Clients = (SELECT ID_Clients FROM clients WHERE owner_name = '{valor[0]}')"
-        db.commit(query)
+    match col_index:
+        case 0:
+            nuevo_valor = var.get()
+            print(dbcols[col_index], nuevo_valor, valor[0])
+            check = f"""SELECT ID_Services, ID_Products, quantity, entry_date FROM records r
+            JOIN clients c ON r.ID_Clients = c.ID_Clients WHERE c.owner_name = '{nuevo_valor}';"""
+            checking = db.fetch_all(check)
+            new = f"""SELECT ID_Services, ID_Products, quantity, entry_date FROM records r
+            JOIN clients c ON r.ID_Clients = c.ID_Clients WHERE c.owner_name = '{valor[0]}'
+            AND left_date = '-' AND done = '-';"""
+            to_check = db.fetch_all(new)
+            print(checking)
+            print(to_check)
+            for i in checking:
+                for j in to_check:
+                    print("itemj", j)
+                    print("itemi", i)
+                    if i == j:
+                        print("si", i == j)
+                        messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        return
+
+            query = f"""UPDATE records SET {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM clients WHERE owner_name = '{nuevo_valor}')
+            WHERE ROWID = 
+            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM clients WHERE owner_name = '{valor[0]}')
+            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            db.commit(query)
+
+        case 1:
+            nuevo_valor = var.get()
+            print(dbcols[col_index], nuevo_valor, valor[0])
+            check = f"""SELECT r.ID_Services, r.ID_Clients, r.quantity, r.entry_date FROM records r
+            JOIN products p ON r.ID_Products = p.ID_Products WHERE p.product_name = '{nuevo_valor}';"""
+            checking = db.fetch_all(check)
+            new = f"""SELECT r.ID_Services, r.ID_Clients, r.quantity, r.entry_date FROM records r
+            JOIN products p ON r.ID_Products = p.ID_Products WHERE p.product_name = '{valor[0]}'
+            AND left_date = '-' AND done = '-';"""
+            to_check = db.fetch_all(new)
+            print(checking)
+            print(to_check)
+            for i in checking:
+                for j in to_check:
+                    print("itemj", j)
+                    print("itemi", i)
+                    if i == j:
+                        print("si", i == j)
+                        messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        return
+
+            query = f"""UPDATE records SET {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM products WHERE product_name = '{nuevo_valor}')
+            WHERE ROWID = 
+            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM products WHERE product_name = '{valor[0]}')
+            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            db.commit(query)
+
+        case 2:
+            nuevo_valor = var.get()
+            print(dbcols[col_index], "xd", nuevo_valor, valor[0])
+            check = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
+            JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{nuevo_valor}'
+            AND r.entry_date = '{var2.get()}';"""
+            checking = db.fetch_all(check)
+            new = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
+            JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{valor[0]}'
+            AND left_date = '-' AND done = '-';"""
+            to_check = db.fetch_all(new)
+            print("nuevoxd", checking)
+            print("viejoxd", to_check)
+            for i in checking:
+                for j in to_check:
+                    print("nuevo", j)
+                    print("viejo", i)
+                    if i == j:
+                        print("si", i == j)
+                        messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        return
+
+            query = f"""UPDATE records SET {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM services WHERE service_name = '{nuevo_valor}')
+            WHERE ROWID = 
+            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
+            (SELECT {dbcols[col_index]} FROM services WHERE service_name = '{valor[0]}')
+            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            db.commit(query)
+
+        case 6:
+            nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
+            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE {dbcols[col_index]} = '{valor[0]}';"
+            db.commit(query)
+
+        case 7:
+            nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
+            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE {dbcols[col_index]} = '{valor[0]}';"
+            db.commit(query)
 
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
 
@@ -185,7 +285,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
-dbcols = ("owner_name", "product_name", "service_name", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
+dbcols = ("ID_Clients", "ID_Products", "ID_Services", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=18)
 
 for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
