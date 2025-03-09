@@ -37,6 +37,7 @@ def on_double_click(event):
     # Obtener el valor actual de la celda
     current_value = treeview.item(item_id, "values")[col_index]
     date = treeview.item(item_id, "values")[5]
+    rid = treeview.item(item_id, "values")[8]
     
     # Opciones del OptionMenu (puedes personalizar estas opciones)
     cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
@@ -56,13 +57,17 @@ def on_double_click(event):
     departure = ["-", f"{strftime(general[35])}"]
 
     # Crear una variable de control para el OptionMenu
-    global var2
+    global vardate
+    global varid
     var = tk.StringVar()
-    var2 = tk.StringVar()
+    vardate = tk.StringVar()
+    varid = tk.StringVar()
+    varid.set(rid)
     var.set(current_value)
-    var2.set(date)
+    vardate.set(date)
     print("xd", var.get())
-    print("xd", var2.get())
+    print("xd", vardate.get())
+    print("ID: ", varid.get())
     match col_index:
         case 0:
             option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
@@ -74,7 +79,7 @@ def on_double_click(event):
             vcmd = (window.register(only_numbers_input), "%P")
             option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
             option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-            option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index))  # Verificar antes de guardar
+            option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
         case 6:
             option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
         case 7:
@@ -121,10 +126,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
             (SELECT {dbcols[col_index]} FROM clients WHERE owner_name = '{nuevo_valor}')
-            WHERE ROWID = 
-            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
-            (SELECT {dbcols[col_index]} FROM clients WHERE owner_name = '{valor[0]}')
-            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
             db.commit(query)
 
         case 1:
@@ -150,10 +152,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
             (SELECT {dbcols[col_index]} FROM products WHERE product_name = '{nuevo_valor}')
-            WHERE ROWID = 
-            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
-            (SELECT {dbcols[col_index]} FROM products WHERE product_name = '{valor[0]}')
-            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
             db.commit(query)
 
         case 2:
@@ -161,7 +160,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
             print(dbcols[col_index], "xd", nuevo_valor, valor[0])
             check = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
             JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{nuevo_valor}'
-            AND r.entry_date = '{var2.get()}';"""
+            AND r.entry_date = '{vardate.get()}';"""
             checking = db.fetch_all(check)
             new = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
             JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{valor[0]}'
@@ -180,34 +179,33 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
             (SELECT {dbcols[col_index]} FROM services WHERE service_name = '{nuevo_valor}')
-            WHERE ROWID = 
-            (SELECT ROWID FROM records WHERE {dbcols[col_index]} = 
-            (SELECT {dbcols[col_index]} FROM services WHERE service_name = '{valor[0]}')
-            AND left_date = '-' AND done = '-' ORDER BY ROWID DESC);"""
+            WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
             db.commit(query)
 
         case 6:
             nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
-            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE {dbcols[col_index]} = '{valor[0]}';"
+            print(dbcols[col_index])
+            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Records = '{varid.get()}';"
             db.commit(query)
 
         case 7:
             nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
-            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE {dbcols[col_index]} = '{valor[0]}';"
+            query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Records = '{varid.get()}';"
             db.commit(query)
 
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
 
-def on_return(event, option_menu, item_id, col_index):
+def on_return(event, option_menu, item_id, col_index, var):
     valor = []
     valor.append(treeview.item(item_id, "values")[col_index])
     if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
         messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
         return "break"  # Impide que se ejecute el comando asociado al Return
     
-    query = f"UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records = (SELECT ID_Records FROM records WHERE quantity = {valor[0]})"
+    query = f"""UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records =
+    (SELECT ID_Records FROM records WHERE {dbcols[col_index]} = {valor[0]})"""
     db.commit(query)
-    save_edit(option_menu.get(), item_id, col_index, option_menu, valor)
+    save_edit(option_menu.get(), item_id, col_index, option_menu, valor, var)
 
 def load_client(entry1, entry2, entry3):
     e1 = entry1.get()
@@ -226,6 +224,7 @@ def load_client(entry1, entry2, entry3):
         messagebox.showerror(records[17], str(e))
 
 window = tk.Tk()
+window.attributes("-topmost", True)
 window.overrideredirect(True)
 center_window(window, 1360, 550)
 
@@ -285,7 +284,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
-dbcols = ("ID_Clients", "ID_Products", "ID_Services", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done",)
+dbcols = ("ID_Clients", "ID_Products", "ID_Services", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done", "ID_Records")
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=18)
 
 for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
@@ -296,8 +295,6 @@ treeview.bind("<Double-1>", on_double_click)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
-
-treeview.bind("<Double-1>", on_double_click)
 
 def load_data(x):
     query_map = {1: queries[0], 2: queries[7]}

@@ -17,6 +17,7 @@ if username is not None:
     sys.exit()  # No creamos la ventana si el usuario ya está autenticado
 
 window = Tk()
+window.attributes("-topmost", True)
 
 def goto_window(x):
     gp.vxl(x)
@@ -46,7 +47,6 @@ def center_window(window, width, height):
 
 center_window(window, 300, 480)
 window.overrideredirect(True)
-
 
 # Crear el canvas
 canvas = Canvas(

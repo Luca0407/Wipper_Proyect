@@ -13,6 +13,7 @@ general = txt.general()
 mainmenu = txt.menu()
 window = Tk()
 username = users.current_user()
+window.attributes("-topmost", True)
 
 if username is None:
     window.destroy()

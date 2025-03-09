@@ -101,6 +101,7 @@ def center_window(window, width, height):
     window.geometry(f"{width}x{height}+{x}+{y}")
 
 window = tk.Tk()
+window.attributes("-topmost", True)
 window.overrideredirect(True)
 center_window(window, 1360, 550)
 

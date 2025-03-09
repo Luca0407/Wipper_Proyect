@@ -13,7 +13,7 @@ def general():
 def queries():
     every_query = ["""SELECT clients.owner_name, product_name, services.service_name,
                 r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
-                r.done FROM records r JOIN clients ON
+                r.done, r.ID_Records FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON
                     r.ID_Products = products.ID_Products
@@ -37,7 +37,7 @@ def queries():
                 
                 """SELECT clients.owner_name, product_name, services.service_name,
                 r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
-                r.done FROM records r JOIN clients ON
+                r.done, r.ID_Records FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON
                     r.ID_Products = products.ID_Products
@@ -104,7 +104,7 @@ def menu():
                     "menu_bar.png", "status_bar.png", "logo_icon.png", "user_icon.png", "date_icon.png",
                     "time_icon.png", "minimize.png", "close.png", "logout.png", "Records",
                     "commerce.png", "No disponible", "Esta funcionalidad solo es accesible en la versión completa.", "Clients", "Products",
-                    "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold", "Teclas Rápidas", "v0.9.4.3",
+                    "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold", "Teclas Rápidas", "v0.9.6",
                     "Wipper Insumos", "Montserrat Medium", "<Button-1>", "<B1-Motion>", "<F2>",
                     "<F3>", "<F4>"]
     return menu_strings
