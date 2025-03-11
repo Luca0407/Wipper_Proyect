@@ -215,8 +215,6 @@ canvas.create_text(
     font=(general[4], 18 * -1))
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-
-
 window.bind(general[5], lambda e: sign_up_button.invoke())
 
 window.resizable(False, False)

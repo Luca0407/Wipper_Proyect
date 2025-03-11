@@ -41,15 +41,12 @@ def on_double_click(event):
     
     # Opciones del OptionMenu (puedes personalizar estas opciones)
     cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
-    cl.insert(0, records[18])
     clients = nokeys(cl)
     
     pr = [row[0] for row in db.fetch_all("SELECT product_name FROM products;")]
-    pr.insert(0, records[19])
     products = nokeys(pr)
     
     sv = [row[0] for row in db.fetch_all("SELECT service_name FROM services;")]
-    sv.insert(0, records[20])
     services = nokeys(sv)
 
     done = ["-", "✔", "✘"]

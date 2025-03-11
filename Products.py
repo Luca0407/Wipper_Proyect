@@ -28,9 +28,10 @@ def load_data(x):
             treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
             treeview.column(col_marca, anchor=tk.CENTER)
 
+        treeview.delete(*treeview.get_children())
+
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
-
 
 def insert_row():
     columns, values = [], []
@@ -58,6 +59,17 @@ def insert_row():
         reset_entries(i)
     load_data(2)
 
+def delete_row():
+    item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+    if item_id == "":
+        messagebox.showerror("ERROR", "Ninguna fila se encuentra seleccionada")
+        return
+    rid = treeview.item(item_id, "values")[0]
+    varid = tk.StringVar()
+    varid.set(rid)
+    query = f"DELETE FROM products WHERE ID_Products = '{varid.get()}'"
+    db.commit(query)
+    load_data(1)
 
 def reset_entries(x):
     match x:
@@ -104,6 +116,9 @@ frame.pack()
 widgets_frame = ttk.LabelFrame(frame, text=products[4])
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
+delete_frame = ttk.LabelFrame(frame)
+delete_frame.grid(row=0, column=0, padx=10, pady=10, sticky="s")
+
 entries = [
     (product_entry := ttk.Entry(widgets_frame), products[0]),
     (cost_entry := ttk.Entry(widgets_frame), products[1])
@@ -124,6 +139,9 @@ button.grid(row=4, column=0, padx=5, pady=(0, 5), sticky=general[26])
 button_close = ttk.Button(widgets_frame, text=general[25], command=close)
 button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=general[26])
 
+button_delete = ttk.Button(delete_frame, text="Eliminar", command=lambda: delete_row())
+button_delete.grid(row=0, column=0, padx=10, pady=10)
+
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
 
@@ -131,7 +149,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
-for col, width in zip(cols, [50, 292, 296, 292]):
+for col, width in zip(cols, [50, 438, 442]):
     treeview.column(col, width=width)
 
 treeview.pack()
