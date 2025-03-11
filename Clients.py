@@ -52,10 +52,6 @@ def on_double_click(event):
     # Obtener el valor actual de la celda
     current_value = treeview.item(item_id, "values")[col_index]
     rid = treeview.item(item_id, "values")[0]
-    
-    # Opciones del OptionMenu (puedes personalizar estas opciones)
-    cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
-    clients = nokeys(cl)
 
     # Crear una variable de control para el OptionMenu
     global varid
@@ -104,12 +100,6 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
 
 def only_numbers_input(P):
     return P.isdigit() or P == ""
-
-def nokeys(x):
-    new_arr = []
-    for i in x:
-        new_arr.append(i.strip("{}"))
-    return new_arr
 
 def on_return(event, option_menu, item_id, col_index, var):
     valor = []
@@ -238,8 +228,6 @@ def on_focus_in(event):
         phone_entry.config(validate="none")  # Desactivar validación temporalmente
         phone_entry.delete(0, tk.END)
         phone_entry.config(validate="key")  # Restaurar validación
-    
-    
 
 def on_focus_out(event):
     """Si el campo queda vacío, vuelve a poner el placeholder."""
@@ -248,7 +236,6 @@ def on_focus_out(event):
         phone_entry.insert(0, clients[1])
         phone_entry.config(validate="key")  # Restaurar validación
 
-
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=0, column=1, pady=10)
 
@@ -256,7 +243,7 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
-for col, width in zip(cols, [50, 500, 500]):
+for col, width in zip(cols, [300, 300, 300]):
     treeview.column(col, width=width)
 
 treeview.pack()

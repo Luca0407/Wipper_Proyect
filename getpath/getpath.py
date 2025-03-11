@@ -22,6 +22,8 @@ def getPath():
         case "Menu":
             assets_path = OUTPUT_PATH / 'Menu_Screen' / 'build' / 'assets' / 'frame0'
 
+        case "testing":
+            assets_path = OUTPUT_PATH / 'Menu_Screen' / 'build' / 'assets' / 'frame0'
         case "Clients":
             assets_path = OUTPUT_PATH
         
@@ -41,7 +43,7 @@ def cambiar_imagen_boton(btn, image_type, button_key, button_images):
         btn.configure(image=button_images[button_key]["original"])
 
 def vxl(screen):
-    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Records"}:
+    if screen in {"Register", "Menu", "Login", "Clients", "Products", "Records", "testing"}:
         goto_path = OUTPUT_PATH / f'{screen}.py'
         process = subprocess.Popen(["python", str(goto_path)])
 
