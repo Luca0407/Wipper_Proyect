@@ -122,6 +122,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
                     if i == j:
                         print("si", i == j)
                         messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        load_data(1)
                         return
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
@@ -148,6 +149,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
                     if i == j:
                         print("si", i == j)
                         messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        load_data(1)
                         return
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
@@ -175,6 +177,7 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
                     if i == j:
                         print("si", i == j)
                         messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                        load_data(1)
                         return
 
             query = f"""UPDATE records SET {dbcols[col_index]} = 
@@ -194,6 +197,20 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
             db.commit(query)
 
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
+    load_data(1)
+
+
+def delete_row():
+    item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+    if item_id == "":
+        messagebox.showerror("ERROR", "Ninguna fila se encuentra seleccionada")
+        return
+    rid = treeview.item(item_id, "values")[8]
+    varid = tk.StringVar()
+    varid.set(rid)
+    query = f"DELETE FROM records WHERE ID_Records = '{varid.get()}'"
+    db.commit(query)
+    load_data(1)
 
 def on_return(event, option_menu, item_id, col_index, var):
     valor = []
@@ -202,21 +219,21 @@ def on_return(event, option_menu, item_id, col_index, var):
         messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
         return "break"  # Impide que se ejecute el comando asociado al Return
     
-    query = f"""UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records =
-    (SELECT ID_Records FROM records WHERE {dbcols[col_index]} = {valor[0]})"""
+    query = f"UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"
     db.commit(query)
     save_edit(option_menu.get(), item_id, col_index, option_menu, valor, var)
 
-def load_client(entry1, entry2, entry3):
+def load_client(entry1, entry2, entry3, entry4):
     e1 = entry1.get()
     e2 = entry2.get()
     e3 = entry3.get()
+    e4 = entry4.get()
 
     if any("- Seleccione " in e for e in (e1, e2, e3)):
         messagebox.showerror(general[28], general[32])
         return
     try:
-        params = (e3, e1, e2)
+        params = (e3, e1, e2, e4)
         db.other_queries(queries[12], params)
         messagebox.showinfo(records[15], records[16])
         load_data(2)
@@ -238,6 +255,9 @@ frame.pack()
 
 widgets_frame = ttk.LabelFrame(frame, text=records[12])
 widgets_frame.grid(row=0, column=0, padx=10, pady=10)
+
+delete_frame = ttk.LabelFrame(frame)
+delete_frame.grid(row=0, column=0, padx=10, pady=10, sticky="e")
 
 def nokeys(x):
     new_arr = []
@@ -269,14 +289,36 @@ servicesbox = ttk.Combobox(widgets_frame, state=records[13], values=services)
 servicesbox.current(0)
 servicesbox.grid(row=0, column=2, padx=10, pady=10)
 
-button_new_service = ttk.Button(widgets_frame, text=records[21], command=lambda: print("en desarollo."))
-button_new_service.grid(row=0, column=3, padx=10, pady=10)
+vcmd = (window.register(only_numbers_input), "%P")
+quantity_entry = ttk.Entry(widgets_frame, foreground="gray", validate="none", validatecommand=vcmd)
+quantity_entry.insert(0, "Ingrese una cantidad")
+quantity_entry.grid(row=0, column=3, padx=10, pady=10)
 
-button_submit = ttk.Button(widgets_frame, text=records[22], command=lambda: load_client(clientsbox, productsbox, servicesbox))
+def on_focus_in(event):
+    """Borra el placeholder cuando el usuario hace clic en el Entry."""
+    if quantity_entry.get() == "Ingrese una cantidad":
+        quantity_entry.config(validate="none")  # Desactivar validación temporalmente
+        quantity_entry.delete(0, tk.END)
+        quantity_entry.config(foreground="white", validate="key")  # Restaurar validación
+
+def on_focus_out(event):
+    """Si el campo queda vacío, vuelve a poner el placeholder."""
+    if not quantity_entry.get():
+        quantity_entry.config(validate="none")  # Desactivar validación para insertar texto
+        quantity_entry.insert(0, "Ingrese una cantidad")
+        quantity_entry.config(foreground="gray", validate="key")  # Restaurar validación
+
+# button_new_service = ttk.Button(widgets_frame, text=records[21], command=lambda: print("en desarollo."))
+# button_new_service.grid(row=0, column=3, padx=10, pady=10)
+
+button_submit = ttk.Button(widgets_frame, text=records[22], command=lambda: load_client(clientsbox, productsbox, servicesbox, quantity_entry))
 button_submit.grid(row=0, column=4, padx=10, pady=10)
 
 button_close = ttk.Button(widgets_frame, text=general[25], command=window.destroy)
 button_close.grid(row=0, column=5, padx=10, pady=10)
+
+button_delete = ttk.Button(delete_frame, text="Eliminar", command=lambda: delete_row())
+button_delete.grid(row=0, column=0, padx=10, pady=10)
 
 treeFrame = ttk.Frame(frame)
 treeFrame.grid(row=1, column=0, pady=20)
@@ -292,6 +334,8 @@ for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
     treeview.heading(col, text=col, anchor=records[14])
 
 treeview.bind("<Double-1>", on_double_click)
+quantity_entry.bind("<FocusIn>", on_focus_in)
+quantity_entry.bind("<FocusOut>", on_focus_out)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
@@ -305,6 +349,10 @@ def load_data(x):
             treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
             treeview.column(col_marca, anchor=tk.CENTER)
 
+# Eliminar datos previos
+        treeview.delete(*treeview.get_children())
+
+# Insertar nuevos datos
     for value_tuple in db_data:
         treeview.insert('', tk.END, values=value_tuple)
 

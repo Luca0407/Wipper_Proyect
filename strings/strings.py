@@ -33,7 +33,7 @@ def queries():
                 """SELECT ID_Products, product_name, initial_cost
                     FROM products ORDER BY ID_Products DESC LIMIT 1;""",  # 5 actualización de listado en products.
                 
-                "SELECT concat(brand, ' ', model) FROM products;",  # 6 verificación en products.
+                "SELECT product_name FROM products;",  # 6 verificación en products.
                 
                 """SELECT clients.owner_name, product_name, services.service_name,
                 r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
@@ -56,9 +56,9 @@ def queries():
                 
                 "UPDATE users SET active = 0 WHERE name = ?;",  # 11 desmarca al usuario que estaba activo.
                 
-                """INSERT INTO records (ID_Services, ID_Clients, ID_Products) VALUES
+                """INSERT INTO records (ID_Services, ID_Clients, ID_Products, quantity) VALUES
                 ((SELECT ID_Services FROM services WHERE service_name = ?), (SELECT ID_Clients FROM clients WHERE owner_name = ?),
-                (SELECT ID_Products FROM products WHERE product_name = ?));""",  # 12 carga una linea en el registro.
+                (SELECT ID_Products FROM products WHERE product_name = ?), ?);""",  # 12 carga una linea en el registro.
                 
                 "SELECT name, passwd FROM users",  # 13 consulta todos los usuarios.
                 
@@ -94,8 +94,8 @@ def clients():
 
 
 def products():
-    products_strings = ["Marca", "Modelo", "Costo Inicial", 'brand', 'model',
-                        'initial_cost', "Datos del Producto", "Este producto ya se encuentra registrado", "El costo debe ser un número."]
+    products_strings = ["Producto", "Costo Inicial", 'product_name', 'initial_cost', "Datos del Producto",
+                        "Este producto ya se encuentra registrado", "El costo debe ser un número."]
     return products_strings
 
 def menu():

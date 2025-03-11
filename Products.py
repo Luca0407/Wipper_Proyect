@@ -12,7 +12,7 @@ queries = txt.queries()
 
 # --- x ---
 init_path = gp.getPath()
-cols = (general[20], products[0], products[1], products[2])
+cols = (general[20], products[0], products[1])
 
 
 def close():
@@ -34,28 +34,22 @@ def load_data(x):
 
 def insert_row():
     columns, values = [], []
-    brand, model, cost = brand_entry.get(), model_entry.get(), cost_entry.get()
+    product_name, cost = product_entry.get(), cost_entry.get()
 
-    if brand not in cols:
-        columns.append(products[3])
-        values.append(brand.strip().capitalize())
-
-    if model not in cols:
-        columns.append(products[4])
-        values.append(model.upper().strip())
-
+    if product_name not in cols:
+        columns.append(products[2])
+        values.append(product_name.strip().upper())
     try:
         if cost not in cols:
-            columns.append(products[5])
+            columns.append(products[3])
             values.append(float(cost))
     except ValueError:
-        messagebox.showerror(general[28], products[8])
+        messagebox.showerror(general[28], products[6])
         return
 
-    product_name = f"{brand} {model}"
     product_data = db.fetch_all(queries[6])
     if any(entry[0] == product_name for entry in product_data):
-        messagebox.showwarning(general[27], products[7])
+        messagebox.showwarning(general[27], products[5])
         return
 
     query = f"INSERT INTO products ({', '.join(columns)}) VALUES ({', '.join(['?'] * len(values))})"
@@ -68,25 +62,19 @@ def insert_row():
 def reset_entries(x):
     match x:
         case 1:
-            brand_entry.delete(0, "")
-            brand_entry.insert(0, products[0])
-            
-        case 2:
-            model_entry.delete(0, "")
-            model_entry.insert(0, products[1])
+            product_entry.delete(0, "")
+            product_entry.insert(0, products[0])
         
-        case 3:
+        case 2:
             cost_entry.delete(0, "")
-            cost_entry.insert(0, products[2])
+            cost_entry.insert(0, products[1])
 
 
 def keep_used():
-    if brand_entry.get().strip() == "":
+    if product_entry.get().strip() == "":
         reset_entries(1)
-    if model_entry.get().strip() == "":
-        reset_entries(2)
     if cost_entry.get().strip() == "":
-        reset_entries(3)
+        reset_entries(2)
 
 
 def clear_entry(event, entry, default_text):
@@ -113,13 +101,12 @@ style.theme_use(general[16])
 frame = ttk.Frame(window)
 frame.pack()
 
-widgets_frame = ttk.LabelFrame(frame, text=products[6])
+widgets_frame = ttk.LabelFrame(frame, text=products[4])
 widgets_frame.grid(row=0, column=0, padx=20, pady=10)
 
 entries = [
-    (brand_entry := ttk.Entry(widgets_frame), products[0]),
-    (model_entry := ttk.Entry(widgets_frame), products[1]),
-    (cost_entry := ttk.Entry(widgets_frame), products[2])
+    (product_entry := ttk.Entry(widgets_frame), products[0]),
+    (cost_entry := ttk.Entry(widgets_frame), products[1])
 ]
 
 for i, (entry, default_text) in enumerate(entries):
