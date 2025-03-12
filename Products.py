@@ -109,6 +109,9 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
         load_data(1)
         return
 
+    option_menu.destroy()  # Eliminar OptionMenu después de guardar
+    load_data(1)
+
 def insert_row():
     product_name, cost = product_entry.get(), cost_entry.get()
 
@@ -238,13 +241,12 @@ treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side=general[17], fill=general[18])
 
 treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
-for col, width in zip(cols, [50, 438, 442]):
+for col, width in zip(cols, [300, 300, 300]):
     treeview.column(col, width=width)
 
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-window.bind(general[5], lambda e: button.invoke())
 window.bind(general[14], lambda e: button_close.invoke())
 treeview.bind("<Double-1>", on_double_click)
 cost_entry.bind("<FocusIn>", on_focus_in)

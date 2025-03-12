@@ -249,7 +249,6 @@ for col, width in zip(cols, [300, 300, 300]):
 treeview.pack()
 treeScroll.config(command=treeview.yview)
 
-window.bind(general[5], lambda e: button.invoke())
 window.bind(general[14], lambda e: button_close.invoke())
 treeview.bind("<Double-1>", on_double_click)
 phone_entry.bind("<FocusIn>", on_focus_in)

@@ -6,12 +6,17 @@ from users import users
 from time import strftime
 from strings import strings as txt
 import sys
+import tkinter as tk
+from db_manager import db_manager as db
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
 general = txt.general()
 mainmenu = txt.menu()
 products = txt.products()
+clients = txt.clients()
+queries = txt.queries()
+records = txt.records()
 window = Tk()
 username = users.current_user()
 window.attributes("-topmost", True)
@@ -141,18 +146,15 @@ def cambiar_imagen_boton(btn, image_type, button_key, func=None):
         btn.configure(image=button_images[button_key]["alternative"])
     else:
         btn.configure(image=button_images[button_key]["original"])
-    
+    btn.master.update()
     if func:
             func()
 
-def ejecutar_vxl(screen, btn, button_images, bk):
-    gp.vxl_button(screen, btn, button_images, bk)
-
 button_data = [
     (image_references["img_12"], lambda: messagebox.showinfo(mainmenu[21], mainmenu[22]), 60.0, 51),
-    (image_references["img_13"], lambda: (ejecutar_vxl(mainmenu[23], buttons_dict["img_1"], button_images, "img_1")), 315, 51),
-    (image_references["img_14"], lambda: (ejecutar_vxl(mainmenu[19], buttons_dict["img_2"], button_images, "img_2")), 855, 51),
-    (image_references["img_15"], lambda: (ejecutar_vxl(mainmenu[24], buttons_dict["img_3"], button_images, "img_3")), 585, 51),
+    (image_references["img_13"], lambda: (cambiar_imagen_boton(buttons_dict["img_1"], "alternative", "img_1", cli_frame())), 315, 51),
+    (image_references["img_14"], lambda: (cambiar_imagen_boton(buttons_dict["img_2"], "alternative", "img_2", rec_frame())), 855, 51),
+    (image_references["img_15"], lambda: (cambiar_imagen_boton(buttons_dict["img_3"], "alternative", "img_3", prod_frame())), 585, 51),
     (image_references["img_9"], lambda: print("minimize clicked"), 1280.0, 2),  # Minimizar
     (image_references["img_10"], window.destroy, 1325, 2),  # Cerrar
     (image_references["img_11"], logout, 1100, 51),  # Logout
@@ -179,7 +181,9 @@ for index, (img, cmd, x, y) in enumerate(button_data):
     buttons.append(btn)
 
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
+prod = buttons_dict["img_3"]
+rec = buttons_dict["img_2"]
+cli = buttons_dict["img_1"]
 
 # Lista con las configuraciones de los textos
 texts = [
@@ -205,56 +209,809 @@ date_text = canvas.create_text(
 update_clock_and_date(canvas, clock_text, date_text)
 # -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-frame_container = Frame(window, width=1360, height=550, bg="#333")
-frame_container.place(x=0, y=130)
-frame_container.pack_propagate(False)
-frame_container_visible = False
+def nokeys(x):
+    new_arr = []
+    for i in x:
+        new_arr.append(i.strip("{}"))
+    return new_arr
 
-def toggle_frame():
-    global frame_container_visible
-    if frame_container_visible:
-        frame_container.place_forget()
+def load_client(entry1, entry2, entry3, entry4):
+    e1 = entry1.get()
+    e2 = entry2.get()
+    e3 = entry3.get()
+    e4 = entry4.get()
+
+    if any("- Seleccione " in e for e in (e1, e2, e3)):
+        messagebox.showerror(general[28], general[32])
+        return
+    try:
+        params = (e3, e1, e2, e4)
+        db.other_queries(queries[12], params)
+        messagebox.showinfo(records[15], records[16])
+        # load_data(2)
+    except Exception as e:
+        messagebox.showerror(records[17], str(e))
+
+def toggle_frame(frame, visible):
+    if visible:
+        frame.place_forget()
     else:
-        frame_container.place(x=0, y=130)
-    frame_container_visible = not frame_container_visible
+        frame.place(x=0, y=131)
+
+    visible = not visible
 
 style = ttk.Style(window)
-theme_path = rf"c:\Users\Luca\Downloads\Programacion\Demo_Wipper\forest-dark.tcl"
+tclpath = gp.getPath().parents[3]
+theme_path = rf"{tclpath}\forest-dark.tcl"
 window.tk.call(general[15], theme_path)
 style.theme_use(general[16])
 
-widgets_frame = ttk.LabelFrame(frame_container, text=products[4])
-widgets_frame.pack(padx=20, pady=10)
+def prod_frame():
+    dbcols = ("ID_Products", "product_name", "initial_cost")
+    def on_double_click(event):
+        """Permite editar una celda con un OptionMenu al hacer doble clic"""
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        col = treeview.identify_column(event.x)  # Columna en formato #n
+        col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if not item_id or col_index < 0:
+            return  # Evita errores si no hay selección válida
 
-product_entry = ttk.Entry(widgets_frame)
-cost_entry = ttk.Entry(widgets_frame, validate="none", validatecommand=vcmd)
-entries = [(product_entry, products[0]), (cost_entry, products[1])]
+        bbox = treeview.bbox(item_id, col_index)
+        if not bbox:
+            return  # Evita errores si bbox es None
 
-for i, (entry, default_text) in enumerate(entries):
-    entry.insert(0, default_text)
-    entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=general[22])
+        x, y, width, height = bbox
 
-separator = ttk.Separator(widgets_frame)
-separator.grid(row=3, column=0, padx=10, pady=10, sticky=general[22])
+        # Obtener el valor actual de la celda
+        current_value = treeview.item(item_id, "values")[col_index]
+        rid = treeview.item(item_id, "values")[0]
 
-button_close = ttk.Button(widgets_frame, text=general[25], command=toggle_frame)
-button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=general[26])
+        # Crear una variable de control para el OptionMenu
+        global varid
+        var = tk.StringVar()
+        varid = tk.StringVar()
+        varid.set(rid)
+        var.set(current_value)
+        print("xd", var.get())
+        print("ID: ", varid.get())
+        match col_index:
+            case 1:
+                option_menu = tk.Entry(treeview)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+            case 2:
+                vcmd = (window.register(only_numbers_input), "%P")
+                option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+            case other:
+                return
 
-treeFrame = ttk.Frame(frame_container)
-treeFrame.pack(pady=10)
+        option_menu.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
+        option_menu.focus()
 
-treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side=general[17], fill=general[18])
+        # Destruir OptionMenu si pierde el foco
+        option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
+    
+    def on_return(event, option_menu, item_id, col_index, var):
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
+            messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
+            return "break"  # Impide que se ejecute el comando asociado al Return
+        print("onreturn: ", dbcols[col_index], option_menu.get(), varid.get())
+        query = f"UPDATE products SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE ID_Products = '{varid.get()}';"
+        db.commit(query)
+        save_edit(dbcols[col_index], item_id, col_index, option_menu, valor, var)
+    
+    def save_edit(value, item_id, col_index, option_menu, valor, var):
+        """Guarda el valor seleccionado en la celda"""
+        values = list(treeview.item(item_id, "values"))
+        values[col_index] = value
+        treeview.item(item_id, values=values)
+        nuevo_valor = var.get()
+        print(dbcols[col_index], nuevo_valor, valor[0])
+        check = f"SELECT product_name FROM products WHERE product_name = '{nuevo_valor}';"
+        checking = db.fetch_all(check)
+        if checking != []:
+            print("si", checking)
+            messagebox.showwarning("Producto duplicado", "Realizar esta modificación duplicará un producto ya existente.")
+            load_data(1)
+            return
 
-cols = (general[20], products[0], products[1])
-treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=23)
-for col, width in zip(cols, [50, 438, 442]):
-    treeview.column(col, width=width)
-treeview.pack()
-treeScroll.config(command=treeview.yview)
+        option_menu.destroy()  # Eliminar OptionMenu después de guardar
+        load_data(1)
+    
+    def load_data(x):
+        query_map = {1: queries[4], 2: queries[5]}
+        db_data = db.fetch_all(query_map.get(x))
 
-button_toggle_frame = Button(window, text="Mostrar/Ocultar Panel", command=toggle_frame)
-button_toggle_frame.place(x=600, y=600, width=160, height=40)
+        if x == 1:
+            for col_marca in cols:
+                treeview.heading(col_marca, text=col_marca, anchor=tk.CENTER)
+                treeview.column(col_marca, anchor=tk.CENTER)
+
+            treeview.delete(*treeview.get_children())
+
+        for value_tuple in db_data:
+            treeview.insert('', tk.END, values=value_tuple)
+    
+    def delete_row():
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        if item_id == "":
+            messagebox.showerror("ERROR", "Ninguna fila se encuentra seleccionada")
+            return
+        rid = treeview.item(item_id, "values")[0]
+        varid = tk.StringVar()
+        varid.set(rid)
+        query = f"DELETE FROM products WHERE ID_Products = '{varid.get()}'"
+        db.commit(query)
+        load_data(1)
+    
+    def reset_entries(x):
+        match x:
+            case 1:
+                product_entry.delete(0, "")
+                product_entry.insert(0, products[0])
+
+            case 2:
+                cost_entry.delete(0, tk.END)
+                cost_entry.insert(0, products[1])
+                on_focus_out("<FocusOut>")
+    
+    def keep_used():
+        if product_entry.get().strip() == "":
+            reset_entries(1)
+        if cost_entry.get().strip() == "":
+            reset_entries(2)
+
+    def clear_entry(event, entry, default_text):
+        if entry.get() == default_text:
+            entry.delete(0, tk.END)
+    
+    def insert_row():
+        product_name, cost = product_entry.get(), cost_entry.get()
+
+        if product_name != products[0]:
+            product_name = product_name.strip().upper()
+        else:
+            messagebox.showerror(general[28], "Producto invalido")
+            return
+
+        if cost == products[1]:
+            messagebox.showerror(general[28], products[6])
+            return
+
+        product_data = db.fetch_all(queries[6])
+        if any(entry[0] == product_name for entry in product_data):
+            messagebox.showwarning(general[27], products[5])
+            return
+
+        query = f"INSERT INTO products (product_name, initial_cost) VALUES ('{product_name}', {cost})"
+        db.commit(query)
+        
+        for i in range(1, 3):
+            print(i)
+            reset_entries(i)
+        load_data(2)
+    
+    frame_container = Frame(window, width=1360, height=550, bg="#333")
+    frame_container_visible = False
+    frame_container.place_forget()
+    
+    toggle_frame(frame_container, frame_container_visible)
+    
+    products_frame = ttk.LabelFrame(frame_container, text=products[4])
+    products_frame.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
+
+    delete_frame = ttk.LabelFrame(frame_container)
+    delete_frame.grid(row=0, column=0, padx=10, pady=10, sticky="s")
+    
+    button_delete = ttk.Button(delete_frame, text="Eliminar", command=lambda: delete_row())
+    button_delete.grid(row=0, column=0, padx=10, pady=10)
+    
+    product_entry = ttk.Entry(products_frame)
+    cost_entry = ttk.Entry(products_frame, validate="none", validatecommand=vcmd)
+    entries = [(product_entry, products[0]), (cost_entry, products[1])]
+
+    for i, (entry, default_text) in enumerate(entries):
+        entry.insert(0, default_text)
+        entry.bind(general[21], lambda e, entry=entry, dt=default_text: clear_entry(e, entry, dt))
+        entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=general[22])
+        entry.bind(general[23], lambda e: keep_used())
+
+    separator = ttk.Separator(products_frame)
+    separator.grid(row=3, column=0, padx=10, pady=10, sticky=general[22])
+
+    button = ttk.Button(products_frame, text=general[24], command=lambda: insert_row())
+    button.grid(row=4, column=0, padx=5, pady=(0, 5), sticky=general[26])
+    
+    button_close = ttk.Button(products_frame, text=general[25], command=lambda: cambiar_imagen_boton(prod, "original", "img_3", toggle_frame(frame_container, True)))
+    button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=general[26])
+    
+    treeFrame = ttk.Frame(frame_container)
+    treeFrame.grid(row=0, column=1, padx= 101, pady=3)
+    
+    treeScroll = ttk.Scrollbar(treeFrame)
+    treeScroll.pack(side=general[17], fill=general[18])
+    
+    treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=[], height=24)
+    
+    cols = (general[20], products[0], products[1])
+    treeview.config(columns=cols)
+    for col, width in zip(cols, [300, 300, 300]):
+        treeview.column(col, width=width)
+        treeview.heading(col, text=col, anchor=records[14])
+    
+    treeview.pack()
+    treeScroll.config(command=treeview.yview)
+    
+    def on_focus_in(event):
+        """Borra el placeholder cuando el usuario hace clic en el Entry."""
+        if cost_entry.get() == products[1]:
+            cost_entry.config(validate="none")  # Desactivar validación temporalmente
+            cost_entry.delete(0, tk.END)
+            cost_entry.config(validate="key")  # Restaurar validación
+
+    def on_focus_out(event):
+        """Si el campo queda vacío, vuelve a poner el placeholder."""
+        if not cost_entry.get():
+            cost_entry.config(validate="none")  # Desactivar validación para insertar texto
+            cost_entry.insert(0, products[1])
+            cost_entry.config(validate="key")  # Restaurar validación
+    
+    window.bind(general[14], lambda e: button_close.invoke())
+    treeview.bind("<Double-1>", on_double_click)
+    cost_entry.bind("<FocusIn>", on_focus_in)
+    cost_entry.bind("<FocusOut>", on_focus_out)
+    load_data(1)
+
+def rec_frame():
+    dbcols = ("ID_Clients", "ID_Products", "ID_Services", "quantity", "Precio Final", "Fecha de Ingreso", "left_date", "done", "ID_Records")
+    
+    def on_double_click(event):
+        """Permite editar una celda con un OptionMenu al hacer doble clic"""
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        col = treeview.identify_column(event.x)  # Columna en formato #n
+        col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if not item_id or col_index < 0:
+            return  # Evita errores si no hay selección válida
+
+        bbox = treeview.bbox(item_id, col_index)
+        if not bbox:
+            return  # Evita errores si bbox es None
+
+        x, y, width, height = bbox
+
+        # Obtener el valor actual de la celda
+        current_value = treeview.item(item_id, "values")[col_index]
+        date = treeview.item(item_id, "values")[5]
+        rid = treeview.item(item_id, "values")[8]
+
+        # Opciones del OptionMenu (puedes personalizar estas opciones)
+        cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
+        clients = nokeys(cl)
+
+        pr = [row[0] for row in db.fetch_all("SELECT product_name FROM products;")]
+        products = nokeys(pr)
+
+        sv = [row[0] for row in db.fetch_all("SELECT service_name FROM services;")]
+        services = nokeys(sv)
+
+        done = ["-", "✔", "✘"]
+
+        departure = ["-", f"{strftime(general[35])}"]
+
+        # Crear una variable de control para el OptionMenu
+        global vardate
+        global varid
+        var = tk.StringVar()
+        vardate = tk.StringVar()
+        varid = tk.StringVar()
+        varid.set(rid)
+        var.set(current_value)
+        vardate.set(date)
+        print("xd", var.get())
+        print("xd", vardate.get())
+        print("ID: ", varid.get())
+        match col_index:
+            case 0:
+                option_menu = tk.OptionMenu(treeview, var, *clients, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
+            case 1:
+                option_menu = tk.OptionMenu(treeview, var, *products, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
+            case 2:
+                option_menu = tk.OptionMenu(treeview, var, *services, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
+            case 3:
+                vcmd = (window.register(only_numbers_input), "%P")
+                option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+            case 6:
+                option_menu = tk.OptionMenu(treeview, var, *departure, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
+            case 7:
+                option_menu = tk.OptionMenu(treeview, var, *done, command=lambda value: save_edit(value, item_id, col_index, option_menu, valor, var))
+            case other:
+                return
+
+        option_menu.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
+        option_menu.focus()
+
+        # Destruir OptionMenu si pierde el foco
+        option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
+
+    def only_numbers_input(P):
+        return P.isdigit() or P == ""
+
+    def save_edit(value, item_id, col_index, option_menu, valor, var):
+        """Guarda el valor seleccionado en la celda"""
+        values = list(treeview.item(item_id, "values"))
+        values[col_index] = value
+        treeview.item(item_id, values=values)
+
+        match col_index:
+            case 0:
+                nuevo_valor = var.get()
+                print(dbcols[col_index], nuevo_valor, valor[0])
+                check = f"""SELECT ID_Services, ID_Products, quantity, entry_date FROM records r
+                JOIN clients c ON r.ID_Clients = c.ID_Clients WHERE c.owner_name = '{nuevo_valor}';"""
+                checking = db.fetch_all(check)
+                new = f"""SELECT ID_Services, ID_Products, quantity, entry_date FROM records r
+                JOIN clients c ON r.ID_Clients = c.ID_Clients WHERE c.owner_name = '{valor[0]}'
+                AND left_date = '-' AND done = '-';"""
+                to_check = db.fetch_all(new)
+                print(checking)
+                print(to_check)
+                for i in checking:
+                    for j in to_check:
+                        print("itemj", j)
+                        print("itemi", i)
+                        if i == j:
+                            print("si", i == j)
+                            messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                            load_data(1)
+                            return
+
+                query = f"""UPDATE records SET {dbcols[col_index]} = 
+                (SELECT {dbcols[col_index]} FROM clients WHERE owner_name = '{nuevo_valor}')
+                WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
+                db.commit(query)
+
+            case 1:
+                nuevo_valor = var.get()
+                print(dbcols[col_index], nuevo_valor, valor[0])
+                check = f"""SELECT r.ID_Services, r.ID_Clients, r.quantity, r.entry_date FROM records r
+                JOIN products p ON r.ID_Products = p.ID_Products WHERE p.product_name = '{nuevo_valor}';"""
+                checking = db.fetch_all(check)
+                new = f"""SELECT r.ID_Services, r.ID_Clients, r.quantity, r.entry_date FROM records r
+                JOIN products p ON r.ID_Products = p.ID_Products WHERE p.product_name = '{valor[0]}'
+                AND left_date = '-' AND done = '-';"""
+                to_check = db.fetch_all(new)
+                print(checking)
+                print(to_check)
+                for i in checking:
+                    for j in to_check:
+                        print("itemj", j)
+                        print("itemi", i)
+                        if i == j:
+                            print("si", i == j)
+                            messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                            load_data(1)
+                            return
+
+                query = f"""UPDATE records SET {dbcols[col_index]} = 
+                (SELECT {dbcols[col_index]} FROM products WHERE product_name = '{nuevo_valor}')
+                WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
+                db.commit(query)
+
+            case 2:
+                nuevo_valor = var.get()
+                print(dbcols[col_index], "xd", nuevo_valor, valor[0])
+                check = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
+                JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{nuevo_valor}'
+                AND r.entry_date = '{vardate.get()}';"""
+                checking = db.fetch_all(check)
+                new = f"""SELECT r.ID_Clients, r.ID_Products, r.quantity, r.entry_date FROM records r
+                JOIN services s ON r.ID_Services = s.ID_Services WHERE s.service_name = '{valor[0]}'
+                AND left_date = '-' AND done = '-';"""
+                to_check = db.fetch_all(new)
+                print("nuevoxd", checking)
+                print("viejoxd", to_check)
+                for i in checking:
+                    for j in to_check:
+                        print("nuevo", j)
+                        print("viejo", i)
+                        if i == j:
+                            print("si", i == j)
+                            messagebox.showwarning("Fila duplicada", "Realizar esta modificación duplicará una fila ya existente.")
+                            load_data(1)
+                            return
+
+                query = f"""UPDATE records SET {dbcols[col_index]} = 
+                (SELECT {dbcols[col_index]} FROM services WHERE service_name = '{nuevo_valor}')
+                WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"""
+                db.commit(query)
+
+            case 6:
+                nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
+                print(dbcols[col_index])
+                query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Records = '{varid.get()}';"
+                db.commit(query)
+
+            case 7:
+                nuevo_valor = var.get()  # Obtener el valor seleccionado del OptionMenu
+                query = f"UPDATE records SET {dbcols[col_index]} = '{nuevo_valor}' WHERE ID_Records = '{varid.get()}';"
+                db.commit(query)
+
+        option_menu.destroy()  # Eliminar OptionMenu después de guardar
+        load_data(1)
+    
+    def on_return(event, option_menu, item_id, col_index, var):
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
+            messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
+            return "break"  # Impide que se ejecute el comando asociado al Return
+
+        query = f"UPDATE records SET {dbcols[col_index]} = {option_menu.get()} WHERE ID_Records = '{varid.get()}' AND left_date = '-' AND done = '-';"
+        db.commit(query)
+        save_edit(option_menu.get(), item_id, col_index, option_menu, valor, var)
+
+    def load_client(entry1, entry2, entry3, entry4):
+        e1 = entry1.get()
+        e2 = entry2.get()
+        e3 = entry3.get()
+        e4 = entry4.get()
+
+        if any("- Seleccione " in e for e in (e1, e2, e3)):
+            messagebox.showerror(general[28], general[32])
+            return
+        try:
+            params = (e3, e1, e2, e4)
+            db.other_queries(queries[12], params)
+            messagebox.showinfo(records[15], records[16])
+            load_data(2)
+        except Exception as e:
+            messagebox.showerror(records[17], str(e))
+        
+    def load_data(x):
+        query_map = {1: queries[0], 2: queries[7]}
+        db_data = db.fetch_all(query_map.get(x))
+
+        if x == 1:
+            for col_name in cols:
+                treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
+                treeview.column(col_name, anchor=tk.CENTER)
+
+            treeview.delete(*treeview.get_children())
+
+        for value_tuple in db_data:
+            treeview.insert('', tk.END, values=value_tuple)
+    
+    def delete_row():
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        if item_id == "":
+            messagebox.showerror("ERROR", "Ninguna fila se encuentra seleccionada")
+            return
+        rid = treeview.item(item_id, "values")[8]
+        varid = tk.StringVar()
+        varid.set(rid)
+        query = f"DELETE FROM records WHERE ID_Records = '{varid.get()}'"
+        db.commit(query)
+        load_data(1)
+
+    frame_container = Frame(window, width=1360, height=500, bg="#333")
+    frame_container_visible = False
+    frame_container.place_forget()
+    
+    toggle_frame(frame_container, frame_container_visible)
+    rec_frame = ttk.LabelFrame(frame_container, text=records[12])
+    rec_frame.grid(row=0, column=0, padx=10, pady=10)
+    
+    delete_frame = ttk.LabelFrame(frame_container)
+    delete_frame.grid(row=0, column=0, padx=25, pady=10, sticky="e")
+    
+    button_delete = ttk.Button(delete_frame, text="Eliminar", command=lambda: delete_row())
+    button_delete.grid(row=0, column=0, padx=10, pady=10)
+    
+    cl = [row[0] for row in db.fetch_all("SELECT owner_name FROM clients;")]
+    cl.insert(0, records[18])
+    clients = nokeys(cl)
+
+    pr = [row[0] for row in db.fetch_all("SELECT product_name FROM products;")]
+    pr.insert(0, records[19])
+    products = nokeys(pr)
+
+    sv = [row[0] for row in db.fetch_all("SELECT service_name FROM services;")]
+    sv.insert(0, records[20])
+    services = nokeys(sv)
+
+    clientsbox = ttk.Combobox(rec_frame, state=records[13], values=clients)
+    clientsbox.current(0)
+    clientsbox.grid(row=0, column=0, padx=10, pady=10)
+
+    productsbox = ttk.Combobox(rec_frame, state=records[13], values=products)
+    productsbox.current(0)
+    productsbox.grid(row=0, column=1, padx=10, pady=10)
+
+    servicesbox = ttk.Combobox(rec_frame, state=records[13], values=services)
+    servicesbox.current(0)
+    servicesbox.grid(row=0, column=2, padx=10, pady=10)
+
+    vcmd = (window.register(only_numbers_input), "%P")
+    quantity_entry = ttk.Entry(rec_frame, foreground="gray", validate="none", validatecommand=vcmd)
+    quantity_entry.insert(0, "Ingrese una cantidad")
+    quantity_entry.grid(row=0, column=3, padx=10, pady=10)
+    
+    button_submit = ttk.Button(rec_frame, text=records[22], command=lambda: load_client(clientsbox, productsbox, servicesbox, quantity_entry))
+    button_submit.grid(row=0, column=4, padx=10, pady=10)
+    
+    button_close = ttk.Button(rec_frame, text=general[25], command=lambda: cambiar_imagen_boton(rec, "original", "img_2", toggle_frame(frame_container, True)))
+    button_close.grid(row=0, column=5, padx=10, pady=10)
+    
+    cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
+    
+    treeFrame = ttk.Frame(frame_container)
+    treeFrame.grid(row=1, column=0, padx=8, pady=18)
+    
+    treeScroll = ttk.Scrollbar(treeFrame)
+    treeScroll.pack(side=general[17], fill=general[18])
+    
+    treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=18)
+    
+    for col, width in zip(cols, [200, 200, 200, 90, 160, 180, 180, 90]):
+        treeview.column(col, width=width)
+        treeview.heading(col, text=col, anchor=records[14])
+    
+    treeview.pack()
+    treeScroll.config(command=treeview.yview)
+    
+    def on_focus_in(event):
+        """Borra el placeholder cuando el usuario hace clic en el Entry."""
+        if quantity_entry.get() == "Ingrese una cantidad":
+            quantity_entry.config(validate="none")  # Desactivar validación temporalmente
+            quantity_entry.delete(0, tk.END)
+            quantity_entry.config(foreground="white", validate="key")  # Restaurar validación
+
+    def on_focus_out(event):
+        """Si el campo queda vacío, vuelve a poner el placeholder."""
+        if not quantity_entry.get():
+            quantity_entry.config(validate="none")  # Desactivar validación para insertar texto
+            quantity_entry.insert(0, "Ingrese una cantidad")
+            quantity_entry.config(foreground="gray", validate="key")  # Restaurar validación
+
+    load_data(1)
+    treeview.bind("<Double-1>", on_double_click)
+    quantity_entry.bind("<FocusIn>", on_focus_in)
+    quantity_entry.bind("<FocusOut>", on_focus_out)
+
+def cli_frame():
+    dbcols = ("ID_Clients", "owner_name", "phone")
+    def on_double_click(event):
+        """Permite editar una celda con un OptionMenu al hacer doble clic"""
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        col = treeview.identify_column(event.x)  # Columna en formato #n
+        col_index = int(col[1:]) - 1  # Convertir a índice (0 basado)
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if not item_id or col_index < 0:
+            return  # Evita errores si no hay selección válida
+
+        bbox = treeview.bbox(item_id, col_index)
+        if not bbox:
+            return  # Evita errores si bbox es None
+
+        x, y, width, height = bbox
+
+        # Obtener el valor actual de la celda
+        current_value = treeview.item(item_id, "values")[col_index]
+        rid = treeview.item(item_id, "values")[0]
+
+        # Crear una variable de control para el OptionMenu
+        global varid
+        var = tk.StringVar()
+        varid = tk.StringVar()
+        varid.set(rid)
+        var.set(current_value)
+        print("xd", var.get())
+        print("ID: ", varid.get())
+        match col_index:
+            case 1:
+                option_menu = tk.Entry(treeview)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+            case 2:
+                vcmd = (window.register(only_numbers_input), "%P")
+                option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+            case other:
+                return
+
+        option_menu.place(x=x + treeview.winfo_x(), y=y + treeview.winfo_y(), width=width, height=height)
+        option_menu.focus()
+
+        # Destruir OptionMenu si pierde el foco
+        option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
+
+    def save_edit(value, item_id, col_index, option_menu, valor, var):
+        """Guarda el valor seleccionado en la celda"""
+        values = list(treeview.item(item_id, "values"))
+        values[col_index] = value
+        treeview.item(item_id, values=values)
+        nuevo_valor = var.get()
+        print(dbcols[col_index], nuevo_valor, valor[0])
+        check = f"SELECT owner_name, phone FROM clients WHERE owner_name = '{nuevo_valor}';"
+        checking = db.fetch_all(check)
+        if checking != []:
+            print("si", checking)
+            messagebox.showwarning("Cliente duplicado", "Realizar esta modificación duplicará un cliente ya existente.")
+            load_data(1)
+            return
+
+        option_menu.destroy()  # Eliminar OptionMenu después de guardar
+        load_data(1)
+
+    def only_numbers_input(P):
+        return P.isdigit() or P == ""
+
+    def on_return(event, option_menu, item_id, col_index, var):
+        valor = []
+        valor.append(treeview.item(item_id, "values")[col_index])
+        if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
+            messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
+            return "break"  # Impide que se ejecute el comando asociado al Return
+
+        print("onreturn: ", dbcols[col_index], option_menu.get(), varid.get())
+        query = f"UPDATE clients SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE ID_Clients = '{varid.get()}';"
+        db.commit(query)
+        save_edit(dbcols[col_index], item_id, col_index, option_menu, valor, var)
+    
+    def reset_entries(x):
+        match x:
+            case 1:
+                name_entry.delete(0, "")
+                name_entry.insert(0, clients[0])
+            case 2:
+                phone_entry.delete(0, "")
+                phone_entry.insert(0, clients[1])
+                on_focus_out("<FocusOut>")
+
+    def keep_used():
+        if name_entry.get().strip() == "":
+            reset_entries(1)
+        if phone_entry.get().strip() == "":
+            reset_entries(2)
+            
+
+    def clear_entry(event, entry, default_text):
+        if entry.get() == default_text:
+            entry.delete(0, tk.END)
+            
+    def load_data(x):
+        query_map = {1: queries[1], 2: queries[2]}
+        db_data = db.fetch_all(query_map.get(x))
+
+        if x == 1:
+            for col_name in cols:
+                treeview.heading(col_name, text=col_name, anchor=tk.CENTER)
+                treeview.column(col_name, anchor=tk.CENTER)
+
+            treeview.delete(*treeview.get_children())
+
+        for value_tuple in db_data:
+            treeview.insert('', tk.END, values=value_tuple)
+
+    frame_container = Frame(window, width=1360, height=550, bg="#333")
+    frame_container.place(x=0, y=130)
+    frame_container.pack_propagate(False)
+    frame_container_visible = False
+    frame_container.place_forget()
+    
+    toggle_frame(frame_container, frame_container_visible)
+    clients_frame = ttk.LabelFrame(frame_container, text=clients[5])
+    clients_frame.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
+    
+    delete_frame = ttk.LabelFrame(frame_container)
+    delete_frame.grid(row=0, column=0, padx=10, pady=10, sticky="s")
+    
+    button_delete = ttk.Button(delete_frame, text="Eliminar", command=lambda: delete_row())
+    button_delete.grid(row=0, column=0, padx=10, pady=10)
+
+    name_entry = ttk.Entry(clients_frame)
+    phone_entry = ttk.Entry(clients_frame, validate="none", validatecommand=vcmd)
+    entries = [(name_entry, clients[0]), (phone_entry, clients[1])]
+
+    for i, (entry, default_text) in enumerate(entries):
+        entry.insert(0, default_text)
+        entry.bind(general[21], lambda e, entry=entry, dt=default_text: clear_entry(e, entry, dt))
+        entry.grid(row=i, column=0, padx=5, pady=(0, 5), sticky=general[22])
+        entry.bind(general[23], lambda e: keep_used())
+
+    def on_focus_in(event):
+        """Borra el placeholder cuando el usuario hace clic en el Entry."""
+        if phone_entry.get() == clients[1]:
+            phone_entry.config(validate="none")  # Desactivar validación temporalmente
+            phone_entry.delete(0, tk.END)
+            phone_entry.config(validate="key")  # Restaurar validación
+
+    def on_focus_out(event):
+        """Si el campo queda vacío, vuelve a poner el placeholder."""
+        if not phone_entry.get():
+            phone_entry.config(validate="none")  # Desactivar validación para insertar texto
+            phone_entry.insert(0, clients[1])
+            phone_entry.config(validate="key")  # Restaurar validación
+    
+    separator = ttk.Separator(clients_frame)
+    separator.grid(row=3, column=0, padx=10, pady=10, sticky=general[22])
+    
+    button = ttk.Button(clients_frame, text=general[24], command=lambda: insert_row())
+    button.grid(row=4, column=0, padx=5, pady=(0, 5), sticky=general[26])
+    
+    button_close = ttk.Button(clients_frame, text=general[25], command=lambda: cambiar_imagen_boton(cli, "original", "img_1", toggle_frame(frame_container, True)))
+    button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=general[26])
+
+    cols = (general[20], clients[0], clients[1])
+    
+    treeFrame = ttk.Frame(frame_container)
+    treeFrame.grid(row=0, column=1, padx= 101, pady=3)
+    
+    treeScroll = ttk.Scrollbar(treeFrame)
+    treeScroll.pack(side=general[17], fill=general[18])
+    
+    treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=24)
+    
+    for col, width in zip(cols, [300, 300, 300]):
+        treeview.column(col, width=width)
+        treeview.heading(col, text=col, anchor=records[14])
+    
+    treeview.pack()
+    treeScroll.config(command=treeview.yview)
+    
+    def insert_row():
+        name, phone = name_entry.get(), phone_entry.get()
+
+        if name != clients[0]:
+            name = name.strip().capitalize()
+
+            client_data = db.fetch_all(queries[3])
+            if any(entry[0] == phone for entry in client_data): 
+                messagebox.showwarning(general[27], clients[4])
+                return
+            elif phone == clients[1] or len(phone) != 10 :
+                messagebox.showwarning(general[27], "Número invalido.")
+                return
+
+            query = f"INSERT INTO clients (owner_name, phone) VALUES ('{name}', '{phone}');"
+            db.commit(query)
+
+            for i in range(1, 3):
+                reset_entries(i)
+            load_data(2)
+        else:
+            messagebox.showwarning(general[27], "Nombre invalido.")
+            return
+    
+    def delete_row():
+        item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
+        if item_id == "":
+            messagebox.showerror("ERROR", "Ninguna fila se encuentra seleccionada")
+            return
+        rid = treeview.item(item_id, "values")[0]
+        varid = tk.StringVar()
+        varid.set(rid)
+        query = f"DELETE FROM clients WHERE ID_Clients = '{varid.get()}'"
+        db.commit(query)
+        load_data(1)
+    
+    window.bind(general[14], lambda e: button_close.invoke())
+    treeview.bind("<Double-1>", on_double_click)
+    phone_entry.bind("<FocusIn>", on_focus_in)
+    phone_entry.bind("<FocusOut>", on_focus_out)
+    load_data(1)
 
 # Diccionario de eventos y funciones para canvas y ventana
 bindings = {

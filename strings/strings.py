@@ -12,7 +12,7 @@ def general():
 
 def queries():
     every_query = ["""SELECT clients.owner_name, product_name, services.service_name,
-                r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
+                r.quantity, sum((products.initial_cost + services.aditional_cost) * quantity), r.entry_date, r.left_date,
                 r.done, r.ID_Records FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON
@@ -36,7 +36,7 @@ def queries():
                 "SELECT product_name FROM products;",  # 6 verificación en products.
                 
                 """SELECT clients.owner_name, product_name, services.service_name,
-                r.quantity, sum(products.initial_cost * quantity + services.aditional_cost), r.entry_date, r.left_date,
+                r.quantity, sum((products.initial_cost + services.aditional_cost) * quantity), r.entry_date, r.left_date,
                 r.done, r.ID_Records FROM records r JOIN clients ON
                     r.ID_Clients = clients.ID_Clients
                 JOIN products ON

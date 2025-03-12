@@ -196,7 +196,6 @@ def save_edit(value, item_id, col_index, option_menu, valor, var):
     option_menu.destroy()  # Eliminar OptionMenu después de guardar
     load_data(1)
 
-
 def delete_row():
     item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
     if item_id == "":

@@ -25,7 +25,8 @@ def goto_window(x):
 
 def relative_to_assets(path: str) -> Path:
     assets_path = gp.getPath()  # Centralizamos dentro de la función
-    return assets_path / Path(path)
+    ap = assets_path / Path(path)
+    return Path(ap)
 
 # --- Gestión de usuarios ---
 def new_user():
