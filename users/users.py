@@ -5,7 +5,7 @@ from strings import strings as txt
 
 
 queries = txt.queries()
-general = txt.queries()
+general = txt.general()
 
 def validate_mail(mail):
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z]+$'

@@ -36,6 +36,7 @@ def center_window(window, width, height):
 window = Tk()
 window.overrideredirect(True)
 center_window(window, 300, 480)
+window.attributes("-topmost", True)
 
 canvas = Canvas(
     window,

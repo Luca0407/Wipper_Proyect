@@ -20,8 +20,8 @@ window = Tk()
 window.attributes("-topmost", True)
 
 def goto_window(x):
-    gp.vxl(x)
     window.destroy()
+    gp.vxl(x)
 
 def relative_to_assets(path: str) -> Path:
     assets_path = gp.getPath()  # Centralizamos dentro de la función

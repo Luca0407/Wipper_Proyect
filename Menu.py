@@ -274,18 +274,16 @@ def prod_frame():
         varid = tk.StringVar()
         varid.set(rid)
         var.set(current_value)
-        print("xd", var.get())
-        print("ID: ", varid.get())
         match col_index:
             case 1:
                 option_menu = tk.Entry(treeview)
                 option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, col_index))  # Verificar antes de guardar
             case 2:
                 vcmd = (window.register(only_numbers_input), "%P")
                 option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
                 option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, col_index))  # Verificar antes de guardar
             case other:
                 return
 
@@ -295,32 +293,19 @@ def prod_frame():
         # Destruir OptionMenu si pierde el foco
         option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
     
-    def on_return(event, option_menu, item_id, col_index, var):
-        valor = []
-        valor.append(treeview.item(item_id, "values")[col_index])
-        if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
-            messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
-            return "break"  # Impide que se ejecute el comando asociado al Return
-        print("onreturn: ", dbcols[col_index], option_menu.get(), varid.get())
-        query = f"UPDATE products SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE ID_Products = '{varid.get()}';"
-        db.commit(query)
-        save_edit(dbcols[col_index], item_id, col_index, option_menu, valor, var)
-    
-    def save_edit(value, item_id, col_index, option_menu, valor, var):
-        """Guarda el valor seleccionado en la celda"""
-        values = list(treeview.item(item_id, "values"))
-        values[col_index] = value
-        treeview.item(item_id, values=values)
-        nuevo_valor = var.get()
-        print(dbcols[col_index], nuevo_valor, valor[0])
-        check = f"SELECT product_name FROM products WHERE product_name = '{nuevo_valor}';"
+    def on_return(event, option_menu, col_index):
+        check = f"SELECT product_name FROM products WHERE product_name = '{option_menu.get().strip()}';"
         checking = db.fetch_all(check)
         if checking != []:
             print("si", checking)
-            messagebox.showwarning("Producto duplicado", "Realizar esta modificación duplicará un producto ya existente.")
+            messagebox.showwarning(f"{cols[col_index]} duplicado", f"Realizar esta modificación duplicará un {cols[col_index].lower()} ya existente.")
             load_data(1)
             return
-
+        if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
+            messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
+            return "break"  # Impide que se ejecute el comando asociado al Return
+        query = f"UPDATE products SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE ID_Products = '{varid.get()}';"
+        db.commit(query)
         option_menu.destroy()  # Eliminar OptionMenu después de guardar
         load_data(1)
     
@@ -750,7 +735,6 @@ def rec_frame():
     button_submit.grid(row=0, column=4, padx=10, pady=10)
     
     button_close = ttk.Button(rec_frame, text=general[25], command=lambda: cambiar_imagen_boton(rec, "original", "img_2", toggle_frame(frame_container, True)))
-    button_close.grid(row=0, column=5, padx=10, pady=10)
     
     cols = (records[0], records[1], records[2], records[3], records[4], records[5], records[6], records[7])
     
@@ -784,12 +768,13 @@ def rec_frame():
             quantity_entry.config(foreground="gray", validate="key")  # Restaurar validación
 
     load_data(1)
+    window.bind(general[14], lambda e: button_close.invoke())
     treeview.bind("<Double-1>", on_double_click)
     quantity_entry.bind("<FocusIn>", on_focus_in)
     quantity_entry.bind("<FocusOut>", on_focus_out)
 
 def cli_frame():
-    dbcols = ("ID_Clients", "owner_name", "phone")
+    dbcols = (clients[9], clients[2], clients[3], clients[8])
     def on_double_click(event):
         """Permite editar una celda con un OptionMenu al hacer doble clic"""
         item_id = treeview.focus()  # Obtener el ID del ítem seleccionado
@@ -816,18 +801,20 @@ def cli_frame():
         varid = tk.StringVar()
         varid.set(rid)
         var.set(current_value)
-        print("xd", var.get())
-        print("ID: ", varid.get())
         match col_index:
             case 1:
                 option_menu = tk.Entry(treeview)
                 option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, col_index))  # Verificar antes de guardar
             case 2:
                 vcmd = (window.register(only_numbers_input), "%P")
                 option_menu = tk.Entry(treeview, validate="key", validatecommand=vcmd)
                 option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
-                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, item_id, col_index, var))  # Verificar antes de guardar
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, col_index))  # Verificar antes de guardar
+            case 3:
+                option_menu = tk.Entry(treeview)
+                option_menu.insert(0, treeview.item(item_id, "values")[col_index])  # Insertar valor actual
+                option_menu.bind("<Return>", lambda event: on_return(event, option_menu, col_index))  # Verificar antes de guardar
             case other:
                 return
 
@@ -837,38 +824,24 @@ def cli_frame():
         # Destruir OptionMenu si pierde el foco
         option_menu.bind("<FocusOut>", lambda e: option_menu.destroy())
 
-    def save_edit(value, item_id, col_index, option_menu, valor, var):
-        """Guarda el valor seleccionado en la celda"""
-        values = list(treeview.item(item_id, "values"))
-        values[col_index] = value
-        treeview.item(item_id, values=values)
-        nuevo_valor = var.get()
-        print(dbcols[col_index], nuevo_valor, valor[0])
-        check = f"SELECT owner_name, phone FROM clients WHERE owner_name = '{nuevo_valor}';"
-        checking = db.fetch_all(check)
-        if checking != []:
-            print("si", checking)
-            messagebox.showwarning("Cliente duplicado", "Realizar esta modificación duplicará un cliente ya existente.")
-            load_data(1)
-            return
-
-        option_menu.destroy()  # Eliminar OptionMenu después de guardar
-        load_data(1)
-
     def only_numbers_input(P):
         return P.isdigit() or P == ""
 
-    def on_return(event, option_menu, item_id, col_index, var):
-        valor = []
-        valor.append(treeview.item(item_id, "values")[col_index])
+    def on_return(event, option_menu, col_index):
+        check = f"SELECT {dbcols[col_index]} FROM clients WHERE {dbcols[col_index]} = '{option_menu.get().strip()}';"
+        checking = db.fetch_all(check)
+        if checking != []:
+            print("si", checking)
+            messagebox.showwarning(f"{cols[col_index]} duplicado", f"Realizar esta modificación duplicará un {cols[col_index].lower()} ya existente.")
+            load_data(1)
+            return
         if option_menu.get().strip() == "":  # Verifica si el Entry está vacío
             messagebox.showwarning("ADVERTENCIA", "El campo no puede estar vacío.")
             return "break"  # Impide que se ejecute el comando asociado al Return
-
-        print("onreturn: ", dbcols[col_index], option_menu.get(), varid.get())
-        query = f"UPDATE clients SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE ID_Clients = '{varid.get()}';"
+        query = f"UPDATE clients SET '{dbcols[col_index]}' = '{option_menu.get()}' WHERE {clients[9]} = '{varid.get()}';"
         db.commit(query)
-        save_edit(dbcols[col_index], item_id, col_index, option_menu, valor, var)
+        option_menu.destroy()  # Eliminar OptionMenu después de guardar
+        load_data(1)
     
     def reset_entries(x):
         match x:
@@ -879,12 +852,17 @@ def cli_frame():
                 phone_entry.delete(0, "")
                 phone_entry.insert(0, clients[1])
                 on_focus_out("<FocusOut>")
+            case 3:
+                mail_entry.delete(0, "")
+                mail_entry.insert(0, clients[7])
 
     def keep_used():
         if name_entry.get().strip() == "":
             reset_entries(1)
         if phone_entry.get().strip() == "":
             reset_entries(2)
+        if mail_entry.get().strip() == "":
+            reset_entries(3)
             
 
     def clear_entry(event, entry, default_text):
@@ -923,7 +901,10 @@ def cli_frame():
 
     name_entry = ttk.Entry(clients_frame)
     phone_entry = ttk.Entry(clients_frame, validate="none", validatecommand=vcmd)
-    entries = [(name_entry, clients[0]), (phone_entry, clients[1])]
+    mail_entry = ttk.Entry(clients_frame)
+    entries = [(name_entry, clients[0]),
+            (phone_entry, clients[1]),
+            (mail_entry, clients[7])]
 
     for i, (entry, default_text) in enumerate(entries):
         entry.insert(0, default_text)
@@ -954,7 +935,7 @@ def cli_frame():
     button_close = ttk.Button(clients_frame, text=general[25], command=lambda: cambiar_imagen_boton(cli, "original", "img_1", toggle_frame(frame_container, True)))
     button_close.grid(row=5, column=0, padx=5, pady=(0, 5), sticky=general[26])
 
-    cols = (general[20], clients[0], clients[1])
+    cols = (general[20], clients[0], clients[1], clients[7])
     
     treeFrame = ttk.Frame(frame_container)
     treeFrame.grid(row=0, column=1, padx= 101, pady=3)
@@ -964,7 +945,7 @@ def cli_frame():
     
     treeview = ttk.Treeview(treeFrame, show=general[19], yscrollcommand=treeScroll.set, columns=cols, height=24)
     
-    for col, width in zip(cols, [300, 300, 300]):
+    for col, width in zip(cols, [100, 275, 250, 275]):
         treeview.column(col, width=width)
         treeview.heading(col, text=col, anchor=records[14])
     
@@ -972,7 +953,7 @@ def cli_frame():
     treeScroll.config(command=treeview.yview)
     
     def insert_row():
-        name, phone = name_entry.get(), phone_entry.get()
+        name, phone, mail = name_entry.get(), phone_entry.get(), mail_entry.get()
 
         if name != clients[0]:
             name = name.strip().capitalize()
@@ -982,13 +963,13 @@ def cli_frame():
                 messagebox.showwarning(general[27], clients[4])
                 return
             elif phone == clients[1] or len(phone) != 10 :
-                messagebox.showwarning(general[27], "Número invalido.")
+                messagebox.showwarning(general[27], "Número invalido. Debe ser de 10 digitos")
                 return
 
-            query = f"INSERT INTO clients (owner_name, phone) VALUES ('{name}', '{phone}');"
+            query = f"INSERT INTO clients ('{clients[2]}', '{clients[3]}', '{clients[8]}') VALUES ('{name}', '{phone}', '{mail}');"
             db.commit(query)
 
-            for i in range(1, 3):
+            for i in range(1, 4):
                 reset_entries(i)
             load_data(2)
         else:
@@ -1003,7 +984,7 @@ def cli_frame():
         rid = treeview.item(item_id, "values")[0]
         varid = tk.StringVar()
         varid.set(rid)
-        query = f"DELETE FROM clients WHERE ID_Clients = '{varid.get()}'"
+        query = f"DELETE FROM clients WHERE {clients[9]} = '{varid.get()}'"
         db.commit(query)
         load_data(1)
     
@@ -1013,12 +994,23 @@ def cli_frame():
     phone_entry.bind("<FocusOut>", on_focus_out)
     load_data(1)
 
+def press_clients(event):
+    cli.invoke()  # Simula el clic en el botón de clientes
+
+def press_products(event):
+    prod.invoke()  # Simula el clic en el botón de productos
+
+def press_records(event):
+    rec.invoke()  # Simula el clic en el botón de registros
+
 # Diccionario de eventos y funciones para canvas y ventana
 bindings = {
     mainmenu[32]: (canvas, start_move),
-    mainmenu[33]: (canvas, do_move)
+    mainmenu[33]: (canvas, do_move),
+    mainmenu[34]: (window, press_clients),
+    mainmenu[35]: (window, press_products),
+    mainmenu[36]: (window, press_records)
 }
-
 # Vincula cada evento con su respectiva función en el objeto correspondiente
 for key, (obj, function) in bindings.items():
     obj.bind(key, function)

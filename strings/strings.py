@@ -89,7 +89,7 @@ def records():
 
 def clients():
     clients_strings = ["Nombre", "Teléfono", 'owner_name', 'phone', "Este cliente ya se encuentra registrado",
-                    "Datos del Cliente", "El número no puede contener letras."]
+                    "Datos del Cliente", "El número no puede contener letras.", "Correo", "mail", "ID_Clients"]
     return clients_strings
 
 
@@ -104,7 +104,7 @@ def menu():
                     "menu_bar.png", "status_bar.png", "logo_icon.png", "user_icon.png", "date_icon.png",
                     "time_icon.png", "minimize.png", "close.png", "logout.png", "Records",
                     "commerce.png", "No disponible", "Esta funcionalidad solo es accesible en la versión completa.", "Clients", "Products",
-                    "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold", "Teclas Rápidas", "v0.9.9",
+                    "F2: Abrir Clientes\n\nF3: Abrir Productos\n\nF4: Abrir Registros\n\nF5: Modo Claro/Oscuro", "#555454", "Montserrat Bold", "Teclas Rápidas", "v1.0.1",
                     "Wipper Insumos", "Montserrat Medium", "<Button-1>", "<B1-Motion>", "<F2>",
                     "<F3>", "<F4>"]
     return menu_strings
